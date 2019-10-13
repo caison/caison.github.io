@@ -6,9 +6,8 @@
     <meta charset="utf-8">
     <meta name="keywords" content="理解Netty模型架构, caison博客">
     <meta name="description" content="
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
-1 Netty简介Netty是 一个异步事件">
+本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
+1 Netty简介Netty是 一个异步事件驱动的网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -418,8 +417,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/0.jpg" alt></p>
-<pre><code>作者 陈彩华
-文章转载交流请联系 caison@aliyun.com</code></pre><p>本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，<strong>知其然且知其所以然</strong>，希望给读者提供学习实践参考。</p>
+<p>本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，<strong>知其然且知其所以然</strong>，希望给读者提供学习实践参考。</p>
 <h1 id="1-Netty简介"><a href="#1-Netty简介" class="headerlink" title="1 Netty简介"></a>1 Netty简介</h1><p>Netty是 一个异步事件驱动的网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端。</p>
 <h2 id="JDK原生NIO程序的问题"><a href="#JDK原生NIO程序的问题" class="headerlink" title="JDK原生NIO程序的问题"></a>JDK原生NIO程序的问题</h2><p>JDK原生也有一套网络应用程序API，但是存在一系列问题，主要如下：</p>
 <ul>
@@ -931,22 +929,19 @@ server<span class="token punctuation">.</span><span class="token function">group
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
+                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
+                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
                         
-                        <span class="card-title">理解Java-GC原理和调优</span>
+                        <span class="card-title">理解Java内存模型</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
-阅读时长约30分钟，内容主要如下：
-
-GC基础原理，涉及调优目标，GC事件分类、JVM内存分
+最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的
                         
                     </div>
                     <div class="publish-info">
@@ -975,19 +970,22 @@ GC基础原理，涉及调优目标，GC事件分类、JVM内存分
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
+                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
+                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
                         
-                        <span class="card-title">理解Java内存模型</span>
+                        <span class="card-title">理解Java-GC原理和调优</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
+
+GC基础原理，涉及调优目标，GC事件分类、JVM内存分
                         
                     </div>
                     <div class="publish-info">
@@ -1128,7 +1126,7 @@ GC基础原理，涉及调优目标，GC事件分类、JVM内存分
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">96.1k</span>&nbsp;字
+                class="white-color">96k</span>&nbsp;字
             
             
             
