@@ -362,22 +362,19 @@
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
+                    <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
                         <div class="card-image tag-image">
                             
-                            <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
+                            <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
                             
-                            <span class="card-title">理解Java-GC原理和调优</span>
+                            <span class="card-title">理解Java并发底层之AQS实现</span>
                         </div>
                     </a>
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                
-概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
-阅读时长约30分钟，内容主要如下：
-
-GC基础原理，涉及调优目标，GC事件分类、JVM内存分
+                                jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
                             
                         </div>
                         <div class="publish-info">
@@ -403,19 +400,22 @@ GC基础原理，涉及调优目标，GC事件分类、JVM内存分
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                    <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
                         <div class="card-image tag-image">
                             
-                            <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
+                            <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
                             
-                            <span class="card-title">理解Java并发底层之AQS实现</span>
+                            <span class="card-title">理解Java-GC原理和调优</span>
                         </div>
                     </a>
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
-                                jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
-本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
+                                
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
+
+GC基础原理，涉及调优目标，GC事件分类、JVM内存分
                             
                         </div>
                         <div class="publish-info">
@@ -596,20 +596,20 @@ GC基础原理，涉及调优目标，GC事件分类、JVM内存分
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
+                    <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
                         <div class="card-image tag-image">
                             
-                            <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
+                            <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
                             
-                            <span class="card-title">设计模式-创建型模式</span>
+                            <span class="card-title">日志打印规范及技巧学习总结</span>
                         </div>
                     </a>
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
                                 
-原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
-建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
+一、日志打印级别
+DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
                             
                         </div>
                         <div class="publish-info">
@@ -648,6 +648,45 @@ GC基础原理，涉及调优目标，GC事件分类、JVM内存分
                             
                                 
 中介者模式(Mediator)意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+            
+            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
+                        <div class="card-image tag-image">
+                            
+                            <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
+                            
+                            <span class="card-title">设计模式-结构型模式</span>
+                        </div>
+                    </a>
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                
+享元模式(Flyweight)意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
+代理模式(Prox
                             
                         </div>
                         <div class="publish-info">
@@ -713,59 +752,20 @@ New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
+                    <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
                         <div class="card-image tag-image">
                             
-                            <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
+                            <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
                             
-                            <span class="card-title">日志打印规范及技巧学习总结</span>
+                            <span class="card-title">设计模式-创建型模式</span>
                         </div>
                     </a>
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
                                 
-一、日志打印级别
-DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                </div>
-            </div>
-            
-            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
-                    <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
-                        <div class="card-image tag-image">
-                            
-                            <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
-                            
-                            <span class="card-title">设计模式-结构型模式</span>
-                        </div>
-                    </a>
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                
-享元模式(Flyweight)意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
-代理模式(Prox
+原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
+建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
                             
                         </div>
                         <div class="publish-info">
