@@ -69,17 +69,6 @@
   
   <li class="hide-on-med-and-down nav-item">
     
-    <a href="/tags" class="waves-effect waves-light">
-      
-      <i class="fas fa-tags" style="zoom: 0.6;"></i>
-      
-      <span>标签</span>
-    </a>
-    
-  </li>
-  
-  <li class="hide-on-med-and-down nav-item">
-    
     <a href="/categories" class="waves-effect waves-light">
       
       <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
@@ -143,17 +132,6 @@
 			    <i class="fa-fw fas fa-home"></i>
 			
 			首页
-		</a>
-          
-        </li>
-        
-        <li class="m-nav-item">
-	  
-		<a href="/tags" class="waves-effect waves-light">
-			
-			    <i class="fa-fw fas fa-tags"></i>
-			
-			标签
 		</a>
           
         </li>
@@ -708,7 +686,7 @@ after<span class="token operator">:</span> gc weakHashMap <span class="token ope
 <p> <a href="https://www.cnblogs.com/dolphin0520/p/3784171.html" target="_blank" rel="noopener">Java 如何有效地避免OOM：善于利用软引用和弱引用</a></p>
 <p><a href="https://blog.csdn.net/imzoer/article/details/8044900" target="_blank" rel="noopener">Java幽灵引用的作用</a></p>
 <p><a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ref/package-summary.html#package_description" target="_blank" rel="noopener">oracle官方文档</a></p>
-<p>都看到这里了，关注个公众号吧，一起交流学习<br><img src="/images/%E7%90%86%E8%A7%A3Java%E7%9A%84%E5%88%86%E7%BA%A7%E5%BC%95%E7%94%A8%E6%A8%A1%E5%9E%8B/4.jpg" alt="caison_way"></p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Java-GC%E5%8E%9F%E7%90%86%E5%92%8C%E8%B0%83%E4%BC%98/16.png" alt></p>
 
             </div>
             <hr/>
@@ -915,19 +893,22 @@ after<span class="token operator">:</span> gc weakHashMap <span class="token ope
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/a-li-ba-ba-java-kai-fa-shou-ce-xue-xi-bi-ji/">
+                <a href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
                     <div class="card-image">
                         
-                        <img src="/images/《阿里巴巴Java开发手册》学习笔记/0.jpg" class="responsive-img" alt="《阿里巴巴Java开发手册》学习笔记">
+                        <img src="/images/理解Java中SPI机制/0.jpg" class="responsive-img" alt="理解Java中SPI机制">
                         
-                        <span class="card-title">《阿里巴巴Java开发手册》学习笔记</span>
+                        <span class="card-title">理解Java中SPI机制</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-2017年，阿里官方推出一套Java编程规范：《阿里巴巴Java开发手册(终极版)》，这套Java统一规范标准将有助于提高行业编码规范化水平，帮助行业人员提高开发质量和效率、大大降低代码维护成本。推出之后，在CSDN，InfoQ，知乎等网
+文章首发于Hollis公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
+1 SPI是什么SP
                         
                     </div>
                     <div class="publish-info">
@@ -956,22 +937,20 @@ after<span class="token operator">:</span> gc weakHashMap <span class="token ope
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
+                <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
+                        <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
                         
-                        <span class="card-title">理解Java-GC原理和调优</span>
+                        <span class="card-title">设计模式-创建型模式</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            文章首发于51CTO公众号
-概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
-阅读时长约30分钟，内容主要如下：
-
-GC基础原理，涉及调优目标，
+                            
+原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
+建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
                         
                     </div>
                     <div class="publish-info">
@@ -1112,7 +1091,7 @@ GC基础原理，涉及调优目标，
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">36.6k</span>&nbsp;字
+                class="white-color">46.2k</span>&nbsp;字
             
             
             

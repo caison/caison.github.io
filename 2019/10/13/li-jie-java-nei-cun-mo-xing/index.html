@@ -6,9 +6,7 @@
     <meta charset="utf-8">
     <meta name="keywords" content="理解Java内存模型, 分布式系统架构">
     <meta name="description" content="
-文章首发于51CTO技术栈公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问">
+最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -63,17 +61,6 @@
       <i class="fas fa-home" style="zoom: 0.6;"></i>
       
       <span>首页</span>
-    </a>
-    
-  </li>
-  
-  <li class="hide-on-med-and-down nav-item">
-    
-    <a href="/tags" class="waves-effect waves-light">
-      
-      <i class="fas fa-tags" style="zoom: 0.6;"></i>
-      
-      <span>标签</span>
     </a>
     
   </li>
@@ -143,17 +130,6 @@
 			    <i class="fa-fw fas fa-home"></i>
 			
 			首页
-		</a>
-          
-        </li>
-        
-        <li class="m-nav-item">
-	  
-		<a href="/tags" class="waves-effect waves-light">
-			
-			    <i class="fa-fw fas fa-tags"></i>
-			
-			标签
 		</a>
           
         </li>
@@ -439,9 +415,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/0.jpg" alt></p>
-<pre><code>文章首发于51CTO技术栈公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com</code></pre><p>最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的理解，知其然而知其所以然。</p>
+<p>最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的理解，知其然而知其所以然。</p>
 <h1 id="1-内存模型产生背景"><a href="#1-内存模型产生背景" class="headerlink" title="1 内存模型产生背景"></a>1 内存模型产生背景</h1><p>在介绍Java内存模型之前，我们先了解一下物理计算机中的并发问题，理解这些问题可以搞清楚内存模型产生的背景。物理机遇到的并发问题与虚拟机中的情况有不少相似之处，物理机的解决方案对虚拟机的实现有相当的参考意义。</p>
 <h2 id="物理机的并发问题"><a href="#物理机的并发问题" class="headerlink" title="物理机的并发问题"></a>物理机的并发问题</h2><ul>
 <li><strong>硬件的效率问题</strong></li>
@@ -548,13 +522,14 @@
 <h2 id="4-3-内存屏障"><a href="#4-3-内存屏障" class="headerlink" title="4.3 内存屏障"></a>4.3 内存屏障</h2><p>Java中如何保证底层操作的有序性和可见性？可以通过内存屏障。</p>
 <p>内存屏障是被插入两个CPU指令之间的一种指令，用来禁止处理器指令发生重排序（像屏障一样），从而保障<strong>有序性</strong>的。另外，为了达到屏障的效果，它也会使处理器写入、读取值之前，将主内存的值写入高速缓存，清空无效队列，从而保障<strong>可见性</strong>。</p>
 <p>举个例子：</p>
-<pre><code>Store1; 
-Store2;   
-Load1;   
-StoreLoad;  //内存屏障
-Store3;   
-Load2;   
-Load3;</code></pre><p>对于上面的一组CPU指令（Store表示写入指令，Load表示读取指令），StoreLoad屏障之前的Store指令无法与StoreLoad屏障之后的Load指令进行交换位置，即<strong>重排序</strong>。但是StoreLoad屏障之前和之后的指令是可以互换位置的，即Store1可以和Store2互换，Load2可以和Load3互换。</p>
+<pre class=" language-java"><code class="language-java">Store1<span class="token punctuation">;</span> 
+Store2<span class="token punctuation">;</span>   
+Load1<span class="token punctuation">;</span>   
+StoreLoad<span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//内存屏障</span>
+Store3<span class="token punctuation">;</span>   
+Load2<span class="token punctuation">;</span>   
+Load3<span class="token punctuation">;</span></code></pre>
+<p>对于上面的一组CPU指令（Store表示写入指令，Load表示读取指令），StoreLoad屏障之前的Store指令无法与StoreLoad屏障之后的Load指令进行交换位置，即<strong>重排序</strong>。但是StoreLoad屏障之前和之后的指令是可以互换位置的，即Store1可以和Store2互换，Load2可以和Load3互换。</p>
 <p>常见有4种屏障</p>
 <ul>
 <li>LoadLoad屏障：<br>对于这样的语句 Load1; LoadLoad; Load2，在Load2及后续读取操作要读取的数据被访问前，保证Load1要读取的数据被读取完毕。</li>
@@ -610,20 +585,21 @@ Load3;</code></pre><p>对于上面的一组CPU指令（Store表示写入指令�
 </ul>
 <p>普通的变量仅仅会保证该方法的执行过程中所有依赖赋值结果的地方都能获取到正确的结果，而不能保证赋值操作的顺序与程序代码中的执行顺序一致。</p>
 <p>举个例子：</p>
-<pre><code>volatile boolean initialized = false;
+<pre class=" language-java"><code class="language-java"><span class="token keyword">volatile</span> <span class="token keyword">boolean</span> initialized <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
 
-// 下面代码线程A中执行
-// 读取配置信息，当读取完成后将initialized设置为true以通知其他线程配置可用
-doSomethingReadConfg();
-initialized = true;
+<span class="token comment" spellcheck="true">// 下面代码线程A中执行</span>
+<span class="token comment" spellcheck="true">// 读取配置信息，当读取完成后将initialized设置为true以通知其他线程配置可用</span>
+<span class="token function">doSomethingReadConfg</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+initialized <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
 
-// 下面代码线程B中执行
-// 等待initialized 为true，代表线程A已经把配置信息初始化完成
-while (!initialized) {
-     sleep();
-}
-// 使用线程A初始化好的配置信息
-doSomethingWithConfig();</code></pre><p>上面代码中如果定义initialized变量时没有使用volatile修饰，就有可能会由于指令重排序的优化，导致线程A中最后一句代码 “initialized = true” 在 “doSomethingReadConfg()” 之前被执行，这样会导致线程B中使用配置信息的代码就可能出现错误，而volatile关键字就禁止重排序的语义可以避免此类情况发生。</p>
+<span class="token comment" spellcheck="true">// 下面代码线程B中执行</span>
+<span class="token comment" spellcheck="true">// 等待initialized 为true，代表线程A已经把配置信息初始化完成</span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span>initialized<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+     <span class="token function">sleep</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment" spellcheck="true">// 使用线程A初始化好的配置信息</span>
+<span class="token function">doSomethingWithConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>上面代码中如果定义initialized变量时没有使用volatile修饰，就有可能会由于指令重排序的优化，导致线程A中最后一句代码 “initialized = true” 在 “doSomethingReadConfg()” 之前被执行，这样会导致线程B中使用配置信息的代码就可能出现错误，而volatile关键字就禁止重排序的语义可以避免此类情况发生。</p>
 <h3 id="volatile型变量实现原理"><a href="#volatile型变量实现原理" class="headerlink" title="volatile型变量实现原理"></a>volatile型变量实现原理</h3><p>具体实现方式是在编译期生成字节码时，会在指令序列中增加内存屏障来保证，下面是基于保守策略的JMM内存屏障插入策略：</p>
 <p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/8.png" alt="volatile型变量内存屏障插入策略"></p>
 <ul>
@@ -868,22 +844,19 @@ doSomethingWithConfig();</code></pre><p>上面代码中如果定义initialized�
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
+                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
+                        <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
                         
-                        <span class="card-title">理解Java-GC原理和调优</span>
+                        <span class="card-title">理解Java并发底层之AQS实现</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            文章首发于51CTO公众号
-概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
-阅读时长约30分钟，内容主要如下：
-
-GC基础原理，涉及调优目标，
+                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
                         
                     </div>
                     <div class="publish-info">
@@ -912,19 +885,24 @@ GC基础原理，涉及调优目标，
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                <a href="/2019/10/13/java-zhen-duan-li-qi-arthas/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java并发底层之AQS实现/0.jpg" class="responsive-img" alt="理解Java并发底层之AQS实现">
+                        <img src="/images/Java诊断利器Arthas/0.jpg" class="responsive-img" alt="Java诊断利器Arthas">
                         
-                        <span class="card-title">理解Java并发底层之AQS实现</span>
+                        <span class="card-title">Java诊断利器Arthas</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
-本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
+                            
+
+1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱
+当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：
+
+这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
+我改的代码为什
                         
                     </div>
                     <div class="publish-info">
@@ -935,8 +913,8 @@ GC基础原理，涉及调优目标，
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
                                 </a>
                             
                             
@@ -1065,7 +1043,7 @@ GC基础原理，涉及调优目标，
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">36.6k</span>&nbsp;字
+                class="white-color">46.2k</span>&nbsp;字
             
             
             

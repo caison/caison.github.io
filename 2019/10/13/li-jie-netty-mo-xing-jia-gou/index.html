@@ -1,0 +1,1327 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="理解Netty模型架构, 分布式系统架构">
+    <meta name="description" content="
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
+1 Netty简介Netty是 一个异步事件">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>理解Netty模型架构 | 分布式系统架构</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+        code[class*="language-"], pre[class*="language-"] {
+            white-space: pre !important;
+        }
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">分布式系统架构</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">分布式系统架构</div>
+        <div class="logo-desc">
+            
+            专注分享分布式架构干货
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/images/理解Netty模型架构/0.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        理解Netty模型架构
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/技术框架/" class="post-category">
+                                技术框架
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-10-13
+                </div>
+
+                
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        5.7k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        20 分
+                    </div>
+                    
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/0.jpg" alt></p>
+<pre><code>作者 陈彩华
+文章转载交流请联系 caison@aliyun.com</code></pre><p>本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，<strong>知其然且知其所以然</strong>，希望给读者提供学习实践参考。</p>
+<h1 id="1-Netty简介"><a href="#1-Netty简介" class="headerlink" title="1 Netty简介"></a>1 Netty简介</h1><p>Netty是 一个异步事件驱动的网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端。</p>
+<h2 id="JDK原生NIO程序的问题"><a href="#JDK原生NIO程序的问题" class="headerlink" title="JDK原生NIO程序的问题"></a>JDK原生NIO程序的问题</h2><p>JDK原生也有一套网络应用程序API，但是存在一系列问题，主要如下：</p>
+<ul>
+<li>NIO的类库和API繁杂，使用麻烦，你需要熟练掌握Selector、ServerSocketChannel、SocketChannel、ByteBuffer等</li>
+<li>需要具备其它的额外技能做铺垫，例如熟悉Java多线程编程，因为NIO编程涉及到Reactor模式，你必须对多线程和网路编程非常熟悉，才能编写出高质量的NIO程序</li>
+<li>可靠性能力补齐，开发工作量和难度都非常大。例如客户端面临断连重连、网络闪断、半包读写、失败缓存、网络拥塞和异常码流的处理等等，NIO编程的特点是功能开发相对容易，但是可靠性能力补齐工作量和难度都非常大</li>
+<li>JDK NIO的BUG，例如臭名昭著的epoll bug，它会导致Selector空轮询，最终导致CPU 100%。官方声称在JDK1.6版本的update18修复了该问题，但是直到JDK1.7版本该问题仍旧存在，只不过该bug发生概率降低了一些而已，它并没有被根本解决</li>
+</ul>
+<h2 id="Netty的特点"><a href="#Netty的特点" class="headerlink" title="Netty的特点"></a>Netty的特点</h2><p>Netty的对JDK自带的NIO的API进行封装，解决上述问题，主要特点有：</p>
+<ul>
+<li>设计优雅<br>适用于各种传输类型的统一API - 阻塞和非阻塞Socket<br>基于灵活且可扩展的事件模型，可以清晰地分离关注点<br>高度可定制的线程模型 - 单线程，一个或多个线程池<br>真正的无连接数据报套接字支持（自3.1起）</li>
+<li>使用方便<br>详细记录的Javadoc，用户指南和示例<br>没有其他依赖项，JDK 5（Netty 3.x）或6（Netty 4.x）就足够了</li>
+<li>高性能<br>吞吐量更高，延迟更低<br>减少资源消耗<br>最小化不必要的内存复制</li>
+<li>安全<br>完整的SSL / TLS和StartTLS支持</li>
+<li>社区活跃，不断更新<br>社区活跃，版本迭代周期短，发现的BUG可以被及时修复，同时，更多的新功能会被加入</li>
+</ul>
+<h2 id="Netty常见使用常见"><a href="#Netty常见使用常见" class="headerlink" title="Netty常见使用常见"></a>Netty常见使用常见</h2><p>Netty常见的使用场景如下：</p>
+<ul>
+<li>互联网行业<br>在分布式系统中，各个节点之间需要远程服务调用，高性能的RPC框架必不可少，Netty作为异步高新能的通信框架,往往作为基础通信组件被这些RPC框架使用。<br>典型的应用有：阿里分布式服务框架Dubbo的RPC框架使用Dubbo协议进行节点间通信，Dubbo协议默认使用Netty作为基础通信组件，用于实现各进程节点之间的内部通信。</li>
+<li>游戏行业<br>无论是手游服务端还是大型的网络游戏，Java语言得到了越来越广泛的应用。Netty作为高性能的基础通信组件，它本身提供了TCP/UDP和HTTP协议栈。<br>非常方便定制和开发私有协议栈，账号登录服务器，地图服务器之间可以方便的通过Netty进行高性能的通信</li>
+<li>大数据领域<br>经典的Hadoop的高性能通信和序列化组件Avro的RPC框架，默认采用Netty进行跨界点通信，它的Netty Service基于Netty框架二次封装实现</li>
+</ul>
+<p>有兴趣的读者可以了解一下目前有哪些开源项目使用了 Netty：<a href="https://netty.io/wiki/related-projects.html" target="_blank" rel="noopener">Related projects</a></p>
+<h1 id="2-Netty高性能设计"><a href="#2-Netty高性能设计" class="headerlink" title="2 Netty高性能设计"></a>2 Netty高性能设计</h1><p>Netty作为异步事件驱动的网络，高性能之处主要来自于其I/O模型和线程处理模型，前者决定如何收发数据，后者决定如何处理数据</p>
+<h2 id="I-O模型"><a href="#I-O模型" class="headerlink" title="I/O模型"></a>I/O模型</h2><p>用什么样的通道将数据发送给对方，BIO、NIO或者AIO，I/O模型在很大程度上决定了框架的性能</p>
+<h3 id="阻塞I-O"><a href="#阻塞I-O" class="headerlink" title="阻塞I/O"></a>阻塞I/O</h3><p>传统阻塞型I/O(BIO)可以用下图表示：<br><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/1.png" alt="Blocking I/O"><br><strong>特点</strong></p>
+<ul>
+<li>每个请求都需要独立的线程完成数据read，业务处理，数据write的完整操作</li>
+</ul>
+<p><strong>问题</strong></p>
+<ul>
+<li>当并发数较大时，需要创建大量线程来处理连接，系统资源占用较大</li>
+<li>连接建立后，如果当前线程暂时没有数据可读，则线程就阻塞在read操作上，造成线程资源浪费</li>
+</ul>
+<h3 id="I-O复用模型"><a href="#I-O复用模型" class="headerlink" title="I/O复用模型"></a>I/O复用模型</h3><p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/2.png" alt></p>
+<p>在I/O复用模型中，会用到select，这个函数也会使进程阻塞，与阻塞I/O所不同的，这个函数可以同时阻塞多个I/O操作，可同时对多个读操写操作的I/O函数进行检测，直到有数据可读或可写时，才真正调用I/O操作函数</p>
+<p>Netty的非阻塞I/O的实现关键是基于I/O复用模型，这里用Selector对象表示：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/3.png" alt="Nonblocking I/O"><br>Netty的IO线程NioEventLoop由于聚合了多路复用器Selector，可以同时并发处理成百上千个客户端连接。当线程从某客户端Socket通道进行读写数据时，若没有数据可用时，该线程可以进行其他任务。线程通常将非阻塞 IO 的空闲时间用于在其他通道上执行 IO 操作，所以单独的线程可以管理多个输入和输出通道。</p>
+<p>由于读写操作都是非阻塞的，这就可以充分提升IO线程的运行效率，避免由于频繁I/O阻塞导致的线程挂起，一个I/O线程可以并发处理N个客户端连接和读写操作，这从根本上解决了传统同步阻塞I/O一连接一线程模型，架构的性能、弹性伸缩能力和可靠性都得到了极大的提升。</p>
+<h3 id="基于buffer"><a href="#基于buffer" class="headerlink" title="基于buffer"></a>基于buffer</h3><p>传统的I/O是面向字节流或字符流的，以流式的方式顺序地从一个Stream 中读取一个或多个字节, 因此也就不能随意改变读取指针的位置。</p>
+<p>在NIO中, 抛弃了传统的 I/O流, 而是引入了Channel和Buffer的概念. 在NIO中, 只能从Channel中读取数据到Buffer中或将数据 Buffer 中写入到 Channel。</p>
+<p>基于buffer操作不像传统IO的顺序操作, NIO 中可以随意地读取任意位置的数据</p>
+<h2 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h2><p>数据报如何读取？读取之后的编解码在哪个线程进行，编解码后的消息如何派发，线程模型的不同，对性能的影响也非常大。</p>
+<h3 id="事件驱动模型"><a href="#事件驱动模型" class="headerlink" title="事件驱动模型"></a>事件驱动模型</h3><p>通常，我们设计一个事件处理模型的程序有两种思路</p>
+<ul>
+<li>轮询方式<br>线程不断轮询访问相关事件发生源有没有发生事件，有发生事件就调用事件处理逻辑。</li>
+<li>事件驱动方式<br>发生事件，主线程把事件放入事件队列，在另外线程不断循环消费事件列表中的事件，调用事件对应的处理逻辑处理事件。事件驱动方式也被称为消息通知方式，其实是<strong>发布-订阅模式</strong>的思路。</li>
+</ul>
+<p>以GUI的逻辑处理为例，说明两种逻辑的不同：</p>
+<ul>
+<li>轮询方式<br>线程不断轮询是否发生按钮点击事件，如果发生，调用处理逻辑</li>
+<li>事件驱动方式<br>发生点击事件把事件放入事件队列，在另外线程消费的事件列表中的事件，根据事件类型调用相关事件处理逻辑</li>
+</ul>
+<p>这里借用O’Reilly 大神关于<a href="http://www.oreilly.com/programming/free/software-architecture-patterns.csp" target="_blank" rel="noopener">事件驱动模型解释图</a><br><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/4.png" alt="事件驱动模型">主要包括4个基本组件：</p>
+<ul>
+<li>事件队列（event queue）：接收事件的入口，存储待处理事件</li>
+<li>分发器（event mediator）：将不同的事件分发到不同的业务逻辑单元</li>
+<li>事件通道（event channel）：分发器与处理器之间的联系渠道</li>
+<li>事件处理器（event processor）：实现业务逻辑，处理完成后会发出事件，触发下一步操作</li>
+</ul>
+<p>可以看出，相对传统轮询模式，事件驱动有如下优点：</p>
+<ul>
+<li>可扩展性好，分布式的异步架构，事件处理器之间高度解耦，可以方便扩展事件处理逻辑</li>
+<li>高性能，基于队列暂存事件，能方便并行异步处理事件</li>
+</ul>
+<h3 id="Reactor线程模型"><a href="#Reactor线程模型" class="headerlink" title="Reactor线程模型"></a>Reactor线程模型</h3><p>Reactor是反应堆的意思，Reactor模型，是指通过一个或多个输入同时传递给服务处理器的服务请求的<strong>事件驱动处理模式</strong>。 服务端程序处理传入多路请求，并将它们同步分派给请求对应的处理线程，Reactor模式也叫Dispatcher模式，即I/O多了复用统一监听事件，收到事件后分发(Dispatch给某进程)，是编写高性能网络服务器的必备技术之一。</p>
+<p>Reactor模型中有2个关键组成：</p>
+<ul>
+<li><p>Reactor<br>Reactor在一个单独的线程中运行，负责监听和分发事件，分发给适当的处理程序来对IO事件做出反应。 它就像公司的电话接线员，它接听来自客户的电话并将线路转移到适当的联系人</p>
+</li>
+<li><p>Handlers<br>处理程序执行I/O事件要完成的实际事件，类似于客户想要与之交谈的公司中的实际官员。Reactor通过调度适当的处理程序来响应I/O事件，处理程序执行非阻塞操作</p>
+</li>
+</ul>
+<p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/5.png" alt="Reactor模型"><br>取决于Reactor的数量和Handler线程数量的不同，Reactor模型有3个变种</p>
+<ul>
+<li>单Reactor单线程</li>
+<li>单Reactor多线程</li>
+<li>主从Reactor多线程</li>
+</ul>
+<p>可以这样理解，Reactor就是一个执行while (true) { selector.select(); …}循环的线程，会源源不断的产生新的事件，称作反应堆很贴切。</p>
+<p>篇幅关系，这里不再具体展开Reactor特性、优缺点比较，有兴趣的读者可以参考我之前另外一篇文章：<a href="https://www.jianshu.com/p/2965fca6bb8f" target="_blank" rel="noopener">《理解高性能网络模型》</a></p>
+<h3 id="Netty线程模型"><a href="#Netty线程模型" class="headerlink" title="Netty线程模型"></a>Netty线程模型</h3><p>Netty主要<strong>基于主从Reactors多线程模型</strong>（如下图）做了一定的修改，其中主从Reactor多线程模型有多个Reactor：MainReactor和SubReactor：</p>
+<ul>
+<li>MainReactor负责客户端的连接请求，并将请求转交给SubReactor</li>
+<li>SubReactor负责相应通道的IO读写请求</li>
+<li>非IO请求（具体逻辑处理）的任务则会直接写入队列，等待worker threads进行处理</li>
+</ul>
+<p>这里引用Doug Lee大神的Reactor介绍：<a href="http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf" target="_blank" rel="noopener">Scalable IO in Java</a>里面关于主从Reactor多线程模型的图</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/6.png" alt="主从Rreactor多线程模型"><br>特别说明的是：<br>虽然Netty的线程模型基于主从Reactor多线程，借用了MainReactor和SubReactor的结构，但是实际实现上，SubReactor和Worker线程在同一个线程池中：</p>
+<pre class=" language-java"><code class="language-java">EventLoopGroup bossGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">NioEventLoopGroup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+EventLoopGroup workerGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">NioEventLoopGroup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+ServerBootstrap server <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ServerBootstrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+server<span class="token punctuation">.</span><span class="token function">group</span><span class="token punctuation">(</span>bossGroup<span class="token punctuation">,</span> workerGroup<span class="token punctuation">)</span>
+ <span class="token punctuation">.</span><span class="token function">channel</span><span class="token punctuation">(</span>NioServerSocketChannel<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span></code></pre>
+<p>上面代码中的bossGroup 和workerGroup是Bootstrap构造方法中传入的两个对象，这两个group均是线程池</p>
+<ul>
+<li>bossGroup线程池则只是在bind某个端口后，获得其中一个线程作为MainReactor，专门处理端口的accept事件，<strong>每个端口对应一个boss线程</strong></li>
+<li>workerGroup线程池会被各个SubReactor和worker线程充分利用</li>
+</ul>
+<h3 id="异步处理"><a href="#异步处理" class="headerlink" title="异步处理"></a>异步处理</h3><p>异步的概念和同步相对。当一个异步过程调用发出后，调用者不能立刻得到结果。实际处理这个调用的部件在完成后，通过状态、通知和回调来通知调用者。</p>
+<p>Netty中的I/O操作是异步的，包括bind、write、connect等操作会简单的返回一个ChannelFuture，调用者并不能立刻获得结果，通过Future-Listener机制，用户可以方便的主动获取或者通过通知机制获得IO操作结果。</p>
+<p>当future对象刚刚创建时，处于非完成状态，调用者可以通过返回的ChannelFuture来获取操作执行的状态，注册监听函数来执行完成后的操作，常见有如下：</p>
+<ul>
+<li>通过isDone方法来判断当前操作是否完成</li>
+<li>通过isSuccess方法来判断已完成的当前操作是否成功</li>
+<li>通过getCause方法来获取已完成的当前操作失败的原因</li>
+<li>通过isCancelled方法来判断已完成的当前操作是否被取消</li>
+<li>通过addListener方法来注册监听器，当操作已完成(isDone方法返回完成)，将会通知指定的监听器；如果future对象已完成，则理解通知指定的监听器</li>
+</ul>
+<p>例如下面的代码中绑定端口是异步操作，当绑定操作处理完，将会调用相应的监听器处理逻辑</p>
+<pre class=" language-java"><code class="language-java">serverBootstrap<span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span>port<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addListener</span><span class="token punctuation">(</span>future <span class="token operator">-</span><span class="token operator">></span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>future<span class="token punctuation">.</span><span class="token function">isSuccess</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">": 端口["</span> <span class="token operator">+</span> port <span class="token operator">+</span> <span class="token string">"]绑定成功!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        System<span class="token punctuation">.</span>err<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"端口["</span> <span class="token operator">+</span> port <span class="token operator">+</span> <span class="token string">"]绑定失败!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>相比传统阻塞I/O，执行I/O操作后线程会被阻塞住, 直到操作完成；异步处理的好处是不会造成线程阻塞，线程在I/O操作期间可以执行别的程序，在高并发情形下会更稳定和更高的吞吐量。</p>
+<h1 id="3-Netty架构设计"><a href="#3-Netty架构设计" class="headerlink" title="3 Netty架构设计"></a>3 Netty架构设计</h1><p>前面介绍完Netty相关一些理论介绍，下面从功能特性、模块组件、运作过程来介绍Netty的架构设计</p>
+<h2 id="功能特性"><a href="#功能特性" class="headerlink" title="功能特性"></a>功能特性</h2><p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/7.png" alt="Netty功能特性图"></p>
+<ul>
+<li>传输服务<br>支持BIO和NIO</li>
+<li>容器集成<br>支持OSGI、JBossMC、Spring、Guice容器</li>
+<li>协议支持<br>HTTP、Protobuf、二进制、文本、WebSocket等一系列常见协议都支持。<br>还支持通过实行编码解码逻辑来实现自定义协议</li>
+<li>Core核心<br>可扩展事件模型、通用通信API、支持零拷贝的ByteBuf缓冲对象</li>
+</ul>
+<h2 id="模块组件"><a href="#模块组件" class="headerlink" title="模块组件"></a>模块组件</h2><h3 id="Bootstrap、ServerBootstrap"><a href="#Bootstrap、ServerBootstrap" class="headerlink" title="Bootstrap、ServerBootstrap"></a>Bootstrap、ServerBootstrap</h3><p>Bootstrap意思是引导，一个Netty应用通常由一个Bootstrap开始，主要作用是配置整个Netty程序，串联各个组件，Netty中Bootstrap类是客户端程序的启动引导类，ServerBootstrap是服务端启动引导类。</p>
+<h3 id="Future、ChannelFuture"><a href="#Future、ChannelFuture" class="headerlink" title="Future、ChannelFuture"></a>Future、ChannelFuture</h3><p>正如前面介绍，在Netty中所有的IO操作都是异步的，不能立刻得知消息是否被正确处理，但是可以过一会等它执行完成或者直接注册一个监听，具体的实现就是通过Future和ChannelFutures，他们可以注册一个监听，当操作执行成功或失败时监听会自动触发注册的监听事件。</p>
+<h3 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h3><p>Netty网络通信的组件，能够用于执行网络I/O操作。<br>Channel为用户提供：</p>
+<ul>
+<li><p>当前网络连接的通道的状态（例如是否打开？是否已连接？）</p>
+</li>
+<li><p>网络连接的配置参数 （例如接收缓冲区大小）</p>
+</li>
+<li><p>提供异步的网络I/O操作(如建立连接，读写，绑定端口)，异步调用意味着任何I/O调用都将立即返回，并且不保证在调用结束时所请求的I/O操作已完成。调用立即返回一个ChannelFuture实例，通过注册监听器到ChannelFuture上，可以I/O操作成功、失败或取消时回调通知调用方。</p>
+</li>
+<li><p>支持关联I/O操作与对应的处理程序</p>
+<p>不同协议、不同的阻塞类型的连接都有不同的 Channel 类型与之对应，下面是一些常用的 Channel 类型</p>
+</li>
+<li><p>NioSocketChannel，异步的客户端 TCP Socket 连接</p>
+</li>
+<li><p>NioServerSocketChannel，异步的服务器端 TCP Socket 连接</p>
+</li>
+<li><p>NioDatagramChannel，异步的 UDP 连接</p>
+</li>
+<li><p>NioSctpChannel，异步的客户端 Sctp 连接</p>
+</li>
+<li><p>NioSctpServerChannel，异步的 Sctp 服务器端连接<br>这些通道涵盖了 UDP 和 TCP网络 IO以及文件 IO.</p>
+</li>
+</ul>
+<h3 id="Selector"><a href="#Selector" class="headerlink" title="Selector"></a>Selector</h3><p>Netty基于Selector对象实现I/O多路复用，通过 Selector, 一个线程可以监听多个连接的Channel事件, 当向一个Selector中注册Channel 后，Selector 内部的机制就可以自动不断地查询(select) 这些注册的Channel是否有已就绪的I/O事件(例如可读, 可写, 网络连接完成等)，这样程序就可以很简单地使用一个线程高效地管理多个 Channel 。</p>
+<h3 id="NioEventLoop"><a href="#NioEventLoop" class="headerlink" title="NioEventLoop"></a>NioEventLoop</h3><p>NioEventLoop中维护了一个线程和任务队列，支持异步提交执行任务，线程启动时会调用NioEventLoop的run方法，执行I/O任务和非I/O任务：</p>
+<ul>
+<li>I/O任务<br>即selectionKey中ready的事件，如accept、connect、read、write等，由processSelectedKeys方法触发。</li>
+<li>非IO任务<br>添加到taskQueue中的任务，如register0、bind0等任务，由runAllTasks方法触发。</li>
+</ul>
+<p>两种任务的执行时间比由变量ioRatio控制，默认为50，则表示允许非IO任务执行的时间与IO任务的执行时间相等。</p>
+<h3 id="NioEventLoopGroup"><a href="#NioEventLoopGroup" class="headerlink" title="NioEventLoopGroup"></a>NioEventLoopGroup</h3><p>NioEventLoopGroup，主要管理eventLoop的生命周期，可以理解为一个线程池，内部维护了一组线程，每个线程(NioEventLoop)负责处理多个Channel上的事件，而一个Channel只对应于一个线程。</p>
+<h3 id="ChannelHandler"><a href="#ChannelHandler" class="headerlink" title="ChannelHandler"></a>ChannelHandler</h3><p>ChannelHandler是一个接口，处理I/O事件或拦截I/O操作，并将其转发到其ChannelPipeline(业务处理链)中的下一个处理程序。</p>
+<p>ChannelHandler本身并没有提供很多方法，因为这个接口有许多的方法需要实现，方便使用期间，可以继承它的子类：</p>
+<ul>
+<li>ChannelInboundHandler用于处理入站I/O事件</li>
+<li>ChannelOutboundHandler用于处理出站I/O操作</li>
+</ul>
+<p>或者使用以下适配器类：</p>
+<ul>
+<li>ChannelInboundHandlerAdapter用于处理入站I/O事件</li>
+<li>ChannelOutboundHandlerAdapter用于处理出站I/O操作</li>
+<li>ChannelDuplexHandler用于处理入站和出站事件</li>
+</ul>
+<h3 id="ChannelHandlerContext"><a href="#ChannelHandlerContext" class="headerlink" title="ChannelHandlerContext"></a>ChannelHandlerContext</h3><p>保存Channel相关的所有上下文信息，同时关联一个ChannelHandler对象</p>
+<h3 id="ChannelPipline"><a href="#ChannelPipline" class="headerlink" title="ChannelPipline"></a>ChannelPipline</h3><p>保存ChannelHandler的List，用于处理或拦截Channel的入站事件和出站操作。 ChannelPipeline实现了一种高级形式的拦截过滤器模式，使用户可以完全控制事件的处理方式，以及Channel中各个的ChannelHandler如何相互交互。</p>
+<p>下图引用Netty的Javadoc4.1中ChannelPipline的说明，描述了ChannelPipeline中ChannelHandler通常如何处理I/O事件。 I/O事件由ChannelInboundHandler或ChannelOutboundHandler处理，并通过调用ChannelHandlerContext中定义的事件传播方法（例如ChannelHandlerContext.fireChannelRead（Object）和ChannelOutboundInvoker.write（Object））转发到其最近的处理程序。</p>
+<pre><code>                                                 I/O Request
+                                            via Channel or
+                                        ChannelHandlerContext
+                                                      |
+  +---------------------------------------------------+---------------+
+  |                           ChannelPipeline         |               |
+  |                                                  \|/              |
+  |    +---------------------+            +-----------+----------+    |
+  |    | Inbound Handler  N  |            | Outbound Handler  1  |    |
+  |    +----------+----------+            +-----------+----------+    |
+  |              /|\                                  |               |
+  |               |                                  \|/              |
+  |    +----------+----------+            +-----------+----------+    |
+  |    | Inbound Handler N-1 |            | Outbound Handler  2  |    |
+  |    +----------+----------+            +-----------+----------+    |
+  |              /|\                                  .               |
+  |               .                                   .               |
+  | ChannelHandlerContext.fireIN_EVT() ChannelHandlerContext.OUT_EVT()|
+  |        [ method call]                       [method call]         |
+  |               .                                   .               |
+  |               .                                  \|/              |
+  |    +----------+----------+            +-----------+----------+    |
+  |    | Inbound Handler  2  |            | Outbound Handler M-1 |    |
+  |    +----------+----------+            +-----------+----------+    |
+  |              /|\                                  |               |
+  |               |                                  \|/              |
+  |    +----------+----------+            +-----------+----------+    |
+  |    | Inbound Handler  1  |            | Outbound Handler  M  |    |
+  |    +----------+----------+            +-----------+----------+    |
+  |              /|\                                  |               |
+  +---------------+-----------------------------------+---------------+
+                  |                                  \|/
+  +---------------+-----------------------------------+---------------+
+  |               |                                   |               |
+  |       [ Socket.read() ]                    [ Socket.write() ]     |
+  |                                                                   |
+  |  Netty Internal I/O Threads (Transport Implementation)            |
+  +-------------------------------------------------------------------+</code></pre><p>入站事件由自下而上方向的入站处理程序处理，如图左侧所示。 入站Handler处理程序通常处理由图底部的I/O线程生成的入站数据。 通常通过实际输入操作（例如SocketChannel.read（ByteBuffer））从远程读取入站数据。</p>
+<p>出站事件由上下方向处理，如图右侧所示。 出站Handler处理程序通常会生成或转换出站传输，例如write请求。 I/O线程通常执行实际的输出操作，例如SocketChannel.write（ByteBuffer）。</p>
+<p> 在 Netty 中每个 Channel 都有且仅有一个 ChannelPipeline 与之对应, 它们的组成关系如下:</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/8.png" alt><br>一个 Channel 包含了一个 ChannelPipeline, 而 ChannelPipeline 中又维护了一个由 ChannelHandlerContext 组成的双向链表, 并且每个 ChannelHandlerContext 中又关联着一个 ChannelHandler。入站事件和出站事件在一个双向链表中，入站事件会从链表head往后传递到最后一个入站的handler，出站事件会从链表tail往前传递到最前一个出站的handler，两种类型的handler互不干扰。</p>
+<h2 id="工作原理架构"><a href="#工作原理架构" class="headerlink" title="工作原理架构"></a>工作原理架构</h2><p>初始化并启动Netty服务端过程如下：</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment" spellcheck="true">// 创建mainReactor</span>
+    NioEventLoopGroup boosGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">NioEventLoopGroup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token comment" spellcheck="true">// 创建工作线程组</span>
+    NioEventLoopGroup workerGroup <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">NioEventLoopGroup</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">final</span> ServerBootstrap serverBootstrap <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ServerBootstrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    serverBootstrap 
+             <span class="token comment" spellcheck="true">// 组装NioEventLoopGroup </span>
+            <span class="token punctuation">.</span><span class="token function">group</span><span class="token punctuation">(</span>boosGroup<span class="token punctuation">,</span> workerGroup<span class="token punctuation">)</span>
+             <span class="token comment" spellcheck="true">// 设置channel类型为NIO类型</span>
+            <span class="token punctuation">.</span><span class="token function">channel</span><span class="token punctuation">(</span>NioServerSocketChannel<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+            <span class="token comment" spellcheck="true">// 设置连接配置参数</span>
+            <span class="token punctuation">.</span><span class="token function">option</span><span class="token punctuation">(</span>ChannelOption<span class="token punctuation">.</span>SO_BACKLOG<span class="token punctuation">,</span> <span class="token number">1024</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">childOption</span><span class="token punctuation">(</span>ChannelOption<span class="token punctuation">.</span>SO_KEEPALIVE<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span>
+            <span class="token punctuation">.</span><span class="token function">childOption</span><span class="token punctuation">(</span>ChannelOption<span class="token punctuation">.</span>TCP_NODELAY<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span>
+            <span class="token comment" spellcheck="true">// 配置入站、出站事件handler</span>
+            <span class="token punctuation">.</span><span class="token function">childHandler</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ChannelInitializer</span><span class="token operator">&lt;</span>NioSocketChannel<span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token annotation punctuation">@Override</span>
+                <span class="token keyword">protected</span> <span class="token keyword">void</span> <span class="token function">initChannel</span><span class="token punctuation">(</span>NioSocketChannel ch<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                    <span class="token comment" spellcheck="true">// 配置入站、出站事件channel</span>
+                    ch<span class="token punctuation">.</span><span class="token function">pipeline</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addLast</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                    ch<span class="token punctuation">.</span><span class="token function">pipeline</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addLast</span><span class="token punctuation">(</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                <span class="token punctuation">}</span>
+            <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 绑定端口</span>
+    <span class="token keyword">int</span> port <span class="token operator">=</span> <span class="token number">8080</span><span class="token punctuation">;</span>
+    serverBootstrap<span class="token punctuation">.</span><span class="token function">bind</span><span class="token punctuation">(</span>port<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">addListener</span><span class="token punctuation">(</span>future <span class="token operator">-</span><span class="token operator">></span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>future<span class="token punctuation">.</span><span class="token function">isSuccess</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">": 端口["</span> <span class="token operator">+</span> port <span class="token operator">+</span> <span class="token string">"]绑定成功!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            System<span class="token punctuation">.</span>err<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"端口["</span> <span class="token operator">+</span> port <span class="token operator">+</span> <span class="token string">"]绑定失败!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
+<ul>
+<li>基本过程如下：</li>
+<li>1 初始化创建2个NioEventLoopGroup，其中boosGroup用于Accetpt连接建立事件并分发请求， workerGroup用于处理I/O读写事件和业务逻辑</li>
+<li>2  基于ServerBootstrap(服务端启动引导类)，配置EventLoopGroup、Channel类型，连接参数、配置入站、出站事件handler</li>
+<li>3 绑定端口，开始工作</li>
+</ul>
+<p>结合上面的介绍的Netty Reactor模型，介绍服务端Netty的工作架构图：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/9.png" alt="服务端Netty Reactor工作架构图"><br>server端包含1个Boss NioEventLoopGroup和1个Worker NioEventLoopGroup，NioEventLoopGroup相当于1个事件循环组，这个组里包含多个事件循环NioEventLoop，每个NioEventLoop包含1个selector和1个事件循环线程。</p>
+<p>每个Boss NioEventLoop循环执行的任务包含3步：</p>
+<ul>
+<li>1 轮询accept事件</li>
+<li>2 处理accept I/O事件，与Client建立连接，生成NioSocketChannel，并将NioSocketChannel注册到某个Worker NioEventLoop的Selector上</li>
+<li>3 处理任务队列中的任务，runAllTasks。任务队列中的任务包括用户调用eventloop.execute或schedule执行的任务，或者其它线程提交到该eventloop的任务</li>
+</ul>
+<p>每个Worker NioEventLoop循环执行的任务包含3步：</p>
+<ul>
+<li>1 轮询read、write事件</li>
+<li>2 处理I/O事件，即read、write事件，在NioSocketChannel可读、可写事件发生时进行处理</li>
+<li>3 处理任务队列中的任务，runAllTasks</li>
+</ul>
+<p>其中任务队列中的task有3种典型使用场景</p>
+<ul>
+<li><p>1 用户程序自定义的普通任务</p>
+<pre class=" language-java"><code class="language-java">ctx<span class="token punctuation">.</span><span class="token function">channel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">eventLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Runnable</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token annotation punctuation">@Override</span>
+  <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment" spellcheck="true">//...</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</li>
+<li><p>2 非当前reactor线程调用channel的各种方法<br>例如在推送系统的业务线程里面，根据用户的标识，找到对应的channel引用，然后调用write类方法向该用户推送消息，就会进入到这种场景。最终的write会提交到任务队列中后被异步消费。</p>
+</li>
+<li><p>3 用户自定义定时任务</p>
+<pre class=" language-java"><code class="language-java">ctx<span class="token punctuation">.</span><span class="token function">channel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">eventLoop</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">schedule</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">Runnable</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token annotation punctuation">@Override</span>
+  <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token number">60</span><span class="token punctuation">,</span> TimeUnit<span class="token punctuation">.</span>SECONDS<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</li>
+</ul>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4 总结"></a>4 总结</h1><p>现在稳定推荐使用的主流版本还是Netty4，Netty5 中使用了 ForkJoinPool，增加了代码的复杂度，但是对性能的改善却不明显，所以这个版本不推荐使用，官网也没有提供下载链接。</p>
+<p>Netty 入门门槛相对较高，其实是因为这方面的资料较少，并不是因为他有多难，大家其实都可以像搞透 Spring 一样搞透 Netty。在学习之前，建议先理解透整个框架原理结构，运行过程，可以少走很多弯路。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://juejin.im/book/5b4bc28bf265da0f60130116?referrer=598ff735f265da3e1c0f9643" target="_blank" rel="noopener">Netty入门与实战：仿写微信 IM 即时通讯系统</a></p>
+<p><a href="https://netty.io/" target="_blank" rel="noopener">Netty官网</a></p>
+<p><a href="http://yihongwei.com/2014/01/netty-4-x-thread-model/" target="_blank" rel="noopener">Netty 4.x学习笔记 - 线程模型</a></p>
+<p><a href="https://juejin.im/book/5b4bc28bf265da0f60130116?referrer=598ff735f265da3e1c0f9643" target="_blank" rel="noopener">Netty入门与实战</a></p>
+<p><a href="https://www.jianshu.com/p/2965fca6bb8f" target="_blank" rel="noopener">理解高性能网络模型</a></p>
+<p><a href="https://wangwei.one/posts/netty-base-theory-intro.html" target="_blank" rel="noopener">Netty基本原理介绍</a></p>
+<p><a href="https://www.oreilly.com/programming/free/files/software-architecture-patterns.pdf" target="_blank" rel="noopener">software-architecture-patterns.pdf</a></p>
+<p><a href="http://www.infoq.com/cn/articles/netty-high-performance" target="_blank" rel="noopener">Netty高性能之道 —— 李林锋</a></p>
+<p>《Netty In Action》</p>
+<p>《Netty权威指南》</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Netty%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/10.png" alt></p>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.png" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        <p class="reprint-tip">
+            <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;
+            <span>转载规则</span>
+        </p>
+        
+            <div class="center-align">
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                    <img alt=""
+                         style="border-width:0"
+                         src="https://i.creativecommons.org/l/by/4.0/88x31.png"/>
+                </a>
+            </div>
+            <br/>
+            <a  href="/2019/10/13/li-jie-netty-mo-xing-jia-gou/">
+                    《理解Netty模型架构》
+            </a> 由
+            <a href="https://caison.github.io">
+                caison
+            </a> 采用
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                知识共享署名 4.0 国际许可协议
+            </a>进行许可。
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/li-jie-netty-mo-xing-jia-gou/">
+                    <div class="card-image">
+                        
+                        <img src="/images/理解Netty模型架构/0.jpg" class="responsive-img" alt="理解Netty模型架构">
+                        
+                        <span class="card-title">理解Netty模型架构</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
+1 Netty简介Netty是 一个异步事件
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
+                    <div class="card-image">
+                        
+                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
+                        
+                        <span class="card-title">理解Java-GC原理和调优</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            文章首发于51CTO公众号
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
+
+GC基础原理，涉及调优目标，
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">年份</span>
+            <a href="https://caison.github.io" target="_blank">caison</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">46.2k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    window.setTimeout("siteTime()", 1000);
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2019";
+                    var startMonth = "6";
+                    var startDate = "28";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/caison" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:caison@aliyun.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i["DaoVoiceObject"] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            a.charset = "utf-8";
+            m.parentNode.insertBefore(a, m)
+        })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') +
+            "//widget.daovoice.io/widget/6984b559.js", "daovoice")
+        daovoice('init', {
+            app_id: ""
+        });
+        daovoice('update');
+    </script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+    
+    
+
+</body>
+
+</html>

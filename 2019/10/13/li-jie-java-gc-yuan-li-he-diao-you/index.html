@@ -70,17 +70,6 @@ GC基础原理，涉及调优目标，">
   
   <li class="hide-on-med-and-down nav-item">
     
-    <a href="/tags" class="waves-effect waves-light">
-      
-      <i class="fas fa-tags" style="zoom: 0.6;"></i>
-      
-      <span>标签</span>
-    </a>
-    
-  </li>
-  
-  <li class="hide-on-med-and-down nav-item">
-    
     <a href="/categories" class="waves-effect waves-light">
       
       <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
@@ -144,17 +133,6 @@ GC基础原理，涉及调优目标，">
 			    <i class="fa-fw fas fa-home"></i>
 			
 			首页
-		</a>
-          
-        </li>
-        
-        <li class="m-nav-item">
-	  
-		<a href="/tags" class="waves-effect waves-light">
-			
-			    <i class="fa-fw fas fa-tags"></i>
-			
-			标签
 		</a>
           
         </li>
@@ -633,65 +611,51 @@ GC基础原理，涉及调优目标，">
 <p><img src="/images/%E7%90%86%E8%A7%A3Java-GC%E5%8E%9F%E7%90%86%E5%92%8C%E8%B0%83%E4%BC%98/15.png" alt="jstat"></p>
 <p>例如： jstat -gc 32683 1000 10 ，统计pid=32683的进程，每秒统计1次，统计10次</p>
 <ul>
-<li><strong>jmap</strong><br>jvm自带命令行工具，可用于了解系统运行时的对象分布，常用命令格式如下<pre><code>// 命令行输出类名、类数量数量，类占用内存大小，
-// 按照类占用内存大小降序排列
-jmap -histo &lt;pid&gt;
-</code></pre></li>
+<li><strong>jmap</strong><br>jvm自带命令行工具，可用于了解系统运行时的对象分布，常用命令格式如下</li>
 </ul>
-<p>// 生成堆内存转储快照，在当前目录下导出dump.hrpof的二进制文件，<br>// 可以用eclipse的MAT图形化工具分析<br>jmap -dump:live,format=b,file=dump.hprof <pid></pid></p>
-<pre><code>
-* **jinfo**
-命令格式</code></pre><p>jinfo <pid> </pid></p>
-<pre><code>用来查看正在运行的 Java 应用程序的扩展参数，包括Java System属性和JVM命令行参数
+<pre class=" language-java"><code class="language-java"><span class="token comment" spellcheck="true">// 命令行输出类名、类数量数量，类占用内存大小，</span>
+<span class="token comment" spellcheck="true">// 按照类占用内存大小降序排列</span>
+jmap <span class="token operator">-</span>histo <span class="token operator">&lt;</span>pid<span class="token operator">></span>
 
-其他GC工具
-* 监控告警系统：Zabbix、Prometheus、Open-Falcon
-* jdk自动实时内存监控工具：VisualVM
-* 堆外内存监控： Java VisualVM安装Buffer Pools 插件、google perf工具、Java NMT(Native Memory Tracking)工具
-* GC日志分析：GCViewer、gceasy
-* GC参数检查和优化：http://xxfox.perfma.com/
+<span class="token comment" spellcheck="true">// 生成堆内存转储快照，在当前目录下导出dump.hrpof的二进制文件，</span>
+<span class="token comment" spellcheck="true">// 可以用eclipse的MAT图形化工具分析</span>
+jmap <span class="token operator">-</span>dump<span class="token operator">:</span>live<span class="token punctuation">,</span>format<span class="token operator">=</span>b<span class="token punctuation">,</span>file<span class="token operator">=</span>dump<span class="token punctuation">.</span>hprof <span class="token operator">&lt;</span>pid<span class="token operator">></span></code></pre>
+<ul>
+<li><strong>jinfo</strong><br>命令格式<pre class=" language-java"><code class="language-java">jinfo <span class="token operator">&lt;</span>pid<span class="token operator">></span> </code></pre>
+用来查看正在运行的 Java 应用程序的扩展参数，包括Java System属性和JVM命令行参数</li>
+</ul>
+<p>其他GC工具</p>
+<ul>
+<li>监控告警系统：Zabbix、Prometheus、Open-Falcon</li>
+<li>jdk自动实时内存监控工具：VisualVM</li>
+<li>堆外内存监控： Java VisualVM安装Buffer Pools 插件、google perf工具、Java NMT(Native Memory Tracking)工具</li>
+<li>GC日志分析：GCViewer、gceasy</li>
+<li>GC参数检查和优化：<a href="http://xxfox.perfma.com/" target="_blank" rel="noopener">http://xxfox.perfma.com/</a></li>
+</ul>
+<h2 id="2-GC优化案例"><a href="#2-GC优化案例" class="headerlink" title="2 GC优化案例"></a>2 GC优化案例</h2><ul>
+<li><strong>数据分析平台系统频繁Full GC</strong></li>
+</ul>
+<p>平台主要对用户在APP中行为进行定时分析统计，并支持报表导出，使用CMS GC算法。数据分析师在使用中发现系统页面打开经常卡顿，通过jstat命令发现系统每次Young GC后大约有10%的存活对象进入老年代。</p>
+<p>原来是因为Survivor区空间设置过小，每次Young GC后存活对象在Survivor区域放不下，提前进入老年代，通过调大Survivor区，使得Survivor区可以容纳Young GC后存活对象，对象在Survivor区经历多次Young GC达到年龄阈值才进入老年代，调整之后每次Young GC后进入老年代的存活对象稳定运行时仅几百Kb，Full GC频率大大降低</p>
+<ul>
+<li><strong>业务对接网关OOM</strong></li>
+</ul>
+<p>网关主要消费Kafka数据，进行数据处理计算然后转发到另外的Kafka队列，系统运行几个小时候出现OOM，重启系统几个小时之后又OOM，通过jmap导出堆内存，在eclipse MAT工具分析才找出原因：代码中将某个业务Kafka的topic数据进行日志异步打印，该业务数据量较大，大量对象堆积在内存中等待被打印，导致OOM</p>
+<ul>
+<li><strong>账号权限管理系统频繁长时间Full GC</strong></li>
+</ul>
+<p>系统对外提供各种账号鉴权服务，使用时发现系统经常服务不可用，通过Zabbix的监控平台监控发现系统频繁发生长时间Full GC，且触发时老年代的堆内存通常并没有占满，发现原来是业务代码中调用了System.gc()</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>GC问题可以说没有捷径，排查线上的性能问题本身就并不简单，除了将本文介绍到的原理和工具融会贯通，还需要我们不断去积累经验，真正做到性能最优</p>
+<p>篇幅所限，不再展开介绍常见GC参数的使用，我发布在github：<a href="https://github.com/caison/caison-blog-demo" target="_blank" rel="noopener">https://github.com/caison/caison-blog-demo</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《Java Performance: The Definitive Guide》 Scott Oaks</p>
+<p>《深入理解 Java 虚拟机：JVM 高级特性与最佳实践（第二版》 周志华</p>
+<p><a href="http://gk.link/a/108k3" target="_blank" rel="noopener">Java性能调优实战</a></p>
+<p><a href="https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html" target="_blank" rel="noopener">Getting Started with the G1 Garbage Collector</a></p>
+<p><a href="https://github.com/cncounter/gc-handbook" target="_blank" rel="noopener">GC参考手册-Java版</a></p>
+<p><a href="https://link.jianshu.com/?t=http://hllvm.group.iteye.com/group/topic/44381#post-272188" target="_blank" rel="noopener">请教G1算法的原理——RednaxelaFX的回答</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/22591838" target="_blank" rel="noopener">Java Hotspot G1 GC的一些关键技术——美团技术团队</a></p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Java-GC%E5%8E%9F%E7%90%86%E5%92%8C%E8%B0%83%E4%BC%98/16.png" alt></p>
 
-## 2 GC优化案例
-
-* **数据分析平台系统频繁Full GC**
-
-平台主要对用户在APP中行为进行定时分析统计，并支持报表导出，使用CMS GC算法。数据分析师在使用中发现系统页面打开经常卡顿，通过jstat命令发现系统每次Young GC后大约有10%的存活对象进入老年代。
-
-原来是因为Survivor区空间设置过小，每次Young GC后存活对象在Survivor区域放不下，提前进入老年代，通过调大Survivor区，使得Survivor区可以容纳Young GC后存活对象，对象在Survivor区经历多次Young GC达到年龄阈值才进入老年代，调整之后每次Young GC后进入老年代的存活对象稳定运行时仅几百Kb，Full GC频率大大降低
-
-* **业务对接网关OOM**
-
-网关主要消费Kafka数据，进行数据处理计算然后转发到另外的Kafka队列，系统运行几个小时候出现OOM，重启系统几个小时之后又OOM，通过jmap导出堆内存，在eclipse MAT工具分析才找出原因：代码中将某个业务Kafka的topic数据进行日志异步打印，该业务数据量较大，大量对象堆积在内存中等待被打印，导致OOM
-
-* **账号权限管理系统频繁长时间Full GC**
-
-系统对外提供各种账号鉴权服务，使用时发现系统经常服务不可用，通过Zabbix的监控平台监控发现系统频繁发生长时间Full GC，且触发时老年代的堆内存通常并没有占满，发现原来是业务代码中调用了System.gc()
-
-
-
-# 总结
-
-GC问题可以说没有捷径，排查线上的性能问题本身就并不简单，除了将本文介绍到的原理和工具融会贯通，还需要我们不断去积累经验，真正做到性能最优
-
-篇幅所限，不再展开介绍常见GC参数的使用，我发布在github：https://github.com/caison/caison-blog-demo
-
-
-# 参考
-《Java Performance: The Definitive Guide》 Scott Oaks
-
-《深入理解 Java 虚拟机：JVM 高级特性与最佳实践（第二版》 周志华
-
-[Java性能调优实战](http://gk.link/a/108k3)
-
-[Getting Started with the G1 Garbage Collector](https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html)
-
-[GC参考手册-Java版](https://github.com/cncounter/gc-handbook)
-
-[请教G1算法的原理——RednaxelaFX的回答](https://link.jianshu.com/?t=http://hllvm.group.iteye.com/group/topic/44381#post-272188)
-
-[Java Hotspot G1 GC的一些关键技术——美团技术团队](https://zhuanlan.zhihu.com/p/22591838)
-
-![](/images/理解Java-GC原理和调优/16.png)</code></pre>
             </div>
             <hr/>
 
@@ -897,12 +861,12 @@ GC问题可以说没有捷径，排查线上的性能问题本身就并不简单
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-de-fen-ji-yin-yong-mo-xing/">
+                <a href="/2019/10/13/li-jie-netty-mo-xing-jia-gou/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java的分级引用模型/0.jpg" class="responsive-img" alt="理解Java的分级引用模型">
+                        <img src="/images/理解Netty模型架构/0.jpg" class="responsive-img" alt="理解Netty模型架构">
                         
-                        <span class="card-title">理解Java的分级引用模型</span>
+                        <span class="card-title">理解Netty模型架构</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -910,8 +874,8 @@ GC问题可以说没有捷径，排查线上的性能问题本身就并不简单
                         
                             
 作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文通过探析Java中的引用模型，分析比较强引用、软引用、弱引用、虚引用的概念及使用场景，知其然且知其所以然，希望给大家在实际开发实践、学习开源项目提供参考。
-1 Jav
+文章转载交流请联系 caison@aliyun.com本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
+1 Netty简介Netty是 一个异步事件
                         
                     </div>
                     <div class="publish-info">
@@ -922,8 +886,8 @@ GC问题可以说没有捷径，排查线上的性能问题本身就并不简单
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
                                 </a>
                             
                             
@@ -940,21 +904,19 @@ GC问题可以说没有捷径，排查线上的性能问题本身就并不简单
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
+                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
+                        <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
                         
-                        <span class="card-title">理解Java内存模型</span>
+                        <span class="card-title">理解Java并发底层之AQS实现</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-文章首发于51CTO技术栈公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问
+                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
                         
                     </div>
                     <div class="publish-info">
@@ -1095,7 +1057,7 @@ GC问题可以说没有捷径，排查线上的性能问题本身就并不简单
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">36.6k</span>&nbsp;字
+                class="white-color">46.2k</span>&nbsp;字
             
             
             
