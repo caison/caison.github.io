@@ -34,7 +34,8 @@
 
     <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
     
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 
 <body>
@@ -430,7 +431,36 @@
 </li>
 </ul>
 <h1 id="2-NoSQL解决方案"><a href="#2-NoSQL解决方案" class="headerlink" title="2 NoSQL解决方案"></a>2 NoSQL解决方案</h1><p>NoSQL，泛指非关系型的数据库，可以理解为SQL的一个有力补充。</p>
-<p>在NoSQL许多方面性能大大优于非关系型数据库的同时，往往也伴随一些特性的缺失，比较常见的，是事务库事务功能的缺失。<br>数据库事务正确执行的四个基本要素：ACID如下：<br>||名称|描述|<br>|:-:|:-:|:-:|<br>|A|Atomicity<br>(原子性)|一个事务中的所有操作，要么全部完成，要么全部不完成，不会在中间某个环节结束。<br>事务在执行过程中发生错误，会被回滚到事务开始前的状态，就像这个事务从来没有执行过一样。|<br>|C|Consistency<br>一致性|在事务开始之前和事务结束以后，数据库数据的一致性约束没有被破坏。|<br>|I|Isolation<br>隔离性|数据库允许多个并发事务同时对数据进行读写和修改的能力。隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。|<br>|D|Durability<br>持久性|事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。|</p>
+<p>在NoSQL许多方面性能大大优于非关系型数据库的同时，往往也伴随一些特性的缺失，比较常见的，是事务库事务功能的缺失。<br>数据库事务正确执行的四个基本要素：ACID如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">要素</th>
+<th align="center">名称</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">A</td>
+<td align="center">Atomicity<br>(原子性)</td>
+<td align="center">一个事务中的所有操作，要么全部完成，要么全部不完成，不会在中间某个环节结束。事务在执行过程中发生错误，会被回滚到事务开始前的状态，就像这个事务从来没有执行过一样。</td>
+</tr>
+<tr>
+<td align="left">C</td>
+<td align="center">Consistency<br>一致性</td>
+<td align="center">在事务开始之前和事务结束以后，数据库数据的一致性约束没有被破坏。</td>
+</tr>
+<tr>
+<td align="left">I</td>
+<td align="center">Isolation<br>隔离性</td>
+<td align="center">数据库允许多个并发事务同时对数据进行读写和修改的能力。隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。</td>
+</tr>
+<tr>
+<td align="left">D</td>
+<td align="center">Durability<br>持久性</td>
+<td align="center">事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。</td>
+</tr>
+</tbody></table>
 <p>下面介绍5大类NoSQL数据针对传统关系型数据库的缺点提供的解决方案：</p>
 <h2 id="2-1-列式数据库"><a href="#2-1-列式数据库" class="headerlink" title="2.1 列式数据库"></a>2.1 列式数据库</h2><p>列式数据库是以列相关存储架构进行数据存储的数据库，主要适合于批量数据处理和即时查询。相对应的是行式数据库，数据以行相关的存储体系架构进行空间分配，主要适合于小批量的数据处理，常用于联机事务型数据处理。</p>
 <p>基于列式数据库的列列存储特性，可以<strong>解决某些特定场景下关系型数据库I/O较高的问题</strong></p>
@@ -874,52 +904,6 @@ iv. 使用这个下标组装出最终的结果集。</code></pre><ul>
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/java-zhen-duan-li-qi-arthas/">
-                    <div class="card-image">
-                        
-                        <img src="/images/Java诊断利器Arthas/0.jpg" class="responsive-img" alt="Java诊断利器Arthas">
-                        
-                        <span class="card-title">Java诊断利器Arthas</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-
-1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱
-当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：
-
-这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
-我改的代码为什
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/工具使用/" class="post-category">
-                                    工具使用
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
                 <a href="/2019/10/13/li-jie-fen-bu-shi-xi-tong-zhong-de-huan-cun-jia-gou/">
                     <div class="card-image">
                         
@@ -937,6 +921,50 @@ iv. 使用这个下标组装出最终的结果集。</code></pre><ul>
 1 缓存概述
 2 缓存的分类缓存主要分为以下四类
 2.1 CDN缓存基本介绍CDN(Conten
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/架构设计/" class="post-category">
+                                    架构设计
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/jia-gou-she-ji-fang-fa-chu-tan/">
+                    <div class="card-image">
+                        
+                        <img src="/images/架构设计方法初探/0.jpg" class="responsive-img" alt="架构设计方法初探">
+                        
+                        <span class="card-title">架构设计方法初探</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com最近学习了阿里资深技术专家李运华的架构设计教程，颇有收获，总结一下。
+本文主要介绍架构设计的相关概念，系统复杂度的来源，架构设计的基本原则和流程。
+1 基本概念和目的架构
                         
                     </div>
                     <div class="publish-info">

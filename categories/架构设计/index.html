@@ -33,7 +33,8 @@
 
     <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
     
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 
 <body>
@@ -401,44 +402,6 @@
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/nosql-huan-shi-sql-zhe-yi-pian-jiang-qing-chu/">
-                        <div class="card-image tag-image">
-                            
-                            <img src="/images/NoSQL-还是-SQL-？这一篇讲清楚/0.jpg" class="responsive-img" alt="NoSQL-还是-SQL-？这一篇讲清楚">
-                            
-                            <span class="card-title">NoSQL-还是-SQL-？这一篇讲清楚</span>
-                        </div>
-                    </a>
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                
-随着大数据时代的到来，越来越多的网站、应用系统需要支撑海量数据存储，高并发请求、高可用、高可扩展性等特性要求，传统的关系型数据库在应付这些调整已经显得力不从心，暴露了许多能以克服的问题。由此，各种各样的NoSQL（Not Only SQL
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/架构设计/" class="post-category">
-                                    架构设计
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                </div>
-            </div>
-            
-            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
                     <a href="/2019/10/13/li-jie-fen-bu-shi-shi-wu/">
                         <div class="card-image tag-image">
                             
@@ -495,6 +458,44 @@
 1 缓存概述
 2 缓存的分类缓存主要分为以下四类
 2.1 CDN缓存基本介绍CDN(Conten
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/架构设计/" class="post-category">
+                                    架构设计
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+            
+            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
+                    <a href="/2019/10/13/nosql-huan-shi-sql-zhe-yi-pian-jiang-qing-chu/">
+                        <div class="card-image tag-image">
+                            
+                            <img src="/images/NoSQL-还是-SQL-？这一篇讲清楚/0.jpg" class="responsive-img" alt="NoSQL-还是-SQL-？这一篇讲清楚">
+                            
+                            <span class="card-title">NoSQL-还是-SQL-？这一篇讲清楚</span>
+                        </div>
+                    </a>
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                
+随着大数据时代的到来，越来越多的网站、应用系统需要支撑海量数据存储，高并发请求、高可用、高可扩展性等特性要求，传统的关系型数据库在应付这些调整已经显得力不从心，暴露了许多能以克服的问题。由此，各种各样的NoSQL（Not Only SQL
                             
                         </div>
                         <div class="publish-info">
@@ -602,25 +603,26 @@
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/zi-yan-im-xi-tong-fang-an-she-ji/">
+                    <a href="/2019/10/13/zi-yan-im-xi-tong-cun-chu-she-ji/">
                         <div class="card-image tag-image">
                             
-                            <img src="/images/自研IM系统方案设计/0.jpg" class="responsive-img" alt="自研IM系统方案设计">
+                            <img src="/images/自研IM系统存储设计/0.jpg" class="responsive-img" alt="自研IM系统存储设计">
                             
-                            <span class="card-title">自研IM系统方案设计</span>
+                            <span class="card-title">自研IM系统存储设计</span>
                         </div>
                     </a>
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
                                 
-本文主要介绍APP功能中的IM模块的设计方案
-1 设计原则
-合适原则——合适优于业界领先
-简单原则——简单优于复杂
-演化原则——演化优于一步到位
+1 数据操作需求1.1 发消息
+发送方新增已发消息 (用于消息判重)
+接收方新增待收消息
+根据发送方用户ID查询最近100条已发消息(用于消息判重)
+消息持久化存储
 
-架构设计的目的在于解决系统复杂度问题，真正优秀的架构都是企业当前人力、条件、业务等各种约束
+1.2 收消息
+根据接收方用户ID，最新已收消息ID，查询未收消息，支
                             
                         </div>
                         <div class="publish-info">
@@ -646,26 +648,25 @@
             
             <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/zi-yan-im-xi-tong-cun-chu-she-ji/">
+                    <a href="/2019/10/13/zi-yan-im-xi-tong-fang-an-she-ji/">
                         <div class="card-image tag-image">
                             
-                            <img src="/images/自研IM系统存储设计/0.jpg" class="responsive-img" alt="自研IM系统存储设计">
+                            <img src="/images/自研IM系统方案设计/0.jpg" class="responsive-img" alt="自研IM系统方案设计">
                             
-                            <span class="card-title">自研IM系统存储设计</span>
+                            <span class="card-title">自研IM系统方案设计</span>
                         </div>
                     </a>
                     <div class="card-content article-content">
                         <div class="summary block-with-text">
                             
                                 
-1 数据操作需求1.1 发消息
-发送方新增已发消息 (用于消息判重)
-接收方新增待收消息
-根据发送方用户ID查询最近100条已发消息(用于消息判重)
-消息持久化存储
+本文主要介绍APP功能中的IM模块的设计方案
+1 设计原则
+合适原则——合适优于业界领先
+简单原则——简单优于复杂
+演化原则——演化优于一步到位
 
-1.2 收消息
-根据接收方用户ID，最新已收消息ID，查询未收消息，支
+架构设计的目的在于解决系统复杂度问题，真正优秀的架构都是企业当前人力、条件、业务等各种约束
                             
                         </div>
                         <div class="publish-info">

@@ -34,7 +34,8 @@
 
     <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
     
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 
 <body>
@@ -700,20 +701,20 @@ Jenkins的每日构建默认是使用master，在开发过程中，有时需要�
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/ru-he-gao-xiao-xue-xi-kai-yuan-xiang-mu/">
+                <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="/images/如何高效学习开源项目/0.jpg" class="responsive-img" alt="如何高效学习开源项目">
+                        <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
                         
-                        <span class="card-title">如何高效学习开源项目</span>
+                        <span class="card-title">日志打印规范及技巧学习总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-随着蓬勃发展的开源时代的到来，为了减少开发成本，提高开发效率，越来越多的公司使用各种开源项目，作为开发者，如果能充分利用好开源项目中的资源，不仅能提高实践能力，专业知识水平，还能从中其中学到的优秀的架构思想。
-本文将提供一些学习开源项目的
+一、日志打印级别
+DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
                         
                     </div>
                     <div class="publish-info">
@@ -724,8 +725,8 @@ Jenkins的每日构建默认是使用master，在开发过程中，有时需要�
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/经验心得/" class="post-category">
-                                    经验心得
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
                                 </a>
                             
                             
@@ -742,36 +743,22 @@ Jenkins的每日构建默认是使用master，在开发过程中，有时需要�
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/java-dai-ma-jing-tai-jian-ce-gong-ju-bi-jiao/">
+                <a href="/2019/10/13/dubbo-fu-wu-ben-di-diao-ce-you-ya-shi-jian/">
                     <div class="card-image">
                         
-                        <img src="/images/Java代码静态检测工具比较/0.jpg" class="responsive-img" alt="Java代码静态检测工具比较">
+                        <img src="/images/Dubbo服务本地调测优雅实践/0.jpg" class="responsive-img" alt="Dubbo服务本地调测优雅实践">
                         
-                        <span class="card-title">Java代码静态检测工具比较</span>
+                        <span class="card-title">Dubbo服务本地调测优雅实践</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            最近团队想引进代码静态检测工具，稍微调研一下：
-工具比较功能比较
+                            
+本文介绍在不污染项目配置文件，不影响服务器服务的前提下，如何优雅地在本地调测Dubbo服务
+1 问题场景分布式应用的调试总是比常规项目开发调试起来要麻烦很多，主要如下：
 
-
-
-Checkstyle
-FindBugs
-PMD
-Jtest
-SonarQube
-
-
-
-使用方式
-IDE插件
-IDE插件
-IDE插件
-IDE插件
-IDE插件+独立部署的服
+Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希望请求
                         
                     </div>
                     <div class="publish-info">
@@ -782,8 +769,8 @@ IDE插件+独立部署的服
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/工具使用/" class="post-category">
-                                    工具使用
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
                                 </a>
                             
                             

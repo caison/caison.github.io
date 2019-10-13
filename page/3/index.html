@@ -33,7 +33,8 @@
 
     <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
     
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 
 <body>
@@ -296,12 +297,12 @@
             
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/a-li-ba-ba-java-kai-fa-shou-ce-xue-xi-bi-ji/">
+                    <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
                         <div class="card-image">
                             
-                            <img src="/images/《阿里巴巴Java开发手册》学习笔记/0.jpg" class="responsive-img" alt="《阿里巴巴Java开发手册》学习笔记">
+                            <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
                             
-                            <span class="card-title">《阿里巴巴Java开发手册》学习笔记</span>
+                            <span class="card-title">线程的5种状态总结</span>
                         </div>
                     </a>
 
@@ -309,7 +310,9 @@
                         <div class="summary block-with-text">
                             
                                 
-2017年，阿里官方推出一套Java编程规范：《阿里巴巴Java开发手册(终极版)》，这套Java统一规范标准将有助于提高行业编码规范化水平，帮助行业人员提高开发质量和效率、大大降低代码维护成本。推出之后，在CSDN，InfoQ，知乎等网
+线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
+
+New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线程中的代码，
                             
                         </div>
                         <div class="publish-info">
@@ -335,12 +338,12 @@
             
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
+                    <a href="/2019/10/13/a-li-ba-ba-java-kai-fa-shou-ce-xue-xi-bi-ji/">
                         <div class="card-image">
                             
-                            <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
+                            <img src="/images/《阿里巴巴Java开发手册》学习笔记/0.jpg" class="responsive-img" alt="《阿里巴巴Java开发手册》学习笔记">
                             
-                            <span class="card-title">线程的5种状态总结</span>
+                            <span class="card-title">《阿里巴巴Java开发手册》学习笔记</span>
                         </div>
                     </a>
 
@@ -348,9 +351,7 @@
                         <div class="summary block-with-text">
                             
                                 
-线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
-
-New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线程中的代码，
+2017年，阿里官方推出一套Java编程规范：《阿里巴巴Java开发手册(终极版)》，这套Java统一规范标准将有助于提高行业编码规范化水平，帮助行业人员提高开发质量和效率、大大降低代码维护成本。推出之后，在CSDN，InfoQ，知乎等网
                             
                         </div>
                         <div class="publish-info">
@@ -455,12 +456,12 @@ Intellij idea快捷键编辑类快捷键Ctrl + Shift + Alt + U      生成UML图
             
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
-                    <a href="/2019/10/13/dubbo-fu-wu-ben-di-diao-ce-you-ya-shi-jian/">
+                    <a href="/2019/10/13/jenkins-da-jian-ji-cheng-sonarqube-zui-jian-shi-jian/">
                         <div class="card-image">
                             
-                            <img src="/images/Dubbo服务本地调测优雅实践/0.jpg" class="responsive-img" alt="Dubbo服务本地调测优雅实践">
+                            <img src="/images/Jenkins搭建集成SonarQube最简实践/0.jpg" class="responsive-img" alt="Jenkins搭建集成SonarQube最简实践">
                             
-                            <span class="card-title">Dubbo服务本地调测优雅实践</span>
+                            <span class="card-title">Jenkins搭建集成SonarQube最简实践</span>
                         </div>
                     </a>
 
@@ -468,10 +469,17 @@ Intellij idea快捷键编辑类快捷键Ctrl + Shift + Alt + U      生成UML图
                         <div class="summary block-with-text">
                             
                                 
-本文介绍在不污染项目配置文件，不影响服务器服务的前提下，如何优雅地在本地调测Dubbo服务
-1 问题场景分布式应用的调试总是比常规项目开发调试起来要麻烦很多，主要如下：
+本文介绍在Linux环境下Jenkins如何整合SonarQube
+环境准备
+JDK环境JDK1.8
+代码托管Gitlab
+审查工具SonarQube
+发布容器Tomcat
+构建工具Maven
+数据库MySQL
 
-Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希望请求
+系统配置要求
+OS内核需
                             
                         </div>
                         <div class="publish-info">
@@ -482,8 +490,8 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
                                 
                                 <i class="fas fa-bookmark fa-fw icon-category"></i>
                                 
-                                <a href="/categories/技术框架/" class="post-category">
-                                    技术框架
+                                <a href="/categories/运维监控/" class="post-category">
+                                    运维监控
                                 </a>
                                 
                                 
@@ -576,6 +584,45 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
             
             <div class="article col s12 m6 l4" data-aos="zoom-in">
                 <div class="card">
+                    <a href="/2019/10/13/she-ji-mo-shi-xing-wei-xing-mo-shi/">
+                        <div class="card-image">
+                            
+                            <img src="/images/设计模式-行为型模式/0.jpg" class="responsive-img" alt="设计模式-行为型模式">
+                            
+                            <span class="card-title">设计模式-行为型模式</span>
+                        </div>
+                    </a>
+
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text">
+                            
+                                
+中介者模式(Mediator)意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复
+                            
+                        </div>
+                        <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                            <span class="publish-author">
+                                
+                                <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                
+                                <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                                
+                                
+                            </span>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </div>
+            
+            <div class="article col s12 m6 l4" data-aos="zoom-in">
+                <div class="card">
                     <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
                         <div class="card-image">
                             
@@ -603,47 +650,6 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
                                 
                                 <a href="/categories/Java基础/" class="post-category">
                                     Java基础
-                                </a>
-                                
-                                
-                            </span>
-                        </div>
-                    </div>
-
-                    
-                </div>
-            </div>
-            
-            <div class="article col s12 m6 l4" data-aos="zoom-in">
-                <div class="card">
-                    <a href="/2019/10/13/gao-xing-neng-shu-ju-ku-ji-qun-fen-ku-fen-biao/">
-                        <div class="card-image">
-                            
-                            <img src="/images/高性能数据库集群——分库分表/0.jpg" class="responsive-img" alt="高性能数据库集群——分库分表">
-                            
-                            <span class="card-title">高性能数据库集群——分库分表</span>
-                        </div>
-                    </a>
-
-                    <div class="card-content article-content">
-                        <div class="summary block-with-text">
-                            
-                                
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com最近学习了阿里资深技术专家李运华的架构设计关于分库分表的教程，颇有收获，总结一下。
-本文主要介绍高性能数据库集群分库分表相关理论，基本架构，涉及的复杂度问题以及常见解决方
-                            
-                        </div>
-                        <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                            </span>
-                            <span class="publish-author">
-                                
-                                <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                
-                                <a href="/categories/架构设计/" class="post-category">
-                                    架构设计
                                 </a>
                                 
                                 

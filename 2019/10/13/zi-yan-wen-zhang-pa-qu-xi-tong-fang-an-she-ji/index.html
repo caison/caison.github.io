@@ -34,7 +34,8 @@
 
     <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
     
-<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
 
 
 <body>
@@ -676,22 +677,29 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/dubbo-fu-wu-ben-di-diao-ce-you-ya-shi-jian/">
+                <a href="/2019/10/13/jenkins-da-jian-ji-cheng-sonarqube-zui-jian-shi-jian/">
                     <div class="card-image">
                         
-                        <img src="/images/Dubbo服务本地调测优雅实践/0.jpg" class="responsive-img" alt="Dubbo服务本地调测优雅实践">
+                        <img src="/images/Jenkins搭建集成SonarQube最简实践/0.jpg" class="responsive-img" alt="Jenkins搭建集成SonarQube最简实践">
                         
-                        <span class="card-title">Dubbo服务本地调测优雅实践</span>
+                        <span class="card-title">Jenkins搭建集成SonarQube最简实践</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-本文介绍在不污染项目配置文件，不影响服务器服务的前提下，如何优雅地在本地调测Dubbo服务
-1 问题场景分布式应用的调试总是比常规项目开发调试起来要麻烦很多，主要如下：
+本文介绍在Linux环境下Jenkins如何整合SonarQube
+环境准备
+JDK环境JDK1.8
+代码托管Gitlab
+审查工具SonarQube
+发布容器Tomcat
+构建工具Maven
+数据库MySQL
 
-Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希望请求
+系统配置要求
+OS内核需
                         
                     </div>
                     <div class="publish-info">
@@ -702,8 +710,8 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/技术框架/" class="post-category">
-                                    技术框架
+                            <a href="/categories/运维监控/" class="post-category">
+                                    运维监控
                                 </a>
                             
                             
