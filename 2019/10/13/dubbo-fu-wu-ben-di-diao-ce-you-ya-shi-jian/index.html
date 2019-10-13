@@ -18,7 +18,7 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Dubbo服务本地调测优雅实践 | 分布式系统架构</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
     <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
@@ -173,7 +173,7 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
         
         <li><div class="divider"></div></li>
         <li>
-            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+            <a href="https://github.com/caison/" class="waves-effect waves-light" target="_blank">
                 <i class="fab fa-github-square fa-fw"></i>Fork Me
             </a>
         </li>
@@ -230,7 +230,7 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
     }
 </style>
 
-<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+<a href="https://github.com/caison/" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
    data-tooltip="Fork Me" data-position="left" data-delay="50">
     <svg viewBox="0 0 250 250" aria-hidden="true">
         <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -659,19 +659,20 @@ dubbo<span class="token punctuation">.</span>registry<span class="token punctuat
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/ji-yu-sonarqube-dai-ma-zhi-liang-jian-cha-gong-ju-zong-jie/">
+                <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="/images/基于SonarQube代码质量检查工具总结/0.jpg" class="responsive-img" alt="基于SonarQube代码质量检查工具总结">
+                        <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
                         
-                        <span class="card-title">基于SonarQube代码质量检查工具总结</span>
+                        <span class="card-title">日志打印规范及技巧学习总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-#　1 概述SonarQube(sonar)是一个开源平台，用于管理源代码的质量。 SonarQube不只是一个质量数据报告工具，更是代码质量管理平台。 支持java, C#, C/C++, PL/SQL, Cobol, JavaScri
+一、日志打印级别
+DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
                         
                     </div>
                     <div class="publish-info">
@@ -682,8 +683,8 @@ dubbo<span class="token punctuation">.</span>registry<span class="token punctuat
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/运维监控/" class="post-category">
-                                    运维监控
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
                                 </a>
                             
                             

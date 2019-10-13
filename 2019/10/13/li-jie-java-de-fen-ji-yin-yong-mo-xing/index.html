@@ -17,7 +17,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>理解Java的分级引用模型 | 分布式系统架构</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
     <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
@@ -172,7 +172,7 @@
         
         <li><div class="divider"></div></li>
         <li>
-            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+            <a href="https://github.com/caison/" class="waves-effect waves-light" target="_blank">
                 <i class="fab fa-github-square fa-fw"></i>Fork Me
             </a>
         </li>
@@ -229,7 +229,7 @@
     }
 </style>
 
-<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+<a href="https://github.com/caison/" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
    data-tooltip="Fork Me" data-position="left" data-delay="50">
     <svg viewBox="0 0 250 250" aria-hidden="true">
         <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -893,20 +893,19 @@ after<span class="token operator">:</span> gc weakHashMap <span class="token ope
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
+                <a href="/2019/10/13/nosql-huan-shi-sql-zhe-yi-pian-jiang-qing-chu/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java中SPI机制/0.jpg" class="responsive-img" alt="理解Java中SPI机制">
+                        <img src="/images/NoSQL-还是-SQL-？这一篇讲清楚/0.jpg" class="responsive-img" alt="NoSQL-还是-SQL-？这一篇讲清楚">
                         
-                        <span class="card-title">理解Java中SPI机制</span>
+                        <span class="card-title">NoSQL-还是-SQL-？这一篇讲清楚</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
-1 SPI是什么SPI全称Service Provider Interface，是Java提供的一套用来被第三方实现或
+随着大数据时代的到来，越来越多的网站、应用系统需要支撑海量数据存储，高并发请求、高可用、高可扩展性等特性要求，传统的关系型数据库在应付这些调整已经显得力不从心，暴露了许多能以克服的问题。由此，各种各样的NoSQL（Not Only SQL
                         
                     </div>
                     <div class="publish-info">
@@ -917,8 +916,8 @@ after<span class="token operator">:</span> gc weakHashMap <span class="token ope
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
+                            <a href="/categories/架构设计/" class="post-category">
+                                    架构设计
                                 </a>
                             
                             
@@ -935,19 +934,23 @@ after<span class="token operator">:</span> gc weakHashMap <span class="token ope
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/nosql-huan-shi-sql-zhe-yi-pian-jiang-qing-chu/">
+                <a href="/2019/10/13/li-jie-fen-bu-shi-xi-tong-zhong-de-huan-cun-jia-gou/">
                     <div class="card-image">
                         
-                        <img src="/images/NoSQL-还是-SQL-？这一篇讲清楚/0.jpg" class="responsive-img" alt="NoSQL-还是-SQL-？这一篇讲清楚">
+                        <img src="/images/理解分布式系统中的缓存架构/0.jpg" class="responsive-img" alt="理解分布式系统中的缓存架构">
                         
-                        <span class="card-title">NoSQL-还是-SQL-？这一篇讲清楚</span>
+                        <span class="card-title">理解分布式系统中的缓存架构</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-随着大数据时代的到来，越来越多的网站、应用系统需要支撑海量数据存储，高并发请求、高可用、高可扩展性等特性要求，传统的关系型数据库在应付这些调整已经显得力不从心，暴露了许多能以克服的问题。由此，各种各样的NoSQL（Not Only SQL
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文主要介绍大型分布式系统中缓存的相关理论，常见的缓存组件以及应用场景。
+1 缓存概述
+2 缓存的分类缓存主要分为以下四类
+2.1 CDN缓存基本介绍CDN(Conten
                         
                     </div>
                     <div class="publish-info">

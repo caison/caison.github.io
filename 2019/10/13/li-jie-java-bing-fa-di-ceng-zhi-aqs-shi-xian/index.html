@@ -15,7 +15,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>理解Java并发底层之AQS实现 | 分布式系统架构</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
     <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
@@ -170,7 +170,7 @@
         
         <li><div class="divider"></div></li>
         <li>
-            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+            <a href="https://github.com/caison/" class="waves-effect waves-light" target="_blank">
                 <i class="fab fa-github-square fa-fw"></i>Fork Me
             </a>
         </li>
@@ -227,7 +227,7 @@
     }
 </style>
 
-<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+<a href="https://github.com/caison/" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
    data-tooltip="Fork Me" data-position="left" data-delay="50">
     <svg viewBox="0 0 250 250" aria-hidden="true">
         <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -1124,30 +1124,29 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
+                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
                         
-                        <span class="card-title">理解Java并发底层之AQS实现</span>
+                        <span class="card-title">理解Java内存模型</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
-本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
+                            
+最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -1160,7 +1159,6 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -1171,21 +1169,22 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-netty-mo-xing-jia-gou/">
+                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Netty模型架构/0.jpg" class="responsive-img" alt="理解Netty模型架构">
+                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
                         
-                        <span class="card-title">理解Netty模型架构</span>
+                        <span class="card-title">理解Java-GC原理和调优</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
-1 Netty简介Netty是 一个异步事件
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
+
+GC基础原理，涉及调优目标，GC事件分类、JVM内存分
                         
                     </div>
                     <div class="publish-info">
@@ -1196,8 +1195,8 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/技术框架/" class="post-category">
-                                    技术框架
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
                                 </a>
                             
                             

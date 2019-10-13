@@ -15,7 +15,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>自研文章爬取系统方案设计 | 分布式系统架构</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
     <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
@@ -170,7 +170,7 @@
         
         <li><div class="divider"></div></li>
         <li>
-            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+            <a href="https://github.com/caison/" class="waves-effect waves-light" target="_blank">
                 <i class="fab fa-github-square fa-fw"></i>Fork Me
             </a>
         </li>
@@ -227,7 +227,7 @@
     }
 </style>
 
-<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+<a href="https://github.com/caison/" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
    data-tooltip="Fork Me" data-position="left" data-delay="50">
     <svg viewBox="0 0 250 250" aria-hidden="true">
         <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
@@ -676,29 +676,20 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/jenkins-da-jian-ji-cheng-sonarqube-zui-jian-shi-jian/">
+                <a href="/2019/10/13/java-xian-shang-fu-wu-cpu-guo-zai-wen-ti-kuai-su-ding-wei/">
                     <div class="card-image">
                         
-                        <img src="/images/Jenkins搭建集成SonarQube最简实践/0.jpg" class="responsive-img" alt="Jenkins搭建集成SonarQube最简实践">
+                        <img src="/images/Java线上服务CPU过载问题快速定位/0.jpg" class="responsive-img" alt="Java线上服务CPU过载问题快速定位">
                         
-                        <span class="card-title">Jenkins搭建集成SonarQube最简实践</span>
+                        <span class="card-title">Java线上服务CPU过载问题快速定位</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-本文介绍在Linux环境下Jenkins如何整合SonarQube
-环境准备
-JDK环境JDK1.8
-代码托管Gitlab
-审查工具SonarQube
-发布容器Tomcat
-构建工具Maven
-数据库MySQL
-
-系统配置要求
-OS内核需
+*　　本文介绍一次解决线上服务*Java进程CPU过载问题的经过，提供了如果定位是哪个服务进程导致CPU过载，哪个线程导致CPU过载，哪段代码**导致CPU过载，希望能提供后续遇到类似情况的读者一点思路。  
+#线上环境发现的问题*　　*
                         
                     </div>
                     <div class="publish-info">
@@ -727,20 +718,36 @@ OS内核需
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
+                <a href="/2019/10/13/java-dai-ma-jing-tai-jian-ce-gong-ju-bi-jiao/">
                     <div class="card-image">
                         
-                        <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
+                        <img src="/images/Java代码静态检测工具比较/0.jpg" class="responsive-img" alt="Java代码静态检测工具比较">
                         
-                        <span class="card-title">设计模式-创建型模式</span>
+                        <span class="card-title">Java代码静态检测工具比较</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
-建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
+                            最近团队想引进代码静态检测工具，稍微调研一下：
+工具比较功能比较
+
+
+
+Checkstyle
+FindBugs
+PMD
+Jtest
+SonarQube
+
+
+
+使用方式
+IDE插件
+IDE插件
+IDE插件
+IDE插件
+IDE插件+独立部署的服
                         
                     </div>
                     <div class="publish-info">
@@ -751,8 +758,8 @@ OS内核需
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
                                 </a>
                             
                             
