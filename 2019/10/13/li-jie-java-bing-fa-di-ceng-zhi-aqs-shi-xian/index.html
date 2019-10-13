@@ -1,0 +1,1525 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="理解Java并发底层之AQS实现, 分布式系统架构">
+    <meta name="description" content="jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>理解Java并发底层之AQS实现 | 分布式系统架构</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+        code[class*="language-"], pre[class*="language-"] {
+            white-space: pre !important;
+        }
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">分布式系统架构</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/tags" class="waves-effect waves-light">
+      
+      <i class="fas fa-tags" style="zoom: 0.6;"></i>
+      
+      <span>标签</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">分布式系统架构</div>
+        <div class="logo-desc">
+            
+            专注分享分布式架构干货
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/tags" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-tags"></i>
+			
+			标签
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/images/理解Java并发底层之AQS实现/0.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        理解Java并发底层之AQS实现
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Java基础/" class="post-category">
+                                Java基础
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-10-13
+                </div>
+
+                
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        5.5k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        21 分
+                    </div>
+                    
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%B9%B6%E5%8F%91%E5%BA%95%E5%B1%82%E4%B9%8BAQS%E5%AE%9E%E7%8E%B0/0.png" alt><br>jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路</p>
+<p>本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅到深，一步步剖析并发底层AQS抽象类具体实现</p>
+<h1 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h1><h2 id="1-AQS"><a href="#1-AQS" class="headerlink" title="1 AQS"></a>1 AQS</h2><p>AQS是一个抽象类，类全路径java.util.concurrent.locks.AbstractQueuedSynchronizer，抽象队列同步器，是基于模板模式开发的并发工具抽象类，有如下并发类基于AQS实现：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%B9%B6%E5%8F%91%E5%BA%95%E5%B1%82%E4%B9%8BAQS%E5%AE%9E%E7%8E%B0/1.png" alt></p>
+<h2 id="2-CAS"><a href="#2-CAS" class="headerlink" title="2 CAS"></a>2 CAS</h2><p>CAS是Conmpare And Swap(比较和交换)的缩写，是一个原子操作指令</p>
+<p>CAS机制当中使用了3个基本操作数：内存地址addr，预期旧的值oldVal，要修改的新值newVal<br>更新一个变量的时候，只有当变量的预期值oldVal和内存地址addr当中的实际值相同时，才会将内存地址addr对应的值修改为newVal</p>
+<p>基于乐观锁的思路，通过CAS再不断尝试和比较，可以对变量值线程安全地更新</p>
+<h2 id="3-线程中断"><a href="#3-线程中断" class="headerlink" title="3 线程中断"></a>3 线程中断</h2><p>线程中断是一种线程协作机制，用于协作其他线程中断任务的执行</p>
+<p>当线程处于阻塞等待状态，例如调用了wait()、join()、sleep()方法之后，调用线程的interrupt()方法之后，线程会马上退出阻塞并收到InterruptedException；</p>
+<p>当线程处于运行状态，调用线程的interrupt()方法之后，线程并不会马上中断执行，需要在线程的具体任务执行逻辑中通过调用isInterrupted() 方法检测线程中断标志位，然后主动响应中断，通常是抛出InterruptedException</p>
+<h1 id="对象锁特性"><a href="#对象锁特性" class="headerlink" title="对象锁特性"></a>对象锁特性</h1><p>下面先介绍对象锁、并发工具有哪些基本特性，后面再逐步展开这些特性如何实现</p>
+<h2 id="1-显式获取"><a href="#1-显式获取" class="headerlink" title="1 显式获取"></a>1 显式获取</h2><p>以ReentrantLock锁为例，主要支持以下4种方式显式获取锁</p>
+<ul>
+<li><p><strong>(1) 阻塞等待获取</strong></p>
+<pre><code>ReentrantLock lock = new ReentrantLock();
+// 一直阻塞等待，直到获取成功
+lock.lock();</code></pre></li>
+<li><p><strong>(2) 无阻塞尝试获取</strong></p>
+<pre><code>ReentrantLock lock = new ReentrantLock();
+// 尝试获取锁，如果锁已被其他线程占用，则不阻塞等待直接返回false
+// 返回true - 锁是空闲的且被本线程获取，或者已经被本线程持有
+// 返回false - 获取锁失败
+boolean isGetLock = lock.tryLock();</code></pre></li>
+<li><p><strong>(3) 指定时间内阻塞等待获取</strong></p>
+<pre><code>ReentrantLock lock = new ReentrantLock();
+try {
+  // 尝试在指定时间内获取锁
+  // 返回true - 锁是空闲的且被本线程获取，或者已经被本线程持有
+  // 返回false - 指定时间内未获取到锁
+  lock.tryLock(10, TimeUnit.SECONDS);
+} catch (InterruptedException e) {
+  // 内部调用isInterrupted() 方法检测线程中断标志位，主动响应中断
+  e.printStackTrace();
+}</code></pre></li>
+<li><p><strong>(4) 响应中断获取</strong></p>
+<pre><code>ReentrantLock lock = new ReentrantLock();
+try {
+  // 响应中断获取锁
+  // 如果调用线程的thread.interrupt()方法设置线程中断，线程退出阻塞等待并抛出中断异常
+  lock.lockInterruptibly();
+} catch (InterruptedException e) {
+  e.printStackTrace();
+}</code></pre></li>
+</ul>
+<h2 id="2-显式释放"><a href="#2-显式释放" class="headerlink" title="2 显式释放"></a>2 显式释放</h2><pre><code>ReentrantLock lock = new ReentrantLock();
+lock.lock();
+// ... 各种业务操作
+// 显式释放锁
+lock.unlock();</code></pre><h2 id="3-可重入"><a href="#3-可重入" class="headerlink" title="3 可重入"></a>3 可重入</h2><p>已经获取到锁的线程，再次请求该锁可以直接获得</p>
+<h2 id="4-可共享"><a href="#4-可共享" class="headerlink" title="4 可共享"></a>4 可共享</h2><p>指同一个资源允许多个线程共享，例如读写锁的读锁允许多个线程共享，共享锁可以让多个线程并发安全地访问数据，提高程序执效率</p>
+<h2 id="5-公平、非公平"><a href="#5-公平、非公平" class="headerlink" title="5 公平、非公平"></a>5 公平、非公平</h2><p>公平锁：多个线程采用先到先得的公平方式竞争锁。每次加锁前都会检查等待队列里面有没有线程排队，没有才会尝试获取锁。<br>非公平锁：当一个线程采用非公平的方式获取锁时，该线程会首先去尝试获取锁而不是等待。如果没有获取成功，才会进入等待队列</p>
+<p>因为非公平锁方式可以使后来的线程有一定几率直接获取锁，减少了线程挂起等待的几率，性能优于公平锁</p>
+<h1 id="AQS实现原理"><a href="#AQS实现原理" class="headerlink" title="AQS实现原理"></a>AQS实现原理</h1><h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1 基本概念"></a>1 基本概念</h2><h3 id="1-Condition接口"><a href="#1-Condition接口" class="headerlink" title="(1) Condition接口"></a>(1) Condition接口</h3><p>类似Object的wait()、wait(long timeout)、notify()以及notifyAll()的方法结合synchronized内置锁可以实现可以实现等待/通知模式，实现Lock接口的ReentrantLock、ReentrantReadWriteLock等对象锁也有类似功能：</p>
+<p>Condition接口定义了await()、awaitNanos(long)、signal()、signalAll()等方法，配合对象锁实例实现等待/通知功能，原理是基于AQS内部类ConditionObject实现Condition接口，线程await后阻塞并进入CLH队列(下面提到)，等待其他线程调用signal方法后被唤醒</p>
+<h3 id="2-CLH队列"><a href="#2-CLH队列" class="headerlink" title="(2) CLH队列"></a>(2) CLH队列</h3><p>CLH队列，CLH是算法提出者Craig, Landin, Hagersten的名字简称</p>
+<p>AQS内部维护着一个双向FIFO的CLH队列，AQS依赖它来管理等待中的线程，如果线程获取同步竞争资源失败时，会将线程阻塞，并加入到CLH同步队列；当竞争资源空闲时，基于CLH队列阻塞线程并分配资源</p>
+<p>CLH的head节点保存当前占用资源的线程，或者是没有线程信息，其他节点保存排队线程信息</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%B9%B6%E5%8F%91%E5%BA%95%E5%B1%82%E4%B9%8BAQS%E5%AE%9E%E7%8E%B0/2.png" alt="CLH"><br>CLH中每一个节点的状态(waitStatus)取值如下：</p>
+<ul>
+<li><strong>CANCELLED(1)</strong>：表示当前节点已取消调度。当timeout或被中断（响应中断的情况下），会触发变更为此状态，进入该状态后的节点将不会再变化</li>
+<li><strong>SIGNAL(-1)</strong>：表示后继节点在等待当前节点唤醒。后继节点入队后进入休眠状态之前，会将前驱节点的状态更新为SIGNAL</li>
+<li><strong>CONDITION(-2)</strong>：表示节点等待在Condition上，当其他线程调用了Condition的signal()方法后，CONDITION状态的节点将从等待队列转移到同步队列中，等待获取同步锁</li>
+<li><strong>PROPAGATE(-3)</strong>：共享模式下，前驱节点不仅会唤醒其后继节点，同时也可能会唤醒后继的后继节点</li>
+<li><strong>0</strong>：新节点入队时的默认状态</li>
+</ul>
+<h3 id="3-资源共享方式"><a href="#3-资源共享方式" class="headerlink" title="(3) 资源共享方式"></a>(3) 资源共享方式</h3><p>AQS定义两种资源共享方式：<br>Exclusive 独占，只有一个线程能执行，如ReentrantLock<br>Share 共享，多个线程可同时执行，如Semaphore/CountDownLatch</p>
+<h3 id="4-阻塞-唤醒线程的方式"><a href="#4-阻塞-唤醒线程的方式" class="headerlink" title="(4) 阻塞/唤醒线程的方式"></a>(4) 阻塞/唤醒线程的方式</h3><p>AQS 基于sun.misc.Unsafe类提供的park方法阻塞线程，unpark方法唤醒线程，被park方法阻塞的线程能响应interrupt()中断请求退出阻塞</p>
+<h2 id="2-基本设计"><a href="#2-基本设计" class="headerlink" title="2 基本设计"></a>2 基本设计</h2><p>核心设计思路：AQS提供一个框架，用于实现依赖于CLH队列的阻塞锁和相关的并发同步器。<strong>子类通过实现判定是否能获取/释放资源的protect方法，AQS基于这些protect方法实现对线程的排队、唤醒的线程调度策略</strong></p>
+<p>AQS还提供一个支持线程安全原子更新的int类型变量作为同步状态值(state)，子类可以根据实际需求，灵活定义该变量代表的意义进行更新</p>
+<p>通过子类重新定义的系列protect方法如下：</p>
+<ul>
+<li>boolean tryAcquire(int) 独占方式尝试获取资源，成功则返回true，失败则返回false</li>
+<li>boolean tryRelease(int) 独占方式尝试释放资源，成功则返回true，失败则返回false</li>
+<li>int tryAcquireShared(int) 共享方式尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源</li>
+<li>boolean tryReleaseShared(int) 共享方式尝试释放资源，如果释放后允许唤醒后续等待节点返回true，否则返回false</li>
+</ul>
+<p>这些方法始终由需要需要调度协作的线程来调用，子类须以非阻塞的方式重新定义这些方法</p>
+<p>AQS基于上述tryXXX方法，对外提供下列方法来获取/释放资源：</p>
+<ul>
+<li>void acquire(int) 独占方式获取到资源，线程直接返回，否则进入等待队列，直到获取到资源为止，且整个过程忽略中断的影响</li>
+<li>boolean release(int) 独占方式下线程释放资源，先释放指定量的资源，如果彻底释放了（即state=0）,它会唤醒等待队列里的其他线程来获取资源</li>
+<li>void acquireShared(int) 独占方式获取资源</li>
+<li>boolean releaseShared(int) 共享方式释放资源</li>
+</ul>
+<p>以独占模式为例：获取/释放资源的核心的实现如下：</p>
+<pre><code> Acquire:
+     while (!tryAcquire(arg)) {
+        如果线程尚未排队，则将其加入队列；
+     }
+
+ Release:
+     if (tryRelease(arg))
+        唤醒CLH中第一个排队线程</code></pre><p>到这里，有点绕，下面一张图把上面介绍到的设计思路再重新捋一捋：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%B9%B6%E5%8F%91%E5%BA%95%E5%B1%82%E4%B9%8BAQS%E5%AE%9E%E7%8E%B0/3.png" alt="AQS基本设计"></p>
+<h1 id="特性实现"><a href="#特性实现" class="headerlink" title="特性实现"></a>特性实现</h1><p>下面介绍基于AQS的对象锁、并发工具的一系列功能特性的实现原理</p>
+<h2 id="1-显式获取-1"><a href="#1-显式获取-1" class="headerlink" title="1 显式获取"></a>1 显式获取</h2><p>该特性还是以ReentrantLock锁为例，ReentrantLock是可重入对象锁，线程每次请求获取成功一次锁，同步状态值state加1，释放锁state减1，state为0代表没有任何线程持有锁</p>
+<p>ReentrantLock锁支持公平/非公平特性，下面的显式获取特性以公平锁为例</p>
+<h3 id="1-阻塞等待获取"><a href="#1-阻塞等待获取" class="headerlink" title="(1) 阻塞等待获取"></a>(1) 阻塞等待获取</h3><p>基本实现如下：</p>
+<ul>
+<li>1、ReentrantLock实现AQS的tryAcquire(int)方法，先判断：如果没有任何线程持有锁，或者当前线程已经持有锁，则返回true，否则返回false</li>
+<li>2、AQS的acquire(int)方法判断当前节点是否为head且基于tryAcquire(int)能否获得资源，如果不能获得，则加入CLH队列排队阻塞等待</li>
+<li>3、ReentrantLock的lock()方法基于AQS的acquire(int)方法阻塞等待获取锁</li>
+</ul>
+<p>ReentrantLock中的tryAcquire(int)方法实现：</p>
+<pre><code>protected final boolean tryAcquire(int acquires) {
+    final Thread current = Thread.currentThread();
+    int c = getState();
+    // 没有任何线程持有锁
+    if (c == 0) {
+        // 通过CLH队列的head判断没有别的线程在比当前更早acquires
+        // 且基于CAS设置state成功(期望的state旧值为0)
+        if (!hasQueuedPredecessors() &amp;&amp;
+            compareAndSetState(0, acquires)) {
+            // 设置持有锁的线程为当前线程
+            setExclusiveOwnerThread(current);
+            return true;
+        }
+    }
+    // 持有锁的线程为当前线程
+    else if (current == getExclusiveOwnerThread()) {
+        // 仅仅在当前线程，单线程，不用基于CAS更新
+        int nextc = c + acquires;
+        if (nextc &lt; 0)
+            throw new Error(&quot;Maximum lock count exceeded&quot;);
+        setState(nextc);
+        return true;
+    }
+    // 其他线程已经持有锁
+    return false;
+}</code></pre><p>AQS的acquire(int)方法实现</p>
+<pre><code>public final void acquire(int arg) {
+        // tryAcquire检查释放能获取成功
+        // addWaiter 构建CLH的节点对象并入队
+        // acquireQueued线程阻塞等待
+    if (!tryAcquire(arg) &amp;&amp;
+        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        // acquireQueued返回true，代表线程在获取资源的过程中被中断
+        // 则调用该方法将线程中断标志位设置为true
+        selfInterrupt();
+}
+
+
+final boolean acquireQueued(final Node node, int arg) {
+    // 标记是否成功拿到资源
+    boolean failed = true;
+    try {
+        // 标记等待过程中是否被中断过
+        boolean interrupted = false;
+        // 循环直到资源释放
+        for (;;) {
+            // 拿到前驱节点
+            final Node p = node.predecessor();
+
+            // 如果前驱是head，即本节点是第二个节点，才有资格去尝试获取资源
+            // 可能是head释放完资源唤醒本节点，也可能被interrupt()
+            if (p == head &amp;&amp; tryAcquire(arg)) {
+                // 成功获取资源
+                setHead(node);
+                // help GC
+                p.next = null; 
+                failed = false;
+                return interrupted;
+            }
+
+            // 需要排队阻塞等待
+            // 如果在过程中线程中断，不响应中断
+            // 且继续排队获取资源，设置interrupted变量为true
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}</code></pre><h3 id="2-无阻塞尝试获取"><a href="#2-无阻塞尝试获取" class="headerlink" title="(2) 无阻塞尝试获取"></a>(2) 无阻塞尝试获取</h3><p>ReentrantLock中的tryLock()的实现仅仅是非公平锁实现，实现逻辑基本与tryAcquire一致，不同的是没有通过hasQueuedPredecessors()检查CLH队列的head是否有其他线程在等待，这样当资源释放时，有线程请求资源能插队优先获取</p>
+<p>ReentrantLock中tryLock()具体实现如下：</p>
+<pre><code>public boolean tryLock() {
+    return sync.nonfairTryAcquire(1);
+}
+
+final boolean nonfairTryAcquire(int acquires) {
+    final Thread current = Thread.currentThread();
+    int c = getState();
+    // 没有任何线程持有锁
+    if (c == 0) {
+        // 基于CAS设置state成功(期望的state旧值为0)
+        // 没有检查CLH队列中是否有线程在等待
+        if (compareAndSetState(0, acquires)) {
+            setExclusiveOwnerThread(current);
+            return true;
+        }
+    }
+    // 持有锁的线程为当前线程
+    else if (current == getExclusiveOwnerThread()) {
+        // 仅仅在当前线程，单线程，不用基于CAS更新
+        int nextc = c + acquires;
+        if (nextc &lt; 0) // overflow，整数溢出
+            throw new Error(&quot;Maximum lock count exceeded&quot;);
+        setState(nextc);
+        return true;
+    }
+    // 其他线程已经持有锁
+    return false;
+}</code></pre><h3 id="3-指定时间内阻塞等待获取"><a href="#3-指定时间内阻塞等待获取" class="headerlink" title="(3) 指定时间内阻塞等待获取"></a>(3) 指定时间内阻塞等待获取</h3><p>基本实现如下：</p>
+<ul>
+<li>1、ReentrantLock的tryLock(long, TimeUnit)调用AQS的tryAcquireNanos(int, long)方法</li>
+<li>2、AQS的tryAcquireNanos先调用tryAcquire(int)尝试获取，获取不到再调用doAcquireNanos(int, long)方法</li>
+<li>3、AQS的doAcquireNanos判断当前节点是否为head且基于tryAcquire(int)能否获得资源，如果不能获得且超时时间大于1微秒，则休眠一段时间后再尝试获取</li>
+</ul>
+<p>ReentrantLock中的实现如下：</p>
+<pre><code>public boolean tryLock(long timeout, TimeUnit unit)
+        throws InterruptedException {
+    return sync.tryAcquireNanos(1, unit.toNanos(timeout));
+}
+
+public final boolean tryAcquireNanos(int arg, long nanosTimeout)
+        throws InterruptedException {
+    // 如果线程已经被interrupt()方法设置中断    
+    if (Thread.interrupted())
+        throw new InterruptedException();
+    // 先tryAcquire尝试获取锁    
+    return tryAcquire(arg) ||
+        doAcquireNanos(arg, nanosTimeout);
+}</code></pre><p>AQS中的实现如下：</p>
+<pre><code>private boolean doAcquireNanos(int arg, long nanosTimeout)
+        throws InterruptedException {
+    if (nanosTimeout &lt;= 0L)
+        return false;
+    // 获取到资源的截止时间    
+    final long deadline = System.nanoTime() + nanosTimeout;
+    final Node node = addWaiter(Node.EXCLUSIVE);
+    // 标记是否成功拿到资源
+    boolean failed = true;
+    try {
+        for (;;) {
+            // 拿到前驱节点
+            final Node p = node.predecessor();
+            // 如果前驱是head，即本节点是第二个节点，才有资格去尝试获取资源
+            // 可能是head释放完资源唤醒本节点，也可能被interrupt()
+            if (p == head &amp;&amp; tryAcquire(arg)) {
+                // 成功获取资源
+                setHead(node);
+                // help GC
+                p.next = null; 
+                failed = false;
+                return true;
+            }
+            // 更新剩余超时时间
+            nanosTimeout = deadline - System.nanoTime();
+            if (nanosTimeout &lt;= 0L)
+                return false;
+            // 排队是否需要排队阻塞等待    
+            // 且超时时间大于1微秒，则线程休眠到超时时间到了再尝试获取
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                nanosTimeout &gt; spinForTimeoutThreshold)
+                LockSupport.parkNanos(this, nanosTimeout);
+
+            // 如果线程已经被interrupt()方法设置中断
+            // 则不再排队，直接退出     
+            if (Thread.interrupted())
+                throw new InterruptedException();
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}</code></pre><h3 id="4-响应中断获取"><a href="#4-响应中断获取" class="headerlink" title="(4) 响应中断获取"></a>(4) 响应中断获取</h3><p>ReentrantLock响应中断获取锁的方式是：当线程在park方法休眠中响应thead.interrupt()方法中断唤醒时，检查到线程中断标志位为true，主动抛出异常，核心实现在AQS的doAcquireInterruptibly(int)方法中</p>
+<p>基本实现与阻塞等待获取类似，只是调用从AQS的acquire(int)方法，改为调用AQS的doAcquireInterruptibly(int)方法</p>
+<pre><code>private void doAcquireInterruptibly(int arg)
+    throws InterruptedException {
+    final Node node = addWaiter(Node.EXCLUSIVE);
+    // 标记是否成功拿到资源
+    boolean failed = true;
+    try {
+        for (;;) {
+            // 拿到前驱节点
+            final Node p = node.predecessor();
+
+            // 如果前驱是head，即本节点是第二个节点，才有资格去尝试获取资源
+            // 可能是head释放完资源唤醒本节点，也可能被interrupt()
+            if (p == head &amp;&amp; tryAcquire(arg)) {
+                // 成功获取资源
+                setHead(node);
+                p.next = null; // help GC
+                failed = false;
+                return;
+            }
+
+            // 需要排队阻塞等待
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                // 从排队阻塞中唤醒，如果检查到中断标志位为true
+                parkAndCheckInterrupt())
+                // 主动响应中断
+                throw new InterruptedException();
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}</code></pre><h2 id="2-显式释放-1"><a href="#2-显式释放-1" class="headerlink" title="2 显式释放"></a>2 显式释放</h2><p>AQS资源共享方式分为独占式和共享式，这里先以ReentrantLock为例介绍独占式资源的显式释放，共享式后面会介绍到</p>
+<p>与显式获取有类似之处，ReentrantLock显式释放基本实现如下：</p>
+<ul>
+<li>1、ReentrantLock实现AQS的tryRelease(int)方法，方法将state变量减1，如果state变成0代表没有任何线程持有锁，返回true，否则返回false</li>
+<li>2、AQS的release(int)方法基于tryRelease(int)排队是否有任何线程持有资源，如果没有，则唤醒CLH队列中头节点的线程</li>
+<li>3、被唤醒后的线程继续执行acquireQueued(Node,int)或者doAcquireNanos(int, long)或者doAcquireInterruptibly(int)中for(;;)中的逻辑，继续尝试获取资源</li>
+</ul>
+<p>ReentrantLock中tryRelease(int)方法实现如下：</p>
+<pre><code>protected final boolean tryRelease(int releases) {
+    int c = getState() - releases;
+    // 只有持有锁的线程才有资格释放锁
+    if (Thread.currentThread() != getExclusiveOwnerThread())
+        throw new IllegalMonitorStateException();
+
+    // 标识是否没有任何线程持有锁    
+    boolean free = false;
+
+    // 没有任何线程持有锁
+    // 可重入锁每lock一次都需要对应一次unlock
+    if (c == 0) {
+        free = true;
+        setExclusiveOwnerThread(null);
+    }
+    setState(c);
+    return free;
+}</code></pre><p>AQS中的release(int)方法实现如下：</p>
+<pre><code>public final boolean release(int arg) {
+    // 尝试释放资源
+    if (tryRelease(arg)) {
+        Node h = head;
+        // 头节点不为空
+        // 后继节点入队后进入休眠状态之前，会将前驱节点的状态更新为SIGNAL(-1)
+        // 头节点状态为0，代表没有后继的等待节点
+        if (h != null &amp;&amp; h.waitStatus != 0)
+            // 唤醒第二个节点
+            // 头节点是占用资源的线程，第二个节点才是首个等待资源的线程
+            unparkSuccessor(h);
+        return true;
+    }
+    return false;
+}</code></pre><h2 id="3-可重入-1"><a href="#3-可重入-1" class="headerlink" title="3 可重入"></a>3 可重入</h2><p>可重入的实现比较简单，以ReentrantLock为例，主要是在tryAcquire(int)方法中实现，持有锁的线程是不是当前线程，如果是，更新同步状态值state，并返回true，代表能获取锁</p>
+<h2 id="4-可共享-1"><a href="#4-可共享-1" class="headerlink" title="4 可共享"></a>4 可共享</h2><p>可共享资源以ReentrantReadWriteLock为例，跟独占锁ReentrantLock的区别主要在于，获取的时候，多个线程允许共享读锁，当写锁释放时，多个阻塞等待读锁的线程能同时获取到</p>
+<p>ReentrantReadWriteLock类中将AQS的state同步状态值定义为，高16位为读锁持有数，低16位为写锁持有锁</p>
+<p>ReentrantReadWriteLock中tryAcquireShared(int)、tryReleaseShared(int)实现的逻辑较长，主要涉及读写互斥、可重入判断、读锁对写锁的让步，篇幅所限，这里就不展开了</p>
+<p><strong>获取读锁(ReadLock.lock())主要实现如下</strong>：</p>
+<ul>
+<li>1、ReentrantReadWriteLock实现AQS的tryAcquireShared(int)方法，判断当前线程能否获得读锁</li>
+<li>2、AQS的acquireShared(int)先基于tryAcquireShared(int)尝试获取资源，如果获取失败，则加入CLH队列排队阻塞等待</li>
+<li>3、ReentrantReadWriteLock的ReadLock.lock()方法基于AQS的acquireShared(int)方法阻塞等待获取锁</li>
+</ul>
+<p>AQS共享模式获取资源的具体实现如下：</p>
+<pre><code>public final void acquireShared(int arg) {
+    // tryAcquireShared返回负数代表获取共享资源失败
+    // 则通过进入等待队列，直到获取到资源为止才返回
+    if (tryAcquireShared(arg) &lt; 0)
+        doAcquireShared(arg);
+}
+
+// 与前面介绍到的acquireQueued逻辑基本一致
+// 不同的是将tryAcquire改为tryAcquireShared
+// 还有资源获取成功后将传播给CLH队列上等待该资源的节点
+private void doAcquireShared(int arg) {
+    final Node node = addWaiter(Node.SHARED);
+     // 标记是否成功拿到资源
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            final Node p = node.predecessor();
+            if (p == head) {
+                int r = tryAcquireShared(arg);
+                // 资源获取成功
+                if (r &gt;= 0) {
+                     // 传播给CLH队列上等待该资源的节点                             
+                    setHeadAndPropagate(node, r);
+                    p.next = null; // help GC
+                    if (interrupted)
+                        selfInterrupt();
+                    failed = false;
+                    return;
+                }
+            }
+            // 需要排队阻塞等待
+            // 如果在过程中线程中断，不响应中断
+            // 且继续排队获取资源，设置interrupted变量为true
+            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+
+//  资源传播给CLH队列上等待该资源的节点 
+private void setHeadAndPropagate(Node node, int propagate) {
+    Node h = head; 
+    setHead(node);
+    if (propagate &gt; 0 || h == null || h.waitStatus &lt; 0 ||
+        (h = head) == null || h.waitStatus &lt; 0) {
+        Node s = node.next;
+        if (s == null || s.isShared())
+            // 释放共享资源
+            doReleaseShared();
+    }
+}</code></pre><p><strong>释放读锁(ReadLock.unlock())主要实现如下</strong>：<br>ReentrantReadWriteLock共享资源的释放主要实现如下：</p>
+<ul>
+<li>1、ReentrantReadWriteLock实现AQS的tryReleaseShared(int)方法，判断读锁释放后是否还有线程持有读锁</li>
+<li>2、AQS的releaseShared(int)基于tryReleaseShared(int)判断是否需要CLH队列中的休眠线程，如果需要就执行doReleaseShared()</li>
+<li>3、ReentrantReadWriteLock的ReadLock.unlock()方法基于AQS的releaseShared(int)方法释放锁</li>
+</ul>
+<p>AQS共享模式释放资源具体实现如下：</p>
+<pre><code>public final boolean releaseShared(int arg) {
+    // 允许唤醒CLH中的休眠线程
+    if (tryReleaseShared(arg)) {
+        // 执行资源释放
+        doReleaseShared();
+        return true;
+    }
+    return false;
+}
+
+private void doReleaseShared() {
+    for (;;) {
+        Node h = head;
+        if (h != null &amp;&amp; h != tail) {
+            int ws = h.waitStatus;
+            // 当前节点正在等待资源
+            if (ws == Node.SIGNAL) {
+                // 当前节点被其他线程唤醒了
+                if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
+                    continue;            
+                unparkSuccessor(h);
+            }
+            // 进入else的条件是，当前节点刚刚成为头节点
+            // 尾节点刚刚加入CLH队列，还没在休眠前将前驱节点状态改为SIGNAL
+            // CAS失败是尾节点已经在休眠前将前驱节点状态改为SIGNAL
+            else if (ws == 0 &amp;&amp;
+                     !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
+                continue;               
+        }
+        // 每次唤醒后驱节点后，线程进入doAcquireShared方法，然后更新head
+        // 如果h变量在本轮循环中没有被改变，说明head == tail，队列中节点全部被唤醒
+        if (h == head)                 
+            break;
+    }
+}</code></pre><h2 id="5-公平、非公平-1"><a href="#5-公平、非公平-1" class="headerlink" title="5 公平、非公平"></a>5 公平、非公平</h2><p>这个特性实现比较简单，以ReentrantLock锁为例，公平锁直接基于AQS的acquire(int)获取资源，而非公平锁先尝试插队：基于CAS，期望state同步变量值为0(没有任何线程持有锁)，更新为1，如果全部CAS更新失败再进行排队</p>
+<pre><code>// 公平锁实现
+final void lock() {
+    acquire(1);
+}
+
+// 非公平锁实现
+final void lock() {
+    // 第1次CAS
+    // state值为0代表没有任何线程持有锁，直接插队获得锁
+    if (compareAndSetState(0, 1))
+        setExclusiveOwnerThread(Thread.currentThread());
+    else
+        acquire(1);
+}
+
+protected final boolean tryAcquire(int acquires) {
+    return nonfairTryAcquire(acquires);
+}
+
+// 在nonfairTryAcquire方法中再次CAS尝试获取锁
+final boolean nonfairTryAcquire(int acquires) {
+    final Thread current = Thread.currentThread();
+    int c = getState();
+    if (c == 0) {
+        // 第2次CAS尝试获取锁
+        if (compareAndSetState(0, acquires)) {
+            setExclusiveOwnerThread(current);
+            return true;
+        }
+    }
+    // 已经获得锁
+    else if (current == getExclusiveOwnerThread()) {
+        int nextc = c + acquires;
+        if (nextc &lt; 0) // overflow
+            throw new Error(&quot;Maximum lock count exceeded&quot;);
+        setState(nextc);
+        return true;
+    }
+    return false;
+}</code></pre><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>AQS的state变量值的含义不一定代表资源，不同的AQS的继承类可以对state变量值有不同的定义</p>
+<p>例如在countDownLatch类中，state变量值代表还需释放的latch计数(可以理解为需要打开的门闩数)，需要每个门闩都打开，门才能打开，所有等待线程才会开始执行，每次countDown()就会对state变量减1，如果state变量减为0，则唤醒CLH队列中的休眠线程</p>
+<p>学习类似底层源码建议先定几个问题，带着问题学习；通俗学习前建议先理解透彻整体设计，整体原理(可以先阅读相关文档资料)，再研究和源码细节，避免一开始就扎进去源码，容易无功而返</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%B9%B6%E5%8F%91%E5%BA%95%E5%B1%82%E4%B9%8BAQS%E5%AE%9E%E7%8E%B0/4.png" alt></p>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.png" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        <p class="reprint-tip">
+            <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;
+            <span>转载规则</span>
+        </p>
+        
+            <div class="center-align">
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                    <img alt=""
+                         style="border-width:0"
+                         src="https://i.creativecommons.org/l/by/4.0/88x31.png"/>
+                </a>
+            </div>
+            <br/>
+            <a  href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                    《理解Java并发底层之AQS实现》
+            </a> 由
+            <a href="https://caison.github.io">
+                caison
+            </a> 采用
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                知识共享署名 4.0 国际许可协议
+            </a>进行许可。
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                    <div class="card-image">
+                        
+                        <img src="/images/理解Java并发底层之AQS实现/0.jpg" class="responsive-img" alt="理解Java并发底层之AQS实现">
+                        
+                        <span class="card-title">理解Java并发底层之AQS实现</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/a-li-ba-ba-java-kai-fa-shou-ce-xue-xi-bi-ji/">
+                    <div class="card-image">
+                        
+                        <img src="/images/《阿里巴巴Java开发手册》学习笔记/0.jpg" class="responsive-img" alt="《阿里巴巴Java开发手册》学习笔记">
+                        
+                        <span class="card-title">《阿里巴巴Java开发手册》学习笔记</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+2017年，阿里官方推出一套Java编程规范：《阿里巴巴Java开发手册(终极版)》，这套Java统一规范标准将有助于提高行业编码规范化水平，帮助行业人员提高开发质量和效率、大大降低代码维护成本。推出之后，在CSDN，InfoQ，知乎等网
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">年份</span>
+            <a href="https://caison.github.io" target="_blank">caison</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">36.6k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    window.setTimeout("siteTime()", 1000);
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2019";
+                    var startMonth = "6";
+                    var startDate = "28";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/caison" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:caison@aliyun.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i["DaoVoiceObject"] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            a.charset = "utf-8";
+            m.parentNode.insertBefore(a, m)
+        })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') +
+            "//widget.daovoice.io/widget/6984b559.js", "daovoice")
+        daovoice('init', {
+            app_id: ""
+        });
+        daovoice('update');
+    </script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+    
+    
+
+</body>
+
+</html>

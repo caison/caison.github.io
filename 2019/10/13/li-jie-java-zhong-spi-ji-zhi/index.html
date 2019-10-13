@@ -4,14 +4,12 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="Java诊断利器Arthas, 分布式系统架构">
+    <meta name="keywords" content="理解Java中SPI机制, 分布式系统架构">
     <meta name="description" content="
-
-1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱
-当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：
-
-这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
-我改的代码为什">
+文章首发于Hollis公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
+1 SPI是什么SP">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -19,7 +17,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Java诊断利器Arthas | 分布式系统架构</title>
+    <title>理解Java中SPI机制 | 分布式系统架构</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -273,13 +271,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/images/arthas/1.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/images/理解Java中SPI机制/0.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        Java诊断利器Arthas
+                        理解Java中SPI机制
                     </div>
                 </div>
             </div>
@@ -389,16 +387,21 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/工具/">
-                                <span class="chip bg-color">工具</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Java基础/" class="post-category">
+                                Java基础
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -413,14 +416,14 @@
                     
                     <div class="info-break-policy">
                         <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        1.6k
+                        1.9k
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        6 分
+                        7 分
                     </div>
                     
                 
@@ -436,96 +439,130 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><img src="/images/arthas/1.jpg" alt></p>
-<p><img src="Java%E8%AF%8A%E6%96%AD%E5%88%A9%E5%99%A8Arthas/1.jpg" alt="Arthas"></p>
-<h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1 简介"></a>1 简介</h1><p>Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱</p>
-<p>当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：</p>
+                <p><img src="/images/%E7%90%86%E8%A7%A3Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6/0.jpg" alt></p>
+<pre><code>文章首发于Hollis公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com</code></pre><p>本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。</p>
+<h1 id="1-SPI是什么"><a href="#1-SPI是什么" class="headerlink" title="1 SPI是什么"></a>1 SPI是什么</h1><p>SPI全称Service Provider Interface，是Java提供的一套用来被第三方实现或者扩展的API，它可以用来启用框架扩展和替换组件。</p>
+<p>整体机制图如下：<br><img src="/images/%E7%90%86%E8%A7%A3Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6/1.png" alt><br>Java SPI 实际上是“<strong>基于接口的编程＋策略模式＋配置文件</strong>”组合实现的动态加载机制。</p>
+<p>系统设计的各个抽象，往往有很多不同的实现方案，在面向的对象的设计里，一般推荐模块之间基于接口编程，模块之间不对实现类进行硬编码。一旦代码里涉及具体的实现类，就违反了可拔插的原则，如果需要替换一种实现，就需要修改代码。为了实现在模块装配的时候能不在程序里动态指明，这就需要一种服务发现机制。<br>Java SPI就是提供这样的一个机制：为某个接口寻找服务实现的机制。有点类似IOC的思想，就是将装配的控制权移到程序之外，在模块化设计中这个机制尤其重要。所以SPI的核心思想就是<strong>解耦</strong>。</p>
+<h1 id="2-使用场景"><a href="#2-使用场景" class="headerlink" title="2 使用场景"></a>2 使用场景</h1><p>概括地说，适用于：<strong>调用者根据实际使用需要，启用、扩展、或者替换框架的实现策略</strong></p>
+<p>比较常见的例子：</p>
 <ul>
-<li>这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？</li>
-<li>我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？</li>
-<li>遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？</li>
-<li>线上遇到某个用户的数据处理有问题，但线上同样无法 debug，线下无法重现！</li>
-<li>是否有一个全局视角来查看系统的运行状况？</li>
-<li>有什么办法可以监控到JVM的实时运行状态？</li>
+<li>数据库驱动加载接口实现类的加载<br>JDBC加载不同类型数据库的驱动</li>
+<li>日志门面接口实现类加载<br>SLF4J加载不同提供商的日志实现类</li>
+<li>Spring<br>Spring中大量使用了SPI,比如：对servlet3.0规范对ServletContainerInitializer的实现、自动类型转换Type Conversion SPI(Converter SPI、Formatter SPI)等</li>
+<li>Dubbo<br>Dubbo中也大量使用SPI的方式实现框架的扩展, 不过它对Java提供的原生SPI做了封装，允许用户扩展实现Filter接口</li>
 </ul>
-<p>Arthas支持JDK 6+，支持Linux/Mac/Winodws，采用命令行交互模式，同时提供丰富的 Tab 自动补全功能，进一步方便进行问题的定位和诊断</p>
-<h1 id="2-主要功能"><a href="#2-主要功能" class="headerlink" title="2 主要功能"></a>2 主要功能</h1><p>Arthas提供的功能主要可以分为以下3个方面：</p>
+<h1 id="3-使用介绍"><a href="#3-使用介绍" class="headerlink" title="3 使用介绍"></a>3 使用介绍</h1><p>要使用Java SPI，需要遵循如下约定：</p>
 <ul>
-<li>(1) 信息监控<ul>
-<li>进程运行基本信息：内存、CPU占用、线程信息、线程堆栈、线程数统计、环境变量信息</li>
-<li>对象信息：类对象静态属性、 Mbean 的属性信息、已加载类信息、类加载器、类方法信息</li>
+<li>1、当服务提供者提供了接口的一种具体实现后，在jar包的META-INF/services目录下创建一个以“接口全限定名”为命名的文件，内容为实现类的全限定名；</li>
+<li>2、接口实现类所在的jar包放在主程序的classpath中；</li>
+<li>3、主程序通过java.util.ServiceLoder动态装载实现模块，它通过扫描META-INF/services目录下的配置文件找到实现类的全限定名，把类加载到JVM；</li>
+<li>4、SPI的实现类必须携带一个不带参数的构造方法；</li>
+</ul>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><p><strong>步骤1</strong>、定义一组接口 (假设是org.foo.demo.IShout)，并写出接口的一个或多个实现，(假设是org.foo.demo.animal.Dog、org.foo.demo.animal.Cat)。</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IShout</span> <span class="token punctuation">{</span>
+    <span class="token keyword">void</span> <span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Cat</span> <span class="token keyword">implements</span> <span class="token class-name">IShout</span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"miao miao"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Dog</span> <span class="token keyword">implements</span> <span class="token class-name">IShout</span> <span class="token punctuation">{</span>
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"wang wang"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p><strong>步骤2</strong>、在 src/main/resources/ 下建立 /META-INF/services 目录， 新增一个以接口命名的文件 (org.foo.demo.IShout文件)，内容是要应用的实现类（这里是org.foo.demo.animal.Dog和org.foo.demo.animal.Cat，每行一个类）。</p>
+<p>文件位置</p>
+<pre class=" language-java"><code class="language-java"><span class="token operator">-</span> src
+    <span class="token operator">-</span>main
+        <span class="token operator">-</span>resources
+            <span class="token operator">-</span> META<span class="token operator">-</span>INF
+                <span class="token operator">-</span> services
+                    <span class="token operator">-</span> org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>IShout</code></pre>
+<p>文件内容</p>
+<pre class=" language-java"><code class="language-java">org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>animal<span class="token punctuation">.</span>Dog
+org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>animal<span class="token punctuation">.</span>Cat</code></pre>
+<p><strong>步骤3</strong>、使用 ServiceLoader 来加载配置文件中指定的实现。</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SPIMain</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        ServiceLoader<span class="token operator">&lt;</span>IShout<span class="token operator">></span> shouts <span class="token operator">=</span> ServiceLoader<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span>IShout<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">for</span> <span class="token punctuation">(</span>IShout s <span class="token operator">:</span> shouts<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            s<span class="token punctuation">.</span><span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>代码输出：</p>
+<pre class=" language-java"><code class="language-java">wang wang
+miao miao</code></pre>
+<h1 id="4-原理解析"><a href="#4-原理解析" class="headerlink" title="4 原理解析"></a>4 原理解析</h1><p>首先看ServiceLoader类的签名类的成员变量：</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">ServiceLoader</span><span class="token operator">&lt;</span>S<span class="token operator">></span> <span class="token keyword">implements</span> <span class="token class-name">Iterable</span><span class="token operator">&lt;</span>S<span class="token operator">></span><span class="token punctuation">{</span>
+<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> String PREFIX <span class="token operator">=</span> <span class="token string">"META-INF/services/"</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 代表被加载的类或者接口</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> Class<span class="token operator">&lt;</span>S<span class="token operator">></span> service<span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 用于定位，加载和实例化providers的类加载器</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> ClassLoader loader<span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 创建ServiceLoader时采用的访问控制上下文</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> AccessControlContext acc<span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 缓存providers，按实例化的顺序排列</span>
+    <span class="token keyword">private</span> LinkedHashMap<span class="token operator">&lt;</span>String<span class="token punctuation">,</span>S<span class="token operator">></span> providers <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">LinkedHashMap</span><span class="token operator">&lt;</span><span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token comment" spellcheck="true">// 懒查找迭代器</span>
+    <span class="token keyword">private</span> LazyIterator lookupIterator<span class="token punctuation">;</span>
+
+    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+<span class="token punctuation">}</span></code></pre>
+<p>参考具体ServiceLoader具体源码，代码量不多，加上注释一共587行，梳理了一下，实现的流程如下：</p>
+<ul>
+<li><p>1 应用程序调用ServiceLoader.load方法<br>ServiceLoader.load方法内先创建一个新的ServiceLoader，并实例化该类中的成员变量，包括： </p>
+<ul>
+<li>loader(ClassLoader类型，类加载器)</li>
+<li>acc(AccessControlContext类型，访问控制器)</li>
+<li>providers(LinkedHashMap&lt;String,S&gt;类型，用于缓存加载成功的类)</li>
+<li>lookupIterator(实现迭代器功能)</li>
 </ul>
 </li>
-<li>(2) 方法调用<ul>
-<li>方法调用入参、返回值查看</li>
-<li>方法被调用的调用路径、调用耗时、方法调用次数、成功次数、失败次数等统计</li>
-<li>记录和重做方法调用</li>
-</ul>
+<li><p>2 应用程序通过迭代器接口获取对象实例<br>ServiceLoader先判断成员变量providers对象中(LinkedHashMap&lt;String,S&gt;类型)是否有缓存实例对象，如果有缓存，直接返回。<br>如果没有缓存，执行类的装载，实现如下：</p>
 </li>
-<li>(3) 类文件处理<ul>
-<li>dump已加载类的字节码、字节码反编译、类编译、类重新热加载</li>
-</ul>
+<li><p>(1) 读取META-INF/services/下的配置文件，获得所有能被实例化的类的名称，值得注意的是，ServiceLoader<strong>可以跨越jar包获取META-INF下的配置文件</strong>，具体加载配置的实现代码如下： </p>
+<pre><code>      try {
+          String fullName = PREFIX + service.getName();
+          if (loader == null)
+              configs = ClassLoader.getSystemResources(fullName);
+          else
+              configs = loader.getResources(fullName);
+      } catch (IOException x) {
+          fail(service, &quot;Error locating configuration files&quot;, x);
+      }</code></pre></li>
+<li><p>(2) 通过反射方法Class.forName()加载类对象，并用instance()方法将类实例化。</p>
+</li>
+<li><p>(3) 把实例化后的类缓存到providers对象中，(LinkedHashMap&lt;String,S&gt;类型）<br>然后返回实例对象。</p>
 </li>
 </ul>
-<h1 id="3-安装和使用"><a href="#3-安装和使用" class="headerlink" title="3 安装和使用"></a>3 安装和使用</h1><h2 id="3-1-安装"><a href="#3-1-安装" class="headerlink" title="3.1 安装"></a>3.1 安装</h2><p>下载arthas-boot.jar，然后用java -jar的方式启动：</p>
-<pre><code>wget https://alibaba.github.io/arthas/arthas-boot.jar
-java -jar arthas-boot.jar</code></pre><p>然后输入进程对应编号，进入Arthas的命令交互界面即可使用：</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/5618238-cd748c559b720ac4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
-<p>打印帮助信息：</p>
-<pre><code>java -jar arthas-boot.jar -h</code></pre><h2 id="3-2-使用"><a href="#3-2-使用" class="headerlink" title="3.2 使用"></a>3.2 使用</h2><p>下面介绍Arthas的一些常用的命令和用法和原理，看看是如何解决我们实际中的问题的，命令详情可以参考Arthas的官方文档</p>
-<h3 id="1-整体dashboard数据"><a href="#1-整体dashboard数据" class="headerlink" title="(1) 整体dashboard数据"></a>(1) 整体dashboard数据</h3><p>在arthas的命令行界面，输入dashboard命令，会实时展示当前tomcat的多线程状态、JVM各区域、GC情况等信息<br><img src="https://upload-images.jianshu.io/upload_images/5618238-a24148b54f5ac484.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="dashboard"></p>
-<h3 id="2-查看线程监控"><a href="#2-查看线程监控" class="headerlink" title="(2) 查看线程监控"></a>(2) 查看线程监控</h3><p>输入thread命令，会显示所有线程的状态信息<br>输入thread -n 3会显示当前最忙的3个线程，可以用来排查线程CPU消耗<br>输入thread -b 会显示当前处于BLOCKED状态的线程，可以排查线程锁的问题<br><img src="https://upload-images.jianshu.io/upload_images/5618238-a84fe618574a9481.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="thread"></p>
-<h3 id="3-JVM监控"><a href="#3-JVM监控" class="headerlink" title="(3) JVM监控"></a>(3) JVM监控</h3><p>输入jvm命令，查看jvm详细的性能数据<br><img src="https://upload-images.jianshu.io/upload_images/5618238-125dc73d973c43ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="jvm"></p>
-<h3 id="4-观察方法参数、返回值"><a href="#4-观察方法参数、返回值" class="headerlink" title="(4) 观察方法参数、返回值"></a>(4) 观察方法参数、返回值</h3><p>有时排查问题中我们需要查看参数，返回值，通常的需要加日志打印，比较繁琐，基于watch命令我们可以很方便做到这一切</p>
-<pre class=" language-java"><code class="language-java">$ watch demo<span class="token punctuation">.</span>MathGame primeFactors <span class="token string">"{params,returnObj}"</span> <span class="token operator">-</span>x <span class="token number">2</span>
-Press Ctrl<span class="token operator">+</span>C to abort<span class="token punctuation">.</span>
-<span class="token function">Affect</span><span class="token punctuation">(</span><span class="token keyword">class</span><span class="token operator">-</span>cnt<span class="token operator">:</span><span class="token number">1</span> <span class="token punctuation">,</span> method<span class="token operator">-</span>cnt<span class="token operator">:</span><span class="token number">1</span><span class="token punctuation">)</span> cost in <span class="token number">44</span> ms<span class="token punctuation">.</span>
-ts<span class="token operator">=</span><span class="token number">2018</span><span class="token operator">-</span><span class="token number">12</span><span class="token operator">-</span><span class="token number">03</span> <span class="token number">19</span><span class="token operator">:</span><span class="token number">16</span><span class="token operator">:</span><span class="token number">51</span><span class="token punctuation">;</span> <span class="token punctuation">[</span>cost<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">.</span>280502ms<span class="token punctuation">]</span> result<span class="token operator">=</span><span class="token annotation punctuation">@ArrayList</span><span class="token punctuation">[</span>
-    <span class="token annotation punctuation">@Object</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">[</span>
-        <span class="token annotation punctuation">@Integer</span><span class="token punctuation">[</span><span class="token number">535629513</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token annotation punctuation">@ArrayList</span><span class="token punctuation">[</span>
-        <span class="token annotation punctuation">@Integer</span><span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-        <span class="token annotation punctuation">@Integer</span><span class="token punctuation">[</span><span class="token number">19</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-        <span class="token annotation punctuation">@Integer</span><span class="token punctuation">[</span><span class="token number">191</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-        <span class="token annotation punctuation">@Integer</span><span class="token punctuation">[</span><span class="token number">49199</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
-    <span class="token punctuation">]</span><span class="token punctuation">,</span>
-<span class="token punctuation">]</span></code></pre>
-<h3 id="5-观察方法调用路径，耗时详情"><a href="#5-观察方法调用路径，耗时详情" class="headerlink" title="(5) 观察方法调用路径，耗时详情"></a>(5) 观察方法调用路径，耗时详情</h3><p>有时会遇到服务卡顿，想排查到底哪个步骤耗时比较久，通常做法是加日志，使用trace命令可以很方便解决这个问题：</p>
-<pre class=" language-java"><code class="language-java">$ trace demo<span class="token punctuation">.</span>MathGame run
-Press Ctrl<span class="token operator">+</span>C to abort<span class="token punctuation">.</span>
-<span class="token function">Affect</span><span class="token punctuation">(</span><span class="token keyword">class</span><span class="token operator">-</span>cnt<span class="token operator">:</span><span class="token number">1</span> <span class="token punctuation">,</span> method<span class="token operator">-</span>cnt<span class="token operator">:</span><span class="token number">1</span><span class="token punctuation">)</span> cost in <span class="token number">42</span> ms<span class="token punctuation">.</span>
-`<span class="token operator">--</span><span class="token operator">-</span>ts<span class="token operator">=</span><span class="token number">2018</span><span class="token operator">-</span><span class="token number">12</span><span class="token operator">-</span><span class="token number">04</span> <span class="token number">00</span><span class="token operator">:</span><span class="token number">44</span><span class="token operator">:</span><span class="token number">17</span><span class="token punctuation">;</span>thread_name<span class="token operator">=</span>main<span class="token punctuation">;</span>id<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span>is_daemon<span class="token operator">=</span><span class="token boolean">false</span><span class="token punctuation">;</span>priority<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">;</span>TCCL<span class="token operator">=</span>sun<span class="token punctuation">.</span>misc<span class="token punctuation">.</span>Launcher$AppClassLoader<span class="token annotation punctuation">@3d4eac69</span>
-    `<span class="token operator">--</span><span class="token operator">-</span><span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">.</span>611029ms<span class="token punctuation">]</span> demo<span class="token punctuation">.</span>MathGame<span class="token operator">:</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-        <span class="token operator">+</span><span class="token operator">--</span><span class="token operator">-</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">.</span>05638ms<span class="token punctuation">]</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>Random<span class="token operator">:</span><span class="token function">nextInt</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-        <span class="token operator">+</span><span class="token operator">--</span><span class="token operator">-</span><span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">.</span>036885ms<span class="token punctuation">]</span> demo<span class="token punctuation">.</span>MathGame<span class="token operator">:</span><span class="token function">primeFactors</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-        `<span class="token operator">--</span><span class="token operator">-</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">.</span>170316ms<span class="token punctuation">]</span> demo<span class="token punctuation">.</span>MathGame<span class="token operator">:</span><span class="token function">print</span><span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
-<h1 id="4-实现原理"><a href="#4-实现原理" class="headerlink" title="4 实现原理"></a>4 实现原理</h1><p>整体宏观模块调用图如下：<br><img src="https://upload-images.jianshu.io/upload_images/5618238-6ab6ae954f6bca2c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整体模块调用图"></p>
-<p>篇幅原因，下面对其其中涉及的比较核心的2个原理进行简单介绍：</p>
-<h2 id="1-信息监控、类文件处理"><a href="#1-信息监控、类文件处理" class="headerlink" title="(1) 信息监控、类文件处理"></a>(1) 信息监控、类文件处理</h2><p>JDK提供的JMX(Java Management Extensions  Java管理扩展，是一个为应用程序植入管理功能的框架)，JMX管理管理了一系列MBean对象，Arthas正是基于这些MBean对象实现内存、GC、类加载信息、JVM信息监控</p>
-<h2 id="2-方法调用"><a href="#2-方法调用" class="headerlink" title="(2) 方法调用"></a>(2) 方法调用</h2><p>从JDK5之后，引入了java.lang.Instrument，程序员通过修改方法的字节码实现动态修改类代码。在代理类的方法中的参数中，就有Instrumentation inst实例。通过该实例，我们可以调用Instrumentation提供的各种接口。比如调用inst.getAllLoadedClasses()得到所有已经加载过的类。调用inst.addTransformer(new SdlTransformer(), true)新增转换器。调用inst.retransformClasses(Class cls)，向JVM发起重转换请求</p>
-<p>Arthas使用ASM生成增强后的类的字节码，增强的功能包括方法调用入参、返回值查看、方法调用统计、方法调用记录和重做，再基于JDK提供的Instrumentation接口对方法进行增加和转换</p>
-<h1 id="5-实战案例"><a href="#5-实战案例" class="headerlink" title="5 实战案例"></a>5 实战案例</h1><p>Arthas官方文档提供了许多用户案例，下面介绍几个比较有意思的案例：</p>
-<h2 id="1-排查应用奇怪日志来源-案例详情"><a href="#1-排查应用奇怪日志来源-案例详情" class="headerlink" title="(1) 排查应用奇怪日志来源 案例详情"></a>(1) 排查应用奇怪日志来源 <a href="https://github.com/alibaba/arthas/issues/263" target="_blank" rel="noopener">案例详情</a></h2><p>服务应用运行中有时会出现一些奇怪日志，排查定位这些日志的来源比较麻烦<br>通过修改StringBuilder的实现代码打印出日志的调用堆栈信息，编译生成StringBuilder.clss，再基于Arthas提供的redefine命令修改应用中使用的StringBuilder的实际使用字节码</p>
-<h2 id="2-排查SpringBoot应用401-404问题-案例详情"><a href="#2-排查SpringBoot应用401-404问题-案例详情" class="headerlink" title="(2) 排查SpringBoot应用401/404问题 案例详情"></a>(2) 排查SpringBoot应用401/404问题 <a href="https://github.com/alibaba/arthas/issues/429" target="_blank" rel="noopener">案例详情</a></h2><p>页面访问返回401/404，碰到这种问题时，通常很头痛，特别是在线上环境时<br>通过Arthas提供的trace命令，打印出页面访问时的完整请求树，定位出具体哪个Servlet返回404</p>
-<pre><code>$ trace javax.servlet.Servlet *
-Press Ctrl+C to abort.
-Affect(class-cnt:7 , method-cnt:185) cost in 1018 ms.</code></pre><p>通过trace命令，trace对象是javax.servlet.Filter定位具体哪个Filter拦截请求定位返回401的问题来源</p>
-<pre><code>$ trace javax.servlet.Filter *
-Press Ctrl+C to abort.
-Affect(class-cnt:13 , method-cnt:75) cost in 278 ms.</code></pre><h2 id="3-线上代码热更新-案例详情"><a href="#3-线上代码热更新-案例详情" class="headerlink" title="(3) 线上代码热更新 案例详情"></a>(3) 线上代码热更新 <a href="https://github.com/alibaba/arthas/issues/537" target="_blank" rel="noopener">案例详情</a></h2><p>有时为了快速验证线上问题的修复方案，或者为了快速测试，我们需要热更新代码<br>Arthas提供的解决步骤如下</p>
+<h1 id="5-总结"><a href="#5-总结" class="headerlink" title="5 总结"></a>5 总结</h1><p><strong>优点</strong>：<br>使用Java SPI机制的优势是实现解耦，使得第三方服务模块的装配控制的逻辑与调用者的业务代码分离，而不是耦合在一起。应用程序可以根据实际业务情况启用框架扩展或替换框架组件。</p>
+<p>相比使用提供接口jar包，供第三方服务模块实现接口的方式，SPI的方式使得源框架，不必关心接口的实现类的路径，可以不用通过下面的方式获取接口实现类：</p>
 <ul>
-<li>步骤1 jad命令反编译代码</li>
-<li>步骤2 文本编辑器修改代码</li>
-<li>步骤3 sc命令查找代码所在类的ClassLoader</li>
-<li>步骤4 mc命令指定ClassLoader编译代码</li>
-<li>步骤5 redefine命令热更新代码</li>
+<li>代码硬编码import 导入实现类</li>
+<li>指定类全路径反射获取：例如在JDBC4.0之前，JDBC中获取数据库驱动类需要通过<strong>Class.forName(“com.mysql.jdbc.Driver”)</strong>，类似语句先动态加载数据库相关的驱动，然后再进行获取连接等的操作</li>
+<li>第三方服务模块把接口实现类实例注册到指定地方，源框架从该处访问实例</li>
 </ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://alibaba.github.io/arthas/" target="_blank" rel="noopener">Arthas官方文档</a></p>
-<p><a href="https://alibaba.github.io/arthas/quick-start.html" target="_blank" rel="noopener">Arthas快速入门</a></p>
-<p><a href="https://blog.csdn.net/zl1zl2zl3/article/details/89333004" target="_blank" rel="noopener">6到飞起的Java诊断工具Arthas</a></p>
-<p><a href="https://mp.weixin.qq.com/s/wG51oUqVPObACqvZA9ItOg" target="_blank" rel="noopener">解密阿里线上问题诊断工具Arthas和jvm-sandbox</a></p>
-<p><img src="https://upload-images.jianshu.io/upload_images/5618238-43a7a547879c7b7e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>通过SPI的方式，第三方服务模块实现接口后，在第三方的项目代码的META-INF/services目录下的配置文件指定实现类的全路径名，源码框架即可找到实现类</p>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>虽然ServiceLoader也算是使用的延迟加载，但是基本只能通过遍历全部获取，也就是接口的实现类全部加载并实例化一遍。如果你并不想用某些实现类，它也被加载并实例化了，这就造成了浪费。获取某个实现类的方式不够灵活，只能通过Iterator形式获取，不能根据某个参数来获取对应的实现类。</li>
+<li>多个并发多线程使用ServiceLoader类的实例是不安全的。</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://time.geekbang.org/column/intro/82?code=w8EZ6RGOQApZJ5tpAzP8dRzeVHxZ4q%2FfOdSbSZzbkhc%3D" target="_blank" rel="noopener">Java核心技术36讲</a><br><a href="https://docs.oracle.com/javase/tutorial/ext/basics/spi.html" target="_blank" rel="noopener">The Java™ Tutorials</a><br><a href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html" target="_blank" rel="noopener">Java Doc</a><br><a href="https://www.developer.com/java/article.php/3848881/Service-Provider-Interface-Creating-Extensible-Java-Applications.htm" target="_blank" rel="noopener">Service Provider Interface: Creating Extensible Java Applications</a><br><a href="https://en.wikipedia.org/wiki/Service_provider_interface" target="_blank" rel="noopener">Service provider interface</a><br><a href="https://www.cnblogs.com/lovesqcc/p/5229353.html" target="_blank" rel="noopener">Java ServiceLoader使用和解析</a><br><a href="https://blog.csdn.net/yangguosb/article/details/78772730" target="_blank" rel="noopener">Java基础之SPI机制</a><br><a href="https://cxis.me/2017/04/17/Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%85%A5%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" target="_blank" rel="noopener">Java中SPI机制深入及源码解析</a><br><a href="http://www.spring4all.com/article/260" target="_blank" rel="noopener">SPI机制简介</a></p>
+<p>都看到这里了，关注个公众号吧，一起交流学习<br><img src="/images/%E7%90%86%E8%A7%A3Java%E4%B8%ADSPI%E6%9C%BA%E5%88%B6/2.jpg" alt="caison_way"></p>
 
             </div>
             <hr/>
@@ -686,8 +723,8 @@ Affect(class-cnt:13 , method-cnt:75) cost in 278 ms.</code></pre><h2 id="3-线�
                 </a>
             </div>
             <br/>
-            <a  href="/2019/10/13/java-zhen-duan-li-qi-arthas/">
-                    《Java诊断利器Arthas》
+            <a  href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
+                    《理解Java中SPI机制》
             </a> 由
             <a href="https://caison.github.io">
                 caison
@@ -728,51 +765,43 @@ Affect(class-cnt:13 , method-cnt:75) cost in 278 ms.</code></pre><h2 id="3-线�
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/java-zhen-duan-li-qi-arthas/">
+                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
                     <div class="card-image">
                         
-                        <img src="/images/arthas/1.jpg" class="responsive-img" alt="Java诊断利器Arthas">
+                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
                         
-                        <span class="card-title">Java诊断利器Arthas</span>
+                        <span class="card-title">理解Java-GC原理和调优</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
+                            文章首发于51CTO公众号
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
 
-1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱
-当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：
-
-这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
-我改的代码为什
+GC基础原理，涉及调优目标，
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                        </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            caison
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                            
                             
                         </span>
                     </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/工具/">
-                        <span class="chip bg-color">工具</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -781,27 +810,24 @@ Affect(class-cnt:13 , method-cnt:75) cost in 278 ms.</code></pre><h2 id="3-线�
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/java-zhen-duan-li-qi-arthas/">
+                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
                     <div class="card-image">
                         
-                        <img src="/images/arthas/1.jpg" class="responsive-img" alt="Java诊断利器Arthas">
+                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
                         
-                        <span class="card-title">Java诊断利器Arthas</span>
+                        <span class="card-title">理解Java内存模型</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-
-1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱
-当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：
-
-这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？
-我改的代码为什
+文章首发于51CTO技术栈公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问
                         
                     </div>
                     <div class="publish-info">
@@ -810,20 +836,15 @@ Affect(class-cnt:13 , method-cnt:75) cost in 278 ms.</code></pre><h2 id="3-线�
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-user fa-fw"></i>
-                            caison
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                            
                             
                         </span>
                     </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/工具/">
-                        <span class="chip bg-color">工具</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -947,7 +968,7 @@ Affect(class-cnt:13 , method-cnt:75) cost in 278 ms.</code></pre><h2 id="3-线�
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">1.6k</span>&nbsp;字
+                class="white-color">36.6k</span>&nbsp;字
             
             
             
