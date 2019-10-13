@@ -868,22 +868,22 @@ doSomethingWithConfig();</code></pre><p>上面代码中如果定义initialized�
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
+                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java中SPI机制/0.jpg" class="responsive-img" alt="理解Java中SPI机制">
+                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
                         
-                        <span class="card-title">理解Java中SPI机制</span>
+                        <span class="card-title">理解Java-GC原理和调优</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-文章首发于Hollis公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
-1 SPI是什么SP
+                            文章首发于51CTO公众号
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
+
+GC基础原理，涉及调优目标，
                         
                     </div>
                     <div class="publish-info">
@@ -912,22 +912,19 @@ doSomethingWithConfig();</code></pre><p>上面代码中如果定义initialized�
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
+                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
                     <div class="card-image">
                         
-                        <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
+                        <img src="/images/理解Java并发底层之AQS实现/0.jpg" class="responsive-img" alt="理解Java并发底层之AQS实现">
                         
-                        <span class="card-title">日志打印规范及技巧学习总结</span>
+                        <span class="card-title">理解Java并发底层之AQS实现</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-###一、日志打印级别
-
-DEBUG（调试）
-开发调试日志*。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按
+                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
                         
                     </div>
                     <div class="publish-info">

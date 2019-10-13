@@ -6,10 +6,8 @@
     <meta charset="utf-8">
     <meta name="keywords" content="日志打印规范及技巧学习总结, 分布式系统架构">
     <meta name="description" content="
-###一、日志打印级别
-
-DEBUG（调试）
-开发调试日志*。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按">
+一、日志打印级别
+DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -440,17 +438,14 @@ DEBUG（调试）
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p><img src="/images/%E6%97%A5%E5%BF%97%E6%89%93%E5%8D%B0%E8%A7%84%E8%8C%83%E5%8F%8A%E6%8A%80%E5%B7%A7%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/0.jpg" alt></p>
-<p>###一、日志打印级别</p>
-<ul>
-<li><strong>DEBUG（调试）</strong></li>
-<li><em>开发调试日志*</em>。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的走向打印。</li>
+<h1 id="一、日志打印级别"><a href="#一、日志打印级别" class="headerlink" title="一、日志打印级别"></a>一、日志打印级别</h1><ul>
+<li><strong>DEBUG（调试）</strong><br><strong>开发调试日志</strong>。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的走向打印。</li>
 <li><strong>INFO（通知）</strong><br>INFO日志级别主要用于记录系统运行状态等关联信息。该日志级别，<strong>常用于反馈系统当前状态给最终用户</strong>。所以，在这里输出的信息，应该对最终用户具有实际意义，也就是最终用户要能够看得明白是什么意思才行。</li>
 <li><strong>WARN（警告）</strong><br>WARN日志常用来表示<strong>系统模块发生问题，但并不影响系统运行</strong>。 此时，进行一些修复性的工作，还能把系统恢复到正常的状态。</li>
 <li><strong>ERROR（错误）</strong></li>
 <li><em>此信息输出后，主体系统核心模块正常工作，需要修复才能正常工作*</em>。 就是说可以进行一些修复性的工作，但无法确定系统会正常的工作下去，系统在以后的某个阶段，很可能会因为当前的这个问题，导致一个无法修复的错误（例如宕机），但也可能一直工作到停止也不出现严重问题。</li>
 </ul>
-<p>###二、日志打印规范</p>
-<blockquote>
+<h1 id="二、日志打印规范"><a href="#二、日志打印规范" class="headerlink" title="二、日志打印规范"></a>二、日志打印规范</h1><blockquote>
 <p><strong>1. 【强制</strong>】应用中不可直接使用日志系统 （Log 4 j 、 Logback） 中的 API ，而应依赖使用日志框架<br>SLF 4 J 中的 API ，使用门面模式的日志框架，有利于维护和各个类的日志处理方式统一。</p>
 </blockquote>
 <pre class=" language-java"><code class="language-java"><span class="token keyword">import</span> org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span>Logger<span class="token punctuation">;</span>
@@ -498,8 +493,7 @@ DEBUG（调试）
 <li>【参考】可以使用 warn 日志级别来记录用户输入参数错误的情况，避免用户投诉时，无所适从。注意日志输出的级别， error 级别只记录系统逻辑出错、异常等重要的错误信息。如非必要，请不要在此场景打出 error 级别。</li>
 </ol>
 </blockquote>
-<p>###三、日志打印技巧<br>####问题排查的日志</p>
-<ul>
+<h1 id="三、日志打印技巧"><a href="#三、日志打印技巧" class="headerlink" title="三、日志打印技巧"></a>三、日志打印技巧</h1><h2 id="问题排查的日志"><a href="#问题排查的日志" class="headerlink" title="问题排查的日志"></a>问题排查的日志</h2><ul>
 <li><p><strong>对接外部的调用封装</strong>：<br>程序中对接外部系统与模块的依赖调用前后都记下日志，方便接口调试。出问题时也可以很快理清是哪块的问题 </p>
 <pre class=" language-java"><code class="language-java">LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Calling external system:"</span> <span class="token operator">+</span> parameters<span class="token punctuation">)</span><span class="token punctuation">;</span>  
 Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
@@ -538,35 +532,39 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
 <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">error</span><span class="token punctuation">(</span><span class="token string">"Description xxx"</span><span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token punctuation">}</span>  
-</code></pre>
+<span class="token keyword">void</span> <span class="token function">invoke</span><span class="token punctuation">(</span>Object primaryParam<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>primaryParam <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
+      LOG<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>原因<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+      <span class="token keyword">return</span><span class="token punctuation">;</span>  
+  <span class="token punctuation">}</span>  
+<span class="token punctuation">}</span> </code></pre>
 </li>
-</ul>
-<p>void invoke(Object primaryParam) {<br>    if (primaryParam == null) {<br>        LOG.warn(原因…);<br>        return;<br>    }<br>} </p>
-<pre><code>* 非预期执行： 
-为程序在“有可能”执行到的地方打印日志。如果我想删除一个文件，结果返回成功。但事实上，那个文件在你想删除之前就不存在了。最终结果是一致的，但程序得让我们知道这种情况，要查清为什么文件在删除之前就已经不存在呢 
-```java
-int myValue = xxxx;  
-int absResult = Math.abs(myValue);  
-if (absResult &lt; 0) {  
-    LOG.info(&quot;Original int &quot; + myValue + &quot;has nagetive abs &quot; + absResult);  
-}  </code></pre><ul>
-<li>很少出现的else情况：<br>else可能吞掉你的请求，或是赋予难以理解的最终结果 <pre class=" language-java"><code class="language-java">Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
+<li><p>非预期执行：<br>为程序在“有可能”执行到的地方打印日志。如果我想删除一个文件，结果返回成功。但事实上，那个文件在你想删除之前就不存在了。最终结果是一致的，但程序得让我们知道这种情况，要查清为什么文件在删除之前就已经不存在呢 </p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">int</span> myValue <span class="token operator">=</span> xxxx<span class="token punctuation">;</span>  
+<span class="token keyword">int</span> absResult <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">abs</span><span class="token punctuation">(</span>myValue<span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<span class="token keyword">if</span> <span class="token punctuation">(</span>absResult <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  
+  LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"Original int "</span> <span class="token operator">+</span> myValue <span class="token operator">+</span> <span class="token string">"has nagetive abs "</span> <span class="token operator">+</span> absResult<span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<span class="token punctuation">}</span>  </code></pre>
+</li>
+<li><p>很少出现的else情况：<br>else可能吞掉你的请求，或是赋予难以理解的最终结果 </p>
+<pre class=" language-java"><code class="language-java">Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
 <span class="token keyword">if</span> <span class="token punctuation">(</span>running<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
  result <span class="token operator">=</span> xxx<span class="token punctuation">;</span>  
 <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>  
  result <span class="token operator">=</span> yyy<span class="token punctuation">;</span>  
  LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"System does not running, we change the final result"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token punctuation">}</span>  </code></pre>
-<h4 id="程序运行状态的日志"><a href="#程序运行状态的日志" class="headerlink" title="程序运行状态的日志"></a>程序运行状态的日志</h4>程序在运行时就像一个机器人，我们可以从它的日志看出它正在做什么，是不是按预期的设计在做，所以这些正常的运行状态是要有的。 </li>
-<li>程序运行时间： <pre class=" language-java"><code class="language-java"><span class="token keyword">long</span> startTime <span class="token operator">=</span> System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
-</code></pre>
+<h2 id="程序运行状态的日志"><a href="#程序运行状态的日志" class="headerlink" title="程序运行状态的日志"></a>程序运行状态的日志</h2><p>程序在运行时就像一个机器人，我们可以从它的日志看出它正在做什么，是不是按预期的设计在做，所以这些正常的运行状态是要有的。 </p>
+</li>
+<li><p>程序运行时间： </p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">long</span> startTime <span class="token operator">=</span> System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> 
+LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"execution cost : "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> startTime<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"ms"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>　 </code></pre>
 </li>
 </ul>
-<p>// business logical  </p>
-<p>LOG.info(“execution cost : “ + (System.currentTime() - startTime) + “ms”);　 </p>
-<pre><code>大批量数据的执行进度： 
-```java
-LOG.debug(&quot;current progress: &quot; + (currentPos * 100 / totalAmount) + &quot;%&quot;); </code></pre><p>关键变量及正在做哪些重要的事情：<br>执行关键的逻辑，做IO操作等等 </p>
+<p>大批量数据的执行进度： </p>
+<pre class=" language-java"><code class="language-java">LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"current progress: "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>currentPos <span class="token operator">*</span> <span class="token number">100</span> <span class="token operator">/</span> totalAmount<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"%"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </code></pre>
+<p>关键变量及正在做哪些重要的事情：<br>执行关键的逻辑，做IO操作等等 </p>
 <pre class=" language-java"><code class="language-java">String <span class="token function">getJVMPid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  
    String pid <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>  
    <span class="token comment" spellcheck="true">// Obtains JVM process ID  </span>
@@ -578,8 +576,7 @@ LOG.debug(&quot;current progress: &quot; + (currentPos * 100 / totalAmount) + &q
     LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"Calling remote method : "</span> <span class="token operator">+</span> params<span class="token punctuation">)</span><span class="token punctuation">;</span>  
     <span class="token comment" spellcheck="true">//Calling remote server  </span>
 <span class="token punctuation">}</span> </code></pre>
-<p>###四、需要规避的问题</p>
-<ul>
+<h1 id="四、需要规避的问题"><a href="#四、需要规避的问题" class="headerlink" title="四、需要规避的问题"></a>四、需要规避的问题</h1><ul>
 <li><p>频繁打印大数据量日志：<br>当日志产生的速度大于日志文件写磁盘的速度，会导致日志内容积压在内存中，导致内存泄漏。</p>
 </li>
 <li><p>无意义的Log：<br>日志不包含有意义的信息: 你肯定想知道的是哪个文件不存在吧 </p>
@@ -798,31 +795,31 @@ LOG.debug(&quot;current progress: &quot; + (currentPos * 100 / totalAmount) + &q
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
+                <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
+                        <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
                         
-                        <span class="card-title">理解Java内存模型</span>
+                        <span class="card-title">日志打印规范及技巧学习总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-文章首发于51CTO技术栈公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问
+一、日志打印级别
+DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -835,6 +832,7 @@ LOG.debug(&quot;current progress: &quot; + (currentPos * 100 / totalAmount) + &q
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -845,21 +843,21 @@ LOG.debug(&quot;current progress: &quot; + (currentPos * 100 / totalAmount) + &q
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-de-fen-ji-yin-yong-mo-xing/">
+                <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java的分级引用模型/0.jpg" class="responsive-img" alt="理解Java的分级引用模型">
+                        <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
                         
-                        <span class="card-title">理解Java的分级引用模型</span>
+                        <span class="card-title">线程的5种状态总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文通过探析Java中的引用模型，分析比较强引用、软引用、弱引用、虚引用的概念及使用场景，知其然且知其所以然，希望给大家在实际开发实践、学习开源项目提供参考。
-1 Jav
+##线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
+
+####New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线
                         
                     </div>
                     <div class="publish-info">

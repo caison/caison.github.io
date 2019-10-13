@@ -6,8 +6,7 @@
     <meta charset="utf-8">
     <meta name="keywords" content="设计模式-行为型模式, 分布式系统架构">
     <meta name="description" content="
-###中介者模式(Mediator)
-意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构">
+中介者模式(Mediator)意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -438,26 +437,17 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/0.jpg" alt></p>
-<p>###中介者模式(Mediator)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/1.png" alt="中介者模式"><strong>意图：</strong>用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。<br><strong>主要解决：</strong>对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复杂，同时若一个对象发生改变，我们也需要跟踪与之相关联的对象，同时做出相应的处理。</p>
-<p>###命令模式(Command)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/2.png" alt="命令模式"><br><strong>意图：</strong>将一个请求封装成一个对象，从而使得行为请求者和行为实现者解耦合。<br><strong>主要解决：</strong>在软件系统中，行为请求者与行为实现者通常是一种紧耦合的关系，但某些场合，比如需要对行为进行记录、撤销或重做、事务等处理时，这种无法抵御变化的紧耦合的设计就不太合适。</p>
-<p>###备忘录模式(Memento)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/3.png" alt="备忘录模式"><br><strong>意图：</strong>在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。<br><strong>主要解决：</strong>所谓备忘录模式就是在不破坏封装的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态，这样可以在以后将对象恢复到原先保存的状态。</p>
-<p>###模板方法模式(Template)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/4.png" alt="模板方法模式"><br><strong>意图：</strong>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。<br><strong>主要解决：</strong>一些方法通用，却在每一个子类都重新写了这一方法。<br>###状态模式(State)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/5.png" alt="状态模式"><strong>意图：</strong>将特定状态相关的逻辑分散到一些类的状态类中<br><strong>主要解决：</strong>对象的行为依赖于它的状态（属性），并且可以根据它的状态改变而改变它的相关行为。</p>
-<p>###策略模式(Strategy)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/6.png" alt="策略模式"><strong>意图：</strong>定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。<br><strong>主要解决：</strong>在有多种算法相似的情况下，使用 if…else 所带来的复杂和难以维护。</p>
-<p>###观察者模式(Observer)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/7.png" alt="观察者模式"><br><strong>意图：</strong>定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并被自动更新。<br><strong>主要解决：</strong>一个对象状态改变给其他对象通知的问题，而且要考虑到易用和低耦合，保证高度的协作。</p>
-<p>###解释器模式(Interpreter )</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/8.png" alt="解释器模式"><strong>意图：</strong>给定一个语言，定义它的文法表示，并定义一个解释器，这个解释器使用该标识来解释语言中的句子。<br><strong>主要解决：</strong>对于一些固定文法构建一个解释句子的解释器。</p>
-<p>###访问者模式(Visitor)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/9.png" alt="访问者模式"><strong>意图：</strong>主要将数据结构与数据访问操作分离。<br><strong>主要解决：</strong>稳定的数据结构和易变的访问操作耦合问题。</p>
-<p>###责任链模式(Chain of Responsibility)</p>
-<p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/10.png" alt="责任链模式"><strong>意图：</strong>避免请求发送者与接收者耦合在一起，让多个对象都有可能接收请求，将这些对象连接成一条链，并且沿着这条链传递请求，直到有对象处理它为止。<br><strong>主要解决：</strong>职责链上的处理者负责处理请求，客户只需要将请求发送到职责链上即可，无须关心请求的处理细节和请求的传递，所以职责链将请求的发送者和请求的处理者解耦了。</p>
-<p>###迭代器模式(Iterator)<br><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/11.png" alt="迭代器模式"><strong>意图：</strong>提供一种方法顺序访问一个聚合对象中各个元素, 而又无须暴露该对象的内部表示。<br><strong>主要解决：</strong>不同的方式来遍历整个整合对象。</p>
+<h1 id="中介者模式-Mediator"><a href="#中介者模式-Mediator" class="headerlink" title="中介者模式(Mediator)"></a>中介者模式(Mediator)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/1.png" alt="中介者模式"><strong>意图：</strong>用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。<br><strong>主要解决：</strong>对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复杂，同时若一个对象发生改变，我们也需要跟踪与之相关联的对象，同时做出相应的处理。</p>
+<h1 id="命令模式-Command"><a href="#命令模式-Command" class="headerlink" title="命令模式(Command)"></a>命令模式(Command)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/2.png" alt="命令模式"><br><strong>意图：</strong>将一个请求封装成一个对象，从而使得行为请求者和行为实现者解耦合。<br><strong>主要解决：</strong>在软件系统中，行为请求者与行为实现者通常是一种紧耦合的关系，但某些场合，比如需要对行为进行记录、撤销或重做、事务等处理时，这种无法抵御变化的紧耦合的设计就不太合适。</p>
+<h1 id="备忘录模式-Memento"><a href="#备忘录模式-Memento" class="headerlink" title="备忘录模式(Memento)"></a>备忘录模式(Memento)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/3.png" alt="备忘录模式"><br><strong>意图：</strong>在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。<br><strong>主要解决：</strong>所谓备忘录模式就是在不破坏封装的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态，这样可以在以后将对象恢复到原先保存的状态。</p>
+<h1 id="模板方法模式-Template"><a href="#模板方法模式-Template" class="headerlink" title="模板方法模式(Template)"></a>模板方法模式(Template)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/4.png" alt="模板方法模式"><br><strong>意图：</strong>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。<br><strong>主要解决：</strong>一些方法通用，却在每一个子类都重新写了这一方法。</p>
+<h1 id="状态模式-State"><a href="#状态模式-State" class="headerlink" title="状态模式(State)"></a>状态模式(State)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/5.png" alt="状态模式"><strong>意图：</strong>将特定状态相关的逻辑分散到一些类的状态类中<br><strong>主要解决：</strong>对象的行为依赖于它的状态（属性），并且可以根据它的状态改变而改变它的相关行为。</p>
+<h1 id="策略模式-Strategy"><a href="#策略模式-Strategy" class="headerlink" title="策略模式(Strategy)"></a>策略模式(Strategy)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/6.png" alt="策略模式"><strong>意图：</strong>定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。<br><strong>主要解决：</strong>在有多种算法相似的情况下，使用 if…else 所带来的复杂和难以维护。</p>
+<h1 id="观察者模式-Observer"><a href="#观察者模式-Observer" class="headerlink" title="观察者模式(Observer)"></a>观察者模式(Observer)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/7.png" alt="观察者模式"><br><strong>意图：</strong>定义对象间的一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都得到通知并被自动更新。<br><strong>主要解决：</strong>一个对象状态改变给其他对象通知的问题，而且要考虑到易用和低耦合，保证高度的协作。</p>
+<h1 id="解释器模式-Interpreter"><a href="#解释器模式-Interpreter" class="headerlink" title="解释器模式(Interpreter )"></a>解释器模式(Interpreter )</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/8.png" alt="解释器模式"><strong>意图：</strong>给定一个语言，定义它的文法表示，并定义一个解释器，这个解释器使用该标识来解释语言中的句子。<br><strong>主要解决：</strong>对于一些固定文法构建一个解释句子的解释器。</p>
+<h1 id="访问者模式-Visitor"><a href="#访问者模式-Visitor" class="headerlink" title="访问者模式(Visitor)"></a>访问者模式(Visitor)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/9.png" alt="访问者模式"><strong>意图：</strong>主要将数据结构与数据访问操作分离。<br><strong>主要解决：</strong>稳定的数据结构和易变的访问操作耦合问题。</p>
+<h1 id="责任链模式-Chain-of-Responsibility"><a href="#责任链模式-Chain-of-Responsibility" class="headerlink" title="责任链模式(Chain of Responsibility)"></a>责任链模式(Chain of Responsibility)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/10.png" alt="责任链模式"><strong>意图：</strong>避免请求发送者与接收者耦合在一起，让多个对象都有可能接收请求，将这些对象连接成一条链，并且沿着这条链传递请求，直到有对象处理它为止。<br><strong>主要解决：</strong>职责链上的处理者负责处理请求，客户只需要将请求发送到职责链上即可，无须关心请求的处理细节和请求的传递，所以职责链将请求的发送者和请求的处理者解耦了。</p>
+<h1 id="迭代器模式-Iterator"><a href="#迭代器模式-Iterator" class="headerlink" title="迭代器模式(Iterator)"></a>迭代器模式(Iterator)</h1><p><img src="/images/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/11.png" alt="迭代器模式"><strong>意图：</strong>提供一种方法顺序访问一个聚合对象中各个元素, 而又无须暴露该对象的内部表示。<br><strong>主要解决：</strong>不同的方式来遍历整个整合对象。</p>
 
             </div>
             <hr/>
@@ -664,21 +654,21 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
+                <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
+                        <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
                         
-                        <span class="card-title">设计模式-结构型模式</span>
+                        <span class="card-title">线程的5种状态总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-###享元模式(Flyweight)
-意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
-###代理
+##线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
+
+####New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线
                         
                     </div>
                     <div class="publish-info">
@@ -704,23 +694,23 @@
         
         <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="far fa-dot-circle"></i>
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/she-ji-mo-shi-xing-wei-xing-mo-shi/">
+                <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
                     <div class="card-image">
                         
-                        <img src="/images/设计模式-行为型模式/0.jpg" class="responsive-img" alt="设计模式-行为型模式">
+                        <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
                         
-                        <span class="card-title">设计模式-行为型模式</span>
+                        <span class="card-title">设计模式-创建型模式</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-###中介者模式(Mediator)
-意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构
+原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
+建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
                         
                     </div>
                     <div class="publish-info">
@@ -739,7 +729,6 @@
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
