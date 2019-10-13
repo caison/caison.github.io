@@ -765,30 +765,33 @@ miao miao</code></pre>
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
+                <a href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
                     <div class="card-image">
                         
-                        <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
+                        <img src="/images/理解Java中SPI机制/0.jpg" class="responsive-img" alt="理解Java中SPI机制">
                         
-                        <span class="card-title">设计模式-创建型模式</span>
+                        <span class="card-title">理解Java中SPI机制</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
-建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
+文章首发于Hollis公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
+1 SPI是什么SP
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -801,6 +804,7 @@ miao miao</code></pre>
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -811,20 +815,21 @@ miao miao</code></pre>
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
+                <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
                     <div class="card-image">
                         
-                        <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
+                        <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
                         
-                        <span class="card-title">设计模式-结构型模式</span>
+                        <span class="card-title">线程的5种状态总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-享元模式(Flyweight)意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
-代理模式(Prox
+线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
+
+New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线程中的代码，
                         
                     </div>
                     <div class="publish-info">

@@ -419,20 +419,22 @@
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
+                        <a href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
                             <div class="card-image">
                                 
-                                <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
+                                <img src="/images/理解Java中SPI机制/0.jpg" class="responsive-img" alt="理解Java中SPI机制">
                                 
-                                <span class="card-title">日志打印规范及技巧学习总结</span>
+                                <span class="card-title">理解Java中SPI机制</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
                                     
-一、日志打印级别
-DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
+文章首发于Hollis公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
+1 SPI是什么SP
                                 
                             </div>
                             <div class="publish-info">
@@ -485,62 +487,9 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
                             <div class="summary block-with-text">
                                 
                                     
-##线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
+线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
 
-####New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>13</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2019/10/13/she-ji-mo-shi-xing-wei-xing-mo-shi/">
-                            <div class="card-image">
-                                
-                                <img src="/images/设计模式-行为型模式/0.jpg" class="responsive-img" alt="设计模式-行为型模式">
-                                
-                                <span class="card-title">设计模式-行为型模式</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    
-中介者模式(Mediator)意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复
+New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线程中的代码，
                                 
                             </div>
                             <div class="publish-info">
@@ -635,22 +584,20 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2019/10/13/li-jie-java-zhong-spi-ji-zhi/">
+                        <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
                             <div class="card-image">
                                 
-                                <img src="/images/理解Java中SPI机制/0.jpg" class="responsive-img" alt="理解Java中SPI机制">
+                                <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
                                 
-                                <span class="card-title">理解Java中SPI机制</span>
+                                <span class="card-title">设计模式-结构型模式</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
                                     
-文章首发于Hollis公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文通过探析JDK提供的，在开源项目中比较常用的Java SPI机制，希望给大家在实际开发实践、学习开源项目提供参考。
-1 SPI是什么SP
+享元模式(Flyweight)意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
+代理模式(Prox
                                 
                             </div>
                             <div class="publish-info">
@@ -691,20 +638,73 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
+                        <a href="/2019/10/13/ri-zhi-da-yin-gui-fan-ji-ji-qiao-xue-xi-zong-jie/">
                             <div class="card-image">
                                 
-                                <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
+                                <img src="/images/日志打印规范及技巧学习总结/0.jpg" class="responsive-img" alt="日志打印规范及技巧学习总结">
                                 
-                                <span class="card-title">设计模式-结构型模式</span>
+                                <span class="card-title">日志打印规范及技巧学习总结</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
                                     
-享元模式(Flyweight)意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
-代理模式(Prox
+一、日志打印级别
+DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的
+                                
+                            </div>
+                            <div class="publish-info">
+                                <span class="publish-date">
+                                    <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                                </span>
+                                <span class="publish-author">
+                                    
+                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
+                                    
+                                    <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                    </a>
+                                    
+                                    
+                                </span>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+            </article>
+        </div>
+        
+        <div class="cd-timeline-block">
+
+            
+            
+
+            
+            
+
+            
+            <div class="cd-timeline-img day" data-aos="zoom-in-up">
+                <span>13</span>
+            </div>
+            <article class="cd-timeline-content" data-aos="fade-up">
+                <div class="article col s12 m6">
+                    <div class="card">
+                        <a href="/2019/10/13/she-ji-mo-shi-xing-wei-xing-mo-shi/">
+                            <div class="card-image">
+                                
+                                <img src="/images/设计模式-行为型模式/0.jpg" class="responsive-img" alt="设计模式-行为型模式">
+                                
+                                <span class="card-title">设计模式-行为型模式</span>
+                            </div>
+                        </a>
+                        <div class="card-content article-content">
+                            <div class="summary block-with-text">
+                                
+                                    
+中介者模式(Mediator)意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复
                                 
                             </div>
                             <div class="publish-info">
