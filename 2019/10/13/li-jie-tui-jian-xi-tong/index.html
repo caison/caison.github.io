@@ -1,0 +1,1366 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="理解推荐系统, 分布式系统架构">
+    <meta name="description" content="
+文章首发于51CTO技术栈公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文主要介绍什么是推荐系统，为什么需要推荐系统，如何实现推荐系统的方案，包括实现推荐系统的一些常见模型，希望给读者提供学习实践参考。
+1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>理解推荐系统 | 分布式系统架构</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+        code[class*="language-"], pre[class*="language-"] {
+            white-space: pre !important;
+        }
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">分布式系统架构</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">分布式系统架构</div>
+        <div class="logo-desc">
+            
+            专注分享分布式架构干货
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/blinkfox/hexo-theme-matery" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/blinkfox/hexo-theme-matery" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/images/理解推荐系统/0.png')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        理解推荐系统
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/架构设计/" class="post-category">
+                                架构设计
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-10-13
+                </div>
+
+                
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        8.1k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        28 分
+                    </div>
+                    
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/0.png" alt></p>
+<pre><code>文章首发于51CTO技术栈公众号
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com</code></pre><p>本文主要介绍什么是推荐系统，为什么需要推荐系统，如何实现推荐系统的方案，包括实现推荐系统的一些常见模型，希望给读者提供学习实践参考。</p>
+<h1 id="1-推荐系统概述"><a href="#1-推荐系统概述" class="headerlink" title="1 推荐系统概述"></a>1 推荐系统概述</h1><h2 id="为什么需要推荐系统"><a href="#为什么需要推荐系统" class="headerlink" title="为什么需要推荐系统"></a>为什么需要推荐系统</h2><p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/1.png" alt="信息爆炸"></p>
+<ul>
+<li>对于信息消费者，需要从大量信息中找到自己感兴趣的信息，而在信息过载时代，用户难以从大量信息中获取自己感兴趣、或者对自己有价值的信息。</li>
+<li>对于信息生产者，信息生产者，需要让自己生产的信息脱颖而出，受到广大用户的关注。从物品的角度出发，推荐系统可以更好地发掘物品的长尾（long tail）。<br><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/2.png" alt="长尾效应"><blockquote>
+<p><strong>长尾效应</strong>是美国《连线》杂志主编Chris Anderson在于2006年出版了《长尾理论》一书中指出，传统的80/20原则（80%的销售额来自于20%的热门品牌）在互联网的加入下会受到挑战。互联网条件下，由于货架成本极端低廉，电子商务网站往往能出售比传统零售店更多的商品。这些原来不受到重视的销量小但种类多的产品或服务由于总量巨大，累积起来的总收益超过主流产品的现象。</p>
+</blockquote>
+</li>
+</ul>
+<p>主流商品往往代表了绝大多数用户的需求，而长尾商品往往代表了一小部分用户的个性化需求。</p>
+<p>推荐系统通过发掘用户的行为，找到用户的个性化需求，从而将长尾商品准确地推荐给需要它的用户，帮助用户发现那些他们感兴趣但很难发现的商品。</p>
+<p><strong>推荐系统的任务</strong>在于：一方面帮助用户发现对自己有价值的信息，另一方面让信息能够展现在对它感兴趣的用户面前，从而实现信息消费者和信息生产者的双赢。</p>
+<h2 id="推荐系统的本质"><a href="#推荐系统的本质" class="headerlink" title="推荐系统的本质"></a>推荐系统的本质</h2><p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/3.png" alt><br>通过一定的方式将用户和物品联系起来，而不同的推荐系统利用了不同的方式。</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/4.png" alt="推荐系统常用的3种联系用户和物品的方式"><br>推荐系统就是自动联系用户和物品的一种工具，它能够在信息过载的环境中帮助用户发现令他们感兴趣的信息，也能将信息推送给对它们感兴趣的用户。</p>
+<h2 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h2><p>从产品的角度出发，评价一个推荐系统可以从以下维度出发：</p>
+<ul>
+<li><p>用户满意度<br>用户作为推荐系统的重要参与者，其满意度是评测推荐系统的最重要指标。但是，用户满意度没有办法离线计算，只能通过用户调查或者在线实验获得。</p>
+</li>
+<li><p>预测准确度<br>预测准确度度量一个推荐系统或者推荐算法预测用户行为的能力。这个指标是最重要的推荐系统离线评测指标，从推荐系统诞生的那一天起，几乎99%与推荐相关的论文都在讨论这个指标。<br>在计算该指标时需要有一个离线的数据集，该数据集包含用户的历史行为记录。然后，将该数据集通过时间分成训练集和测试集。最后，通过在训练集上建立用户的行为和兴趣模型预测用户在测试集上的行为，并计算预测行为和测试集上实际行为的重合度作为预测准确度。</p>
+</li>
+<li><p>覆盖率<br>覆盖率（ coverage ）描述一个推荐系统对物品长尾的发掘能力。覆盖率有不同的定义方法，<br>最简单的定义为推荐系统能够推荐出来的物品占总物品集合的比例。</p>
+</li>
+<li><p>多样性<br>用户的兴趣是广泛的，为了满足用户广泛的兴趣，推荐列表需要能够覆盖用户不同的兴趣领域，即推荐结果需要具有多样性。</p>
+</li>
+<li><p>新颖性<br>新颖的推荐是指给用户推荐那些他们以前没有听说过的物品。在一个网站中实现新颖性的最简单办法是，把那些用户之前在网站中对其有过行为的物品从推荐列表中过滤掉。</p>
+</li>
+<li><p>惊喜度<br>与新颖性不同，如果推荐结果和用户的历史兴趣不相似，但却让用户觉得满意，那么就可以说推荐结果的惊喜度很高，而推荐的新颖性仅仅取决于用户是否听说过这个推荐结果。</p>
+</li>
+<li><p>信任度<br>对于基于机器学习的自动推荐系统，同样存在信任度（ trust ）的问题，如果用户信任推荐系统，那就会增加用户和推荐系统的交互。同样的推荐结果，以让用户信任的方式推荐给用户就更能让用户产生购买欲，而以类似广告形式的方法推荐给用户就可能很难让用户产生购买的意愿。<br>度量推荐系统的信任度只能通过问卷调查的方式，询问用户是否信任推荐系统的推荐结果。</p>
+</li>
+<li><p>实时性<br>推荐系统需要实时地更新推荐列表来满足用户新的行为变化，推荐系统需要能够将新加入系统的物品推荐给用户。这主要考验了推荐系统处理物品冷启动的能力。</p>
+</li>
+<li><p>健壮性<br>任何一个能带来利益的算法系统都会被人攻击，这方面最典型的例子就是搜索引擎。搜索引擎的作弊和反作弊斗争异常激烈，而健壮性（即 robust, 鲁棒性）指标衡量了一个推荐系统抗击作弊的能力。</p>
+</li>
+</ul>
+<h1 id="2-基于用户行为推荐"><a href="#2-基于用户行为推荐" class="headerlink" title="2 基于用户行为推荐"></a>2 基于用户行为推荐</h1><h2 id="2-1-用户行为"><a href="#2-1-用户行为" class="headerlink" title="2.1 用户行为"></a>2.1 用户行为</h2><p>可以分为<strong>显性反馈行为（explicit feedback）</strong>和<strong>隐性反馈行为（implicit feedback）</strong></p>
+<ul>
+<li>显性反馈行为<br>是指用户明确表示对物品喜好的行为，主要方式就是评分和喜欢/不喜欢，常见的显性反馈行为可以参考如下表格：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">用户行为</th>
+<th align="center">特征</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">评分</td>
+<td align="center">整数量化的偏好，可能得取值是[0,n]，n一般的取值是5或者10</td>
+<td align="center">通过用户对物品的评分，可以精确得到用户的偏好</td>
+</tr>
+<tr>
+<td align="left">投票</td>
+<td align="center">布尔值的偏好，取值是0或1</td>
+<td align="center">通过用户对物品的投票，可以精确得到用户的偏好</td>
+</tr>
+<tr>
+<td align="left">转发</td>
+<td align="center">布尔值的偏好，取值是0或1</td>
+<td align="center">通过用户对物品的投票，可以精确得到用户的偏好</td>
+</tr>
+<tr>
+<td align="left">保存书签</td>
+<td align="center">布尔值的偏好，取值是0或1</td>
+<td align="center">通过用户对物品的投票，可以精确得到用户的偏好</td>
+</tr>
+<tr>
+<td align="left">标记标签(tag)</td>
+<td align="center">一些单词，需要对单词进行分析，得到偏好</td>
+<td align="center">通过分析用户的标签，可以得到用户对物品的理解，用户的情感，是喜欢还是厌恶</td>
+</tr>
+<tr>
+<td align="left">评论</td>
+<td align="center">一些文字，需要进行文本分析得到偏好</td>
+<td align="center">通过分析用户的评论，可以得到用户的情感，是喜欢还是厌恶</td>
+</tr>
+</tbody></table>
+<ul>
+<li>隐性反馈行为（implicit feedback）<br>指的是那些不能明确反应用户喜好的行为。最具代表性的隐性反馈行为就是<strong>页面浏览行为</strong>。用户浏览一个物品的页面并不代表用户一定喜欢这个页面展示的物品，比如可能因为这个页面链接显示在首页，用户更容易点击它而已。<br>相比显性反馈，隐性反馈虽然不明确，但数据量更大。在很多网站中，很多用户甚至只有隐性反<br>馈数据，而没有显性反馈数据。</li>
+</ul>
+<p>基于用户行为数据设计的推荐算法一般称为协同过滤算法。学术界对协同过滤算法进行了深入研究，提出了很多方法，比如基于邻域的算法（ neighborhood-based ）、隐语义模型（ latent factor model ）、基于图的随机游走算法（ random walk on graph ）等。</p>
+<p>下面主要展开介绍基于领域的算法和隐语义模型算法。</p>
+<h2 id="2-2-基于领域的算法"><a href="#2-2-基于领域的算法" class="headerlink" title="2.2 基于领域的算法"></a>2.2 基于领域的算法</h2><h3 id="2-2-1-算法概述"><a href="#2-2-1-算法概述" class="headerlink" title="2.2.1 算法概述"></a>2.2.1 算法概述</h3><p>基于邻域的方法是最著名的、在业界得到最广泛应用的推荐算法，而基于邻域的方法主要包含下面两种算法：</p>
+<ul>
+<li>基于用户的协同过滤算法(UserCF)</li>
+<li>基于物品的协同过滤算法(ItemCF)</li>
+</ul>
+<p>算法涉及的基本步骤如下：</p>
+<ul>
+<li>1 收集用户偏好，把用户对物品的偏好转换成可量化的综合评分值</li>
+<li>2 找到相似的用户或物品</li>
+<li>3 计算推荐</li>
+</ul>
+<h3 id="2-2-2-相似度计算"><a href="#2-2-2-相似度计算" class="headerlink" title="2.2.2 相似度计算"></a>2.2.2 相似度计算</h3><p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/5.png" alt><br>计算相似度主要有以下3种计算方式：</p>
+<ul>
+<li><p><strong>1 欧氏距离（Euclidean Distance)</strong><br>向量欧式距离：<br>$$ d(x,y) = \sqrt{( \sum(x_i-y_i)^2 ) }  $$<br>相似度：<br>$$ sim(x,y) = \frac{1}{1+d(x,y)} $$</p>
+</li>
+<li><p><strong>2 皮尔逊相关系数（Pearson Correlation Coefficient）</strong><br>协方差，用来衡量2个向量的变化趋势是否一致：<br>$$ cov(X,Y)=\frac{\sum_n^{i=1}(X_i-\overline{X})(Y_i-\overline{Y}))}{n-1} $$<br>标准差：<br>$$ \sigma_X=\sqrt{ \frac{1}{N} \sum_{i=1}^{N}(x_i-\overline{x})^{2} } $$<br>皮尔逊相关系数：<br>$$ \rho_{X,Y} = corr(X,Y) = \frac{cov(X,Y)}{\sigma_X\sigma_Y} $$<br>皮尔逊相关系数使用协方差除以2个向量的标准差得到，值的范围[-1,1]</p>
+</li>
+<li><p><strong>3 Cosine 相似度（Cosine Similarity，余弦距离）</strong><br>$$ T(x,y) = \frac{x \cdot y}{||x||^2 \times ||y||^2 } = \frac{\sum x_i y_i}{\sqrt {\sum x_i^2}   \sqrt {\sum y_i^2}} $$<br>其实就是求2个向量的夹角</p>
+</li>
+</ul>
+<p>3种计算相关系数的算法中，<strong>皮尔逊相关系数</strong>在生产中最为常用。</p>
+<h3 id="2-2-3-邻居的选择"><a href="#2-2-3-邻居的选择" class="headerlink" title="2.2.3 邻居的选择"></a>2.2.3 邻居的选择</h3><p>通过相似度计算出若干个最相似的邻居后，如何选择邻居？主要有以下方式：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/6.png" alt="邻居的选择"></p>
+<ul>
+<li><strong>基于固定数量的邻居</strong></li>
+</ul>
+<p>该方式直接选择选择固定数量的邻居，有可能把相似度较小的对象也引入</p>
+<ul>
+<li><strong>基于相似度门槛的邻居</strong></li>
+</ul>
+<p>该方式先用相似度门槛筛选出邻居的一个集合，再从集合里面挑选出相似度较大的邻居。<br>可以避免把相似度较小的对象引入，效果更好</p>
+<h3 id="2-2-4-基于用户的协同过滤算法-UserCF"><a href="#2-2-4-基于用户的协同过滤算法-UserCF" class="headerlink" title="2.2.4 基于用户的协同过滤算法(UserCF)"></a>2.2.4 基于用户的协同过滤算法(UserCF)</h3><h4 id="算法概述"><a href="#算法概述" class="headerlink" title="算法概述"></a>算法概述</h4><p>简单而言，就是<strong>给用户推荐和他兴趣相似的其他用户喜欢的物品</strong></p>
+<p>在一个在线个性化推荐系统中，当一个用户 A 需要个性化推荐时，可以先找到和他有相似兴趣的其他用户，然后把那些用户喜欢的、而用户 A 没有听说过的物品推荐给 A 。这种方法称为基于用户的协同过滤算法。</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/7.png" alt="基于用户的协同过滤"><br>用于A与用户C的兴趣比较相似，用户C喜欢了物品4，所以给用户A推荐物品4</p>
+<h4 id="数学实现"><a href="#数学实现" class="headerlink" title="数学实现"></a>数学实现</h4><p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/8.png" alt="用户评分矩阵"><br>已知用户评分矩阵Matrix R（一般都是非常稀疏的），推断矩阵中问号处的评分值</p>
+<h4 id="UserCF模型存在问题"><a href="#UserCF模型存在问题" class="headerlink" title="UserCF模型存在问题"></a>UserCF模型存在问题</h4><ul>
+<li>对于一个新用户，很难找到邻居用户</li>
+<li>对于一个新物品，所有最近的邻居都在其上没有多少打分</li>
+</ul>
+<h4 id="基础解决方案"><a href="#基础解决方案" class="headerlink" title="基础解决方案"></a>基础解决方案</h4><ul>
+<li>相似度计算最好使用皮尔逊相似度</li>
+<li>计算用户相似度考虑共同打分物品的数目<br>比如乘上<br>$$ \frac{min(n,N)}{N}，n为共同打分的商品数，N为指定阈值 $$<br>这样可以让2个用户的共同打分的商品数越少，相似度越小</li>
+<li>对打分进行归一化处理<br>比如把原来分数值范围是[0,10]，归一化后变成[0,1]</li>
+<li>设置一个相似度阈值</li>
+</ul>
+<h4 id="基于用户的协同过滤不流行的原因"><a href="#基于用户的协同过滤不流行的原因" class="headerlink" title="基于用户的协同过滤不流行的原因"></a>基于用户的协同过滤不流行的原因</h4><ul>
+<li>数据稀疏问题，数据存取困难</li>
+<li>数百万用户计算，用户之间两两计算相似度，计算量过大</li>
+<li>人是善变的</li>
+</ul>
+<h3 id="2-2-5-基于物品的协同过滤算法-ItemCF"><a href="#2-2-5-基于物品的协同过滤算法-ItemCF" class="headerlink" title="2.2.5 基于物品的协同过滤算法(ItemCF)"></a>2.2.5 基于物品的协同过滤算法(ItemCF)</h3><h4 id="算法概述-1"><a href="#算法概述-1" class="headerlink" title="算法概述"></a>算法概述</h4><p>简单而言，就是<strong>给用户推荐和他之前喜欢的物品相似的物品</strong>。</p>
+<p>基于物品的协同过滤算法（简称 ItemCF ）给用户推荐那些和他们之前喜欢的物品相似的物品。</p>
+<p>比如，该算法会因为你购买过《数据挖掘导论》而给你推荐《机器学习》。不过， <strong>ItemCF 算法并不利用物品的内容属性计算物品之间的相似度，它主要通过分析用户的行为记录计算物品之间的相似度</strong>。该算法认为，物品 A 和物品 B 具有很大的相似度是因为喜欢物品 A 的用户大都也喜欢物品B。</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/9.png" alt><br>物品1和物品3都被用户A和用户B喜欢，所以认为是相似物品，所以当用户C喜欢物品1，就给用户C推荐物品3</p>
+<p>算法主要主要步骤如下：</p>
+<ul>
+<li>计算物品之间的相似度</li>
+<li>根据物品的相似度和用户的历史行为给用户生成推荐列表</li>
+</ul>
+<h4 id="数学实现思路"><a href="#数学实现思路" class="headerlink" title="数学实现思路"></a>数学实现思路</h4><p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/10.png" alt="预测用户评分"><br>需要用户用户5对物品1的评分r_15，由于物品3、物品6是与物品1最为相似的2个物品，取相似度作为权重，所以r_15可以预测如下：<br>$$ r_15 = (0.41<em>2 + 0.59</em>3)/ (0.41 + 0.59) = 2.6 $$</p>
+<h4 id="模型优势"><a href="#模型优势" class="headerlink" title="模型优势"></a>模型优势</h4><ul>
+<li>计算性能高，通常用户数量远大于物品数量<br>实际计算物品之间的相似度，可以只选择同一个大分类下的类似物品来计算，以此减少计算量</li>
+<li>可预先保留结果，物品并不善变</li>
+</ul>
+<h3 id="2-2-6-UserCF和ItemCF综合比较"><a href="#2-2-6-UserCF和ItemCF综合比较" class="headerlink" title="2.2.6 UserCF和ItemCF综合比较"></a>2.2.6 UserCF和ItemCF综合比较</h3><p> UserCF 给用户推荐那些和他有共同兴趣爱好的用户喜欢的物品，而 ItemCF 给用户推荐那些和他之前喜欢的物品类似的物品。从这个算法的原理可以看到：</p>
+<ul>
+<li>UserCF 的推荐结果着重于反映和用户兴趣相似的小群体的热点</li>
+<li>ItemCF的推荐结果着重于维系用户的历史兴趣。</li>
+</ul>
+<p>换句话说：</p>
+<ul>
+<li>UserCF 的推荐更社会化，反映了用户所在的小型兴趣群体中物品的热门程度</li>
+<li>ItemCF 的推荐更加个性化，反映了用户自己的兴趣传承</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">UserCF</th>
+<th align="center">ItemCF</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">性能</td>
+<td align="center">适用于用户较少的场合，如果用户很多，计算用户相似度矩阵代价很大</td>
+<td align="center">适用于物品数明显小于用户数的场合，如果物品很多（网页），计算物品相似度矩阵代价很大</td>
+</tr>
+<tr>
+<td align="left">领域</td>
+<td align="center">时效性较强，用户个性化兴趣不太明显的领域</td>
+<td align="center">长尾物品丰富，用户个性化需求强烈的领域</td>
+</tr>
+<tr>
+<td align="left">实时性</td>
+<td align="center">用户有新行为，不一定造成推荐结果的立即变化</td>
+<td align="center">用户有新行为，一定会导致推荐结果的实时变化</td>
+</tr>
+<tr>
+<td align="left">冷启动</td>
+<td align="center">在新用户对很少的物品产生行为后，不能立即对他进行个性化推荐，因为用户相似度表是每隔一段时间离线计算的。<br><br>新物品上线后一段时间，一旦有用户对物品产生行为，就可以将新物品推荐给和对它产生行为的用户兴趣相似的其他用户</td>
+<td align="center">新用户只要对一个物品产生行为，就可以给他推荐和该物品相关的其他物品。<br><br>但没有办法在不离线更新物品相似度表的情况下将新物品推荐给用户</td>
+</tr>
+<tr>
+<td align="left">推荐理由</td>
+<td align="center">很难提供令用户信服的推荐解释</td>
+<td align="center">利用用户的历史行为给用户做推荐解释，可以令用户比较信服</td>
+</tr>
+<tr>
+<td align="left">常见场景</td>
+<td align="center">实时新闻<br>突发情况</td>
+<td align="center">图书<br>电子商务<br>电影<br>外卖</td>
+</tr>
+</tbody></table>
+<h1 id="3-基于用户标签推荐"><a href="#3-基于用户标签推荐" class="headerlink" title="3 基于用户标签推荐"></a>3 基于用户标签推荐</h1><h2 id="3-1-标签推荐概述"><a href="#3-1-标签推荐概述" class="headerlink" title="3.1 标签推荐概述"></a>3.1 标签推荐概述</h2><p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/11.png" alt="推荐系统联系用户和物品的3种途径"><br>推荐系统的目的是联系用户的兴趣和物品，这种联系需要依赖不同的媒介。目前流行的推荐系统基本上通过3种方式联系用户兴趣和物品：</p>
+<ul>
+<li>基于用户推荐UserCF<br>利用和用户兴趣相似的其他用户，给用户推荐那些和他们兴趣爱好相似的其他用户喜欢的物品。</li>
+<li>基于物品推荐ItemCF<br>给用户推荐与他喜欢过的物品相似的物品</li>
+<li>基于特征<br>这里的特征有不同的表现方式，比如可以表现为物品的属性集合（比如对于图书，属性集合<br>包括作者、出版社、主题和关键词等），也可以表现为隐语义向量（latent factor vector）。</li>
+</ul>
+<h2 id="3-2-标签相关问题"><a href="#3-2-标签相关问题" class="headerlink" title="3.2 标签相关问题"></a>3.2 标签相关问题</h2><h3 id="3-2-1-标签的定义"><a href="#3-2-1-标签的定义" class="headerlink" title="3.2.1 标签的定义"></a>3.2.1 标签的定义</h3><p>根据维基百科的定义，标签是一种无层次化结构的、用来描述信息的关键词，它可以用来<br>描述物品的语义。根据给物品打标签的人的不同，标签应用一般分为两种：</p>
+<ul>
+<li>一种是让作者或者专家给物品打标签</li>
+<li>另一种是让普通用户给物品打标签，也就是UGC（User Generated Content，用户生成的内容）的标签应用UGC的标签系统是一种表示用户兴趣和物品语义的重要方式。<br>当一个用户对一个物品打上一个标签，这个标签一方面描述了用户的兴趣，另一方面则表示了物品的语义，从而将用户和物品联系了起来。因此下面主要讨论UGC的标签应用，研究用户给物品打标签的行为，探讨如何通过分析这种行为给用户进行个性化推荐。</li>
+</ul>
+<h3 id="3-2-2-用户为什么要打标签"><a href="#3-2-2-用户为什么要打标签" class="headerlink" title="3.2.2 用户为什么要打标签"></a>3.2.2 用户为什么要打标签</h3><p>从产品的角度，我们需要理解用户打标签的行为，为什么要打标签，只有深入了解用户的行为，我们才能基于这个行为设计出令他们满意的个性化推荐系统。</p>
+<p>用户这个行为背后的原因主要可以从2个维度进行探讨：</p>
+<ul>
+<li>社会维度，有些用户标注是给内容上传者使用的（便于上传者组织自己的信息），而有些用户标注是给广大用户使用的（便于帮助其他用户找到信息）。</li>
+<li>功能维度，有些标注用于更好地组织内容，方便用户将来的查找，而另一些标注用于传达某种信息，比如照片的拍摄时间和地点等。</li>
+</ul>
+<h3 id="3-2-3-用户打什么样的标签"><a href="#3-2-3-用户打什么样的标签" class="headerlink" title="3.2.3 用户打什么样的标签"></a>3.2.3 用户打什么样的标签</h3><ul>
+<li>表明物品是什么</li>
+<li>表明物品的种类</li>
+<li>表明谁拥有物品<br>比如很多博客的标签中会包括博客的作者等信息</li>
+<li>表达用户的观点<br>比如用户认为网页很有趣，就会打上标签 funny （有趣），认为很无聊，就会打上标签 boring （无聊）</li>
+<li>用户相关的标签<br>比如 my favorite （我最喜欢的）、 my comment （我的评论）等</li>
+<li>用户的任务<br>比如 to read （即将阅读）、 job search （找工作）等</li>
+</ul>
+<h3 id="3-2-4-为什么要给用户推荐标签"><a href="#3-2-4-为什么要给用户推荐标签" class="headerlink" title="3.2.4 为什么要给用户推荐标签"></a>3.2.4 为什么要给用户推荐标签</h3><p>用户浏览某个物品时，标签系统非常希望用户能够给这个物品打上高质量的标签，这样才能促进标签系统的良性循环。因此，很多标签系统都设计了标签推荐模块给用户推荐标签。一般认为，给用户推荐标签有以下好处。</p>
+<ul>
+<li>方便用户输入标签<br>让用户从键盘输入标签无疑会增加用户打标签的难度，这样很多用户不愿意给物品打标签，因此我们需要一个辅助工具来减小用户打标签的难度，从而提高用户打标签的参与度。</li>
+<li>提高标签质量<br>同一个语义不同的用户可能用不同的词语来表示。这些同义词会使标签的词表变得很庞大，而且会使计算相似度不太准确。而使用推荐标签时，我们可以对词表进行选择，首先保证词表不出现太多的同义词，同时保证出现的词都是一些比较热门的、有代表性的词。</li>
+</ul>
+<h3 id="3-2-5-如何给用户推荐标签"><a href="#3-2-5-如何给用户推荐标签" class="headerlink" title="3.2.5 如何给用户推荐标签"></a>3.2.5 如何给用户推荐标签</h3><p>用户 u 给物品 i 打标签时，我们有很多方法可以给用户推荐和物品 i 相关的标签。比较简单的方<br>法有 4 种：</p>
+<ul>
+<li><p>给用户 u 推荐整个系统里最热门的标签（这里将这个算法称为 PopularTags ），这个算法太简单了，甚至于不能称为一种标签推荐算法</p>
+</li>
+<li><p>给用户 u 推荐物品 i 上最热门的标签（这里将这个算法称为 ItemPopularTags ）</p>
+</li>
+<li><p>用户 u 推荐他自己经常使用的标签（这里将这个算法称为 UserPopularTags ）</p>
+</li>
+<li><p>前面两种的融合（这里记为 HybridPopularTags ），该方法通过一个系数将上面的推荐结果线性加权，然后生成最终的推荐结果</p>
+</li>
+</ul>
+<h2 id="3-3-一个最简单的算法"><a href="#3-3-一个最简单的算法" class="headerlink" title="3.3 一个最简单的算法"></a>3.3 一个最简单的算法</h2><p>基本步骤如下：</p>
+<ul>
+<li>统计每个用户最常用的标签</li>
+<li>对于每个标签，统计被打过这个标签次数最多的物品</li>
+<li>对于一个用户，首先找到他常用的标签，然后找到具有这些标签的最热门物品推荐给这个用户</li>
+</ul>
+<p>对于上面算法，用户u对于物品i的兴趣公式如下：<br>$$ p(u,i)=\sum_bn_{u,b}n_{b,i} $$<br>$ B(u) $ 是用户u打过的标签集合，<br>$ B(i) $是物品i被打过标签的集合，<br>$ n_{u,b}$ 是用户 u 打过标签b的次数，<br>$ n_{b,i} $是物品 i 被打过标签 b 的次数</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/12.png" alt="用户 - 标签 - 物品"></p>
+<p>某用户使用过“幽默”标签10次，“搞笑”标签3次，“讽刺”标签6次。这3个标签被物品A使用的次数分别的4、7、2。<br>由此计算用户对物品的兴趣值为：$$ 10 * 4 + 3* 7 + 6*2 = 73$$</p>
+<p>上面的计算公式会倾向于给热门标签对应的热门物品很大的权重，因此会造成推荐热门的物品给用户，从而降低推荐结果的新颖性，还有数据稀疏性的问题，可以通过计算结果除以惩罚项来进行修正。</p>
+<h1 id="4-系统冷启动问题"><a href="#4-系统冷启动问题" class="headerlink" title="4 系统冷启动问题"></a>4 系统冷启动问题</h1><h2 id="问题简介"><a href="#问题简介" class="headerlink" title="问题简介"></a>问题简介</h2><p>系统冷启动（cold start）问题主要在于如何在一个新开发的网站上（还没有用户，也没有用户行为，只有一些物品的信息）设计个性化推荐系统，从而在网站刚发布时就让用户体验到个性化推荐服务这一问题</p>
+<p>主要可以分为3类：</p>
+<ul>
+<li><p>用户冷启动<br>用户冷启动问题主要在于如何给新用户做个性化推荐。当新用户到来时，我们没有他的行为数据，所以也无法根据他的历史行为预测其兴趣，从而无法借此给他做个性化推荐。</p>
+</li>
+<li><p>物品冷启动<br>物品冷启动问题主要在于如何解决如何将新的物品推荐给可能对它感兴趣的用户。</p>
+</li>
+<li><p>系统冷启动<br>系统刚刚新上线，用户、物品数据较少</p>
+</li>
+</ul>
+<h2 id="解决思路"><a href="#解决思路" class="headerlink" title="解决思路"></a>解决思路</h2><p>针对上述3类冷启动问题，一般来说，可以参考如下解决方案：</p>
+<ul>
+<li><p>提供非个性化的推荐<br>非个性化推荐的最简单例子就是热门排行榜，我们可以给用户推荐热门排行榜，然后等到用户数据收集到一定的时候，再切换为个性化推荐。这也是最常见的解决方案。</p>
+</li>
+<li><p>利用用户注册时提供的年龄、性别等数据做粗粒度的个性化。</p>
+</li>
+<li><p>要求用户在首次登录时提供反馈，比如输入感兴趣的标签，或感兴趣的物品。收集用户对物品的兴趣信息，然后给用户推荐那些和这些物品相似的物品。</p>
+</li>
+<li><p>对于新加入的物品，可以利用内容信息，将它们推荐给喜欢过和它们相似的物品的用户。</p>
+</li>
+<li><p>在系统冷启动时，可以引入专家的知识，通过一定的高效方式迅速建立起物品的相关度表。</p>
+</li>
+</ul>
+<h1 id="5-评估指标"><a href="#5-评估指标" class="headerlink" title="5 评估指标"></a>5 评估指标</h1><p>令 $ R(u) $ 是根据用户在训练集上的行为给用户作出的推荐列表, $T(u) $ 是用户在测试集上的行为列表</p>
+<ul>
+<li>准确率<br>用于度量模型的预测值与真实值之间的误差<br>$$ RMSE = \frac {\sqrt {\sum_{u,i\in T (r_{ui} - \hat r_{ui})^2} }}{|T|} $$</li>
+</ul>
+<ul>
+<li><p>召回率<br>用于度量有多个正例被分为正例，这里是正确推荐的数量占测试集合上用户行为列表的比例。<br>$$ Recall = \frac{\sum_{u \in U}|R(u) \bigcap T(u)|}{\sum_{u \in U}|T(u)|} $$</p>
+</li>
+<li><p>覆盖率<br>用户衡量推荐的物品占全部商品的比例，一般我们推荐的物品希望尽可能覆盖更多类别<br>常见有2种计算方法：<br>通过推荐的商品占总商品的比例<br>$$ Coverage = \frac {U_{u \in U} R(u)}{|I|}$$<br>或者通过推荐物品的熵值得到覆盖率，熵值越大，覆盖率越大<br>$$ H = - \sum_{i=1}^n p(i) \log p(i) $$</p>
+</li>
+<li><p>多样性<br>用于衡量每次推荐里面的推送的物品占所有可能性的比率，多样性越大，每次推荐的物品越丰富<br>$$ Diversity = 1 - \frac{\sum_{i,j \in R(u), i \neq j}s(i,j) }{\frac{1}{2}|R(u)|(|R(u)|-1)} $$</p>
+</li>
+</ul>
+<p>实际上，不同的平台还有不同的衡量标准，例如用户满意度，广告收益，需要结合实际业务情况做策略调整。</p>
+<h1 id="6-系统架构"><a href="#6-系统架构" class="headerlink" title="6 系统架构"></a>6 系统架构</h1><h2 id="6-1-基于特征的推荐系统"><a href="#6-1-基于特征的推荐系统" class="headerlink" title="6.1 基于特征的推荐系统"></a>6.1 基于特征的推荐系统</h2><p>再次回顾一下上面提到的推荐系统联系用户和物品的3种途径</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/13.png" alt="推荐系统联系用户和物品的3种途径"><br>如果将这3种方式都抽象一下就可以发现，如果认为用户喜欢的物品也是一种用户特征，或者和用户兴趣相似的其他用户也是一种用户特征，那么用户就和物品通过特征相联系。</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/14.png" alt="基于特征的推荐系统"><br>用户特征种类特别多，主要包括一下几类</p>
+<ul>
+<li><p>用户注册属性<br>年龄、性别、国籍等</p>
+</li>
+<li><p>用户行为特征<br>浏览、点赞、评论、购买等</p>
+</li>
+</ul>
+<h2 id="6-2-系统整体架构"><a href="#6-2-系统整体架构" class="headerlink" title="6.2 系统整体架构"></a>6.2 系统整体架构</h2><p>由于推送策略本身的复杂性，如果要在一个系统中把上面提到的各种特征和任务都统筹考虑，那么系统将会非常复杂，而且很难通过配置文件方便地配置不同特征和任务的权重。<br>因此，推荐系统需要由多个推荐引擎组成，每个推荐引擎负责一类特征和一种任务，而推荐系统的任务只是将推荐引擎的结果按照一定权重或者优先级合并、排序然后返回。</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/15.png" alt="推荐系统基本架构图"><br>这样做有2个好处：</p>
+<ul>
+<li><p>1 可以方便地增加/删除引擎，控制不同引擎对推荐结果的影响。对于绝大多数需求，只需要通过不同的引擎组合实现。</p>
+</li>
+<li><p>2 可以实现推荐引擎级别的用户反馈。每一个推荐引擎其实代表了一种推荐策略，而不同的用户可能喜欢不同的推荐策略。</p>
+<ul>
+<li>有些用户可能喜欢利用他的年龄性别作出的推荐</li>
+<li>有些用户可能比较喜欢看到新加入的和他兴趣相关的视频</li>
+<li>有些用户喜欢比较新颖的推荐</li>
+<li>有些用户喜欢专注于一个邻域的推荐</li>
+<li>有些用户喜欢多样的推荐。</li>
+</ul>
+</li>
+</ul>
+<p>我们可以将每一种策略都设计成一个推荐引擎，然后通过分析用户对推荐结果的反馈了解用户比较喜欢哪些引擎推荐出来的结果，从而对不同的用户给出不同的引擎组合权重。</p>
+<h2 id="6-3-推荐引擎架构"><a href="#6-3-推荐引擎架构" class="headerlink" title="6.3 推荐引擎架构"></a>6.3 推荐引擎架构</h2><p>推荐引擎使用一种或几种用户特征，按照一种推荐策略生成一种类型物品的推荐列表，基本架构如下图：<br><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/16.png" alt="推荐引擎架构图"><br>如图，推荐引擎架构主要包括3部分</p>
+<ul>
+<li><p>用户行为数据模块<br>图中A部分，该部分负责从数据库或者缓存中拿到用户行为数据，通过分析不同行为，生成当前用户的特征向量。不过如果是使用非行为特征，就不需要使用行为提取和分析模块了。该模块的输出是用户特征向量。</p>
+</li>
+<li><p>物品数据模块<br>图中B部分，该部分负责将用户的特征向量通过特征-物品相关矩阵转化为初始推荐物品列表。</p>
+</li>
+<li><p>最终结果生成模块<br>图中C部分，该部分负责对初始的推荐列表进行过滤、排名等处理，从而生成最终的推荐结果。</p>
+</li>
+</ul>
+<p>其中，有几个模块需要特别介绍一下：</p>
+<ul>
+<li><p>候选物品集合<br>特征 — 物品相关推荐模块还可以接受一个候选物品集合。候选物品集合的目的是保证推荐结果只包含候选物品集合中的物品。它的应用场合一般是产品需求希望将某些类型的电视剧推荐给用户。比如有些产品要求给用户推荐最近一周加入的新物品，那么候选物品集合就包括最近一周新加的物品。</p>
+</li>
+<li><p>过滤模块<br>在得到初步的推荐列表后，还不能把这个列表展现给用户，首先需要按照产品需求对结果进行过滤，过滤掉那些不符合要求的物品。一般来说，过滤模块会过滤掉以下物品：</p>
+<ul>
+<li><p><strong>用户已经产生过行为物品</strong><br>因为推荐系统的目的是帮助用户发现物品，因此没必要给用户推荐他已经知道的物品，这样可以保证推荐结果的新颖性。</p>
+</li>
+<li><p><strong>候选物品以外的物品</strong><br>候选物品集合一般有两个来源，一个是产品需求。比如在首页可能要求将新加入的物品推荐给用户，因此需要在过滤模块中过滤掉不满足这一条件的物品。另一个来源是用户自己的选择，比如用户选择了某一个价格区间，只希望看到这个价格区间内的物品，那么过滤模块需要过滤掉不满足用户需求的物品。</p>
+</li>
+<li><p><strong>某些质量很差的物品</strong><br>为了提高用户的体验，推荐系统需要给用户推荐质量好的物品，那么对于一些绝大多数用户评论都很差的物品，推荐系统需要过滤掉。这种过滤一般以用户的历史评分为依据，比如过滤掉平均分在2分以下的物品。</p>
+</li>
+</ul>
+</li>
+<li><p>排名模块<br>经过过滤后的推荐结果直接展示给用户一般也没有问题，但如果对它们进行一些排名，则可以更好地提升用户满意度。实际进行排名时，可以基于新颖性、多样性、用户反馈进行排名优化。</p>
+</li>
+</ul>
+<h1 id="7-总结"><a href="#7-总结" class="headerlink" title="7 总结"></a>7 总结</h1><p>除了本文介绍的模型算法，基于用户行为推荐还有隐语义模型，基于图的模型比较常见，还有的基于上下文、社交网络推荐。实际有一些常见的算法库可以实际推荐系统运算，包括LibRec，Crab等。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>《推荐系统实践》</p>
+<p><a href="https://cloud.tencent.com/developer/article/1070529" target="_blank" rel="noopener">一文读懂推荐系统知识体系）</a></p>
+<p><a href="https://www.jianshu.com/p/319e4933c5ba" target="_blank" rel="noopener">个性化推荐系统总结</a></p>
+<p><a href="https://www.cnblogs.com/redbear/p/8594939.html" target="_blank" rel="noopener">推荐系统介绍</a></p>
+<p><img src="/images/%E7%90%86%E8%A7%A3%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/17.png" alt></p>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.png" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        <p class="reprint-tip">
+            <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;
+            <span>转载规则</span>
+        </p>
+        
+            <div class="center-align">
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                    <img alt=""
+                         style="border-width:0"
+                         src="https://i.creativecommons.org/l/by/4.0/88x31.png"/>
+                </a>
+            </div>
+            <br/>
+            <a  href="/2019/10/13/li-jie-tui-jian-xi-tong/">
+                    《理解推荐系统》
+            </a> 由
+            <a href="https://caison.github.io">
+                caison
+            </a> 采用
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                知识共享署名 4.0 国际许可协议
+            </a>进行许可。
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2019/10/13/zi-yan-im-xi-tong-cun-chu-she-ji/">
+                    <div class="card-image">
+                        
+                        <img src="/images/自研IM系统存储设计/0.jpg" class="responsive-img" alt="自研IM系统存储设计">
+                        
+                        <span class="card-title">自研IM系统存储设计</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+1 数据操作需求1.1 发消息
+发送方新增已发消息 (用于消息判重)
+接收方新增待收消息
+根据发送方用户ID查询最近100条已发消息(用于消息判重)
+消息持久化存储
+
+1.2 收消息
+根据接收方用户ID，最新已收消息ID，查询未收消息，支
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/架构设计/" class="post-category">
+                                    架构设计
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/fen-bu-shi-ren-wu-diao-du-ping-tai-xxl-job/">
+                    <div class="card-image">
+                        
+                        <img src="/images/分布式任务调度平台XXL-JOB/0.jpg" class="responsive-img" alt="分布式任务调度平台XXL-JOB">
+                        
+                        <span class="card-title">分布式任务调度平台XXL-JOB</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            本文主要介绍分布式任务调度平台XXL-JOB(v2.1.0版本)，包括功能特性、实现原理、优缺点、同类框架比较等
+基本介绍项目开发中，常常以下场景需要分布式任务调度：
+
+同一服务多个实例的任务存在互斥时，需要统一协调
+定时任务的执行需要支持
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">年份</span>
+            <a href="https://caison.github.io" target="_blank">caison</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">88.7k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    window.setTimeout("siteTime()", 1000);
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2019";
+                    var startMonth = "6";
+                    var startDate = "28";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/caison" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:caison@aliyun.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i["DaoVoiceObject"] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            a.charset = "utf-8";
+            m.parentNode.insertBefore(a, m)
+        })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') +
+            "//widget.daovoice.io/widget/6984b559.js", "daovoice")
+        daovoice('init', {
+            app_id: ""
+        });
+        daovoice('update');
+    </script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+    
+    
+
+</body>
+
+</html>
