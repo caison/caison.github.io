@@ -4,7 +4,7 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="日志打印规范及技巧学习总结, 分布式系统架构">
+    <meta name="keywords" content="日志打印规范及技巧学习总结, caison博客">
     <meta name="description" content="
 一、日志打印级别
 DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程中，不会输出该级别的日志。因此，开发人员可以打印任何自己觉得有利于了解系统运行状态的东东。不过很多场景下，过多的DEBUG日志，并不是好事，建议是按照业务逻辑的">
@@ -15,7 +15,7 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>日志打印规范及技巧学习总结 | 分布式系统架构</title>
+    <title>日志打印规范及技巧学习总结 | caison博客</title>
     <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -47,7 +47,7 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
                     
                     <img src="/medias/logo.png" class="logo-img" alt="LOGO">
                     
-                    <span class="logo-span">分布式系统架构</span>
+                    <span class="logo-span">caison博客</span>
                 </a>
             </div>
             
@@ -112,10 +112,10 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
         
         <img src="/medias/logo.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">分布式系统架构</div>
+        <div class="logo-name">caison博客</div>
         <div class="logo-desc">
             
-            专注分享分布式架构干货
+            Never really desperate, only the lost of the soul.
             
         </div>
     </div>
@@ -777,19 +777,20 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/ji-yu-sonarqube-dai-ma-zhi-liang-jian-cha-gong-ju-zong-jie/">
+                <a href="/2019/10/13/ji-yu-java-nei-cun-dump-wen-jian-fen-xi-jie-jue-nei-cun-xie-lou-wen-ti/">
                     <div class="card-image">
                         
-                        <img src="/images/基于SonarQube代码质量检查工具总结/0.jpg" class="responsive-img" alt="基于SonarQube代码质量检查工具总结">
+                        <img src="/images/基于Java内存dump文件分析解决内存泄漏问题/0.jpg" class="responsive-img" alt="基于Java内存dump文件分析解决内存泄漏问题">
                         
-                        <span class="card-title">基于SonarQube代码质量检查工具总结</span>
+                        <span class="card-title">基于Java内存dump文件分析解决内存泄漏问题</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-#　1 概述SonarQube(sonar)是一个开源平台，用于管理源代码的质量。 SonarQube不只是一个质量数据报告工具，更是代码质量管理平台。 支持java, C#, C/C++, PL/SQL, Cobol, JavaScri
+*　　本文介绍一次解决现场*java内存泄漏问题**的经过，希望能提供后续遇到类似情况的读者一点思路。    
+生产环境发现的问题问题*　　*生产环境运维人员反馈，服务器(windows系统)卡死，相关的服务都运行异常，重启之后也没作用。
                         
                     </div>
                     <div class="publish-info">
@@ -818,22 +819,36 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/dubbo-fu-wu-ben-di-diao-ce-you-ya-shi-jian/">
+                <a href="/2019/10/13/java-dai-ma-jing-tai-jian-ce-gong-ju-bi-jiao/">
                     <div class="card-image">
                         
-                        <img src="/images/Dubbo服务本地调测优雅实践/0.jpg" class="responsive-img" alt="Dubbo服务本地调测优雅实践">
+                        <img src="/images/Java代码静态检测工具比较/0.jpg" class="responsive-img" alt="Java代码静态检测工具比较">
                         
-                        <span class="card-title">Dubbo服务本地调测优雅实践</span>
+                        <span class="card-title">Java代码静态检测工具比较</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-本文介绍在不污染项目配置文件，不影响服务器服务的前提下，如何优雅地在本地调测Dubbo服务
-1 问题场景分布式应用的调试总是比常规项目开发调试起来要麻烦很多，主要如下：
+                            最近团队想引进代码静态检测工具，稍微调研一下：
+工具比较功能比较
 
-Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希望请求
+
+
+Checkstyle
+FindBugs
+PMD
+Jtest
+SonarQube
+
+
+
+使用方式
+IDE插件
+IDE插件
+IDE插件
+IDE插件
+IDE插件+独立部署的服
                         
                     </div>
                     <div class="publish-info">
@@ -844,8 +859,8 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/技术框架/" class="post-category">
-                                    技术框架
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
                                 </a>
                             
                             
