@@ -692,20 +692,20 @@ OS内核需">
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/java-xian-shang-fu-wu-cpu-guo-zai-wen-ti-kuai-su-ding-wei/">
+                <a href="/2019/10/13/ji-yu-java-nei-cun-dump-wen-jian-fen-xi-jie-jue-nei-cun-xie-lou-wen-ti/">
                     <div class="card-image">
                         
-                        <img src="/images/Java线上服务CPU过载问题快速定位/0.jpg" class="responsive-img" alt="Java线上服务CPU过载问题快速定位">
+                        <img src="/images/基于Java内存dump文件分析解决内存泄漏问题/0.jpg" class="responsive-img" alt="基于Java内存dump文件分析解决内存泄漏问题">
                         
-                        <span class="card-title">Java线上服务CPU过载问题快速定位</span>
+                        <span class="card-title">基于Java内存dump文件分析解决内存泄漏问题</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-*　　本文介绍一次解决线上服务*Java进程CPU过载问题的经过，提供了如果定位是哪个服务进程导致CPU过载，哪个线程导致CPU过载，哪段代码**导致CPU过载，希望能提供后续遇到类似情况的读者一点思路。  
-#线上环境发现的问题*　　*
+*　　本文介绍一次解决现场*java内存泄漏问题**的经过，希望能提供后续遇到类似情况的读者一点思路。    
+生产环境发现的问题问题*　　*生产环境运维人员反馈，服务器(windows系统)卡死，相关的服务都运行异常，重启之后也没作用。
                         
                     </div>
                     <div class="publish-info">
@@ -734,19 +734,36 @@ OS内核需">
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/zi-yan-wen-zhang-pa-qu-xi-tong-fang-an-she-ji/">
+                <a href="/2019/10/13/java-dai-ma-jing-tai-jian-ce-gong-ju-bi-jiao/">
                     <div class="card-image">
                         
-                        <img src="/images/自研文章爬取系统方案设计/0.jpg" class="responsive-img" alt="自研文章爬取系统方案设计">
+                        <img src="/images/Java代码静态检测工具比较/0.jpg" class="responsive-img" alt="Java代码静态检测工具比较">
                         
-                        <span class="card-title">自研文章爬取系统方案设计</span>
+                        <span class="card-title">Java代码静态检测工具比较</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-1 系统设计分析1.1 需求介绍目前已有社区内容系统的文章数据较少，文章质量普遍较低，为了丰富文章内容，增加用户粘性，需要想办法从其他地方爬取文章数据，丰富社区内容系统的文章。为此，需要设计一个文章内容爬取系统，负责爬取、清洗、保存文章。
+                            最近团队想引进代码静态检测工具，稍微调研一下：
+工具比较功能比较
+
+
+
+Checkstyle
+FindBugs
+PMD
+Jtest
+SonarQube
+
+
+
+使用方式
+IDE插件
+IDE插件
+IDE插件
+IDE插件
+IDE插件+独立部署的服
                         
                     </div>
                     <div class="publish-info">
@@ -757,8 +774,8 @@ OS内核需">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/架构设计/" class="post-category">
-                                    架构设计
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
                                 </a>
                             
                             

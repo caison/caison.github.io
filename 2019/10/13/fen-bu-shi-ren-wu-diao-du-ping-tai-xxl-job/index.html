@@ -457,7 +457,7 @@
 <li>当用户在调度中心查看任务日志，调度中心请求任务执行器，任务执行器读取任务日志文件并返回日志详情</li>
 </ul>
 <h2 id="4-HA设计"><a href="#4-HA设计" class="headerlink" title="4 HA设计"></a>4 HA设计</h2><h3 id="4-1-调度中心高可用"><a href="#4-1-调度中心高可用" class="headerlink" title="4.1 调度中心高可用"></a>4.1 调度中心高可用</h3><p>调度中心支持多节点部署，基于数据库行锁保证同时只有一个调度中心节点触发任务调度，参考com.xxl.job.admin.core.thread.JobScheduleHelper#start</p>
-<pre class=" language-java"><code class="language-java">Connection conn <span class="token operator">=</span> XxlJobAdminConfig<span class="token punctuation">.</span><span class="token function">getAdminConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getDataSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java">Connection conn <span class="token operator">=</span> XxlJobAdminConfig<span class="token punctuation">.</span><span class="token function">getAdminConfig</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getDataSource</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 connAutoCommit <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">getAutoCommit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 conn<span class="token punctuation">.</span><span class="token function">setAutoCommit</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 preparedStatement <span class="token operator">=</span> conn<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>  <span class="token string">"select * from xxl_job_lock where lock_name = 'schedule_lock' for update"</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>
@@ -466,7 +466,7 @@ preparedStatement<span class="token punctuation">.</span><span class="token func
 # 触发任务调度
 
 # 事务提交
- conn<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+ conn<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="4-2-任务调度高可用"><a href="#4-2-任务调度高可用" class="headerlink" title="4.2 任务调度高可用"></a>4.2 任务调度高可用</h3><ul>
 <li><p>路由策略<br>调度中心基于路由策略路由选择一个执行器节点执行任务，XXL-JOB提供了如下路由策略保证任务调度高可用：</p>
 </li>
@@ -542,10 +542,10 @@ preparedStatement<span class="token punctuation">.</span><span class="token func
 <h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h2 id="快速上手"><a href="#快速上手" class="headerlink" title="快速上手"></a>快速上手</h2><p>具体如何快速上手使用，官方文档：<a href="http://www.xuxueli.com/xxl-job/" target="_blank" rel="noopener">http://www.xuxueli.com/xxl-job/</a> 已经介绍得比较详细和清楚，不再赘述</p>
 <h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
 <li><p><strong>1 时钟同步问题</strong><br>调度中心和任务执行器需要时间同步，同步时间误差需要在3分钟内，否则抛出异常<br>参考：com.xxl.rpc.remoting.provider.XxlRpcProviderFactory#invokeService</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">if</span> <span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">currentTimeMillis</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> xxlRpcRequest<span class="token punctuation">.</span><span class="token function">getCreateMillisTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">3</span><span class="token operator">*</span><span class="token number">60</span><span class="token operator">*</span><span class="token number">1000</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">if</span> <span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">currentTimeMillis</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> xxlRpcRequest<span class="token punctuation">.</span><span class="token function">getCreateMillisTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">></span> <span class="token number">3</span><span class="token operator">*</span><span class="token number">60</span><span class="token operator">*</span><span class="token number">1000</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
   xxlRpcResponse<span class="token punctuation">.</span><span class="token function">setErrorMsg</span><span class="token punctuation">(</span><span class="token string">"The timestamp difference between admin and executor exceeds the limit."</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
   <span class="token keyword">return</span> xxlRpcResponse<span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p><strong>2 时区问题</strong><br>任务由调度中心触发，按照在调度中心设置任务的cron表达式触发时，需要注意部署调度中心的机器所在的时区，按照该时区定制化cron表达式</p>
 </li>
@@ -768,22 +768,25 @@ preparedStatement<span class="token punctuation">.</span><span class="token func
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-tui-jian-xi-tong/">
+                <a href="/2019/10/13/zi-yan-im-xi-tong-fang-an-she-ji/">
                     <div class="card-image">
                         
-                        <img src="/images/理解推荐系统/0.png" class="responsive-img" alt="理解推荐系统">
+                        <img src="/images/自研IM系统方案设计/0.jpg" class="responsive-img" alt="自研IM系统方案设计">
                         
-                        <span class="card-title">理解推荐系统</span>
+                        <span class="card-title">自研IM系统方案设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-文章首发于51CTO技术栈公众号
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文主要介绍什么是推荐系统，为什么需要推荐系统，如何实现推荐系统的方案，包括实现推荐系统的一些常见模型，希望给读者提供学习实践参考。
-1
+本文主要介绍APP功能中的IM模块的设计方案
+1 设计原则
+合适原则——合适优于业界领先
+简单原则——简单优于复杂
+演化原则——演化优于一步到位
+
+架构设计的目的在于解决系统复杂度问题，真正优秀的架构都是企业当前人力、条件、业务等各种约束
                         
                     </div>
                     <div class="publish-info">
@@ -812,25 +815,19 @@ preparedStatement<span class="token punctuation">.</span><span class="token func
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/zi-yan-im-xi-tong-fang-an-she-ji/">
+                <a href="/2019/10/13/zi-yan-wen-zhang-pa-qu-xi-tong-fang-an-she-ji/">
                     <div class="card-image">
                         
-                        <img src="/images/自研IM系统方案设计/0.jpg" class="responsive-img" alt="自研IM系统方案设计">
+                        <img src="/images/自研文章爬取系统方案设计/0.jpg" class="responsive-img" alt="自研文章爬取系统方案设计">
                         
-                        <span class="card-title">自研IM系统方案设计</span>
+                        <span class="card-title">自研文章爬取系统方案设计</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-本文主要介绍APP功能中的IM模块的设计方案
-1 设计原则
-合适原则——合适优于业界领先
-简单原则——简单优于复杂
-演化原则——演化优于一步到位
-
-架构设计的目的在于解决系统复杂度问题，真正优秀的架构都是企业当前人力、条件、业务等各种约束
+1 系统设计分析1.1 需求介绍目前已有社区内容系统的文章数据较少，文章质量普遍较低，为了丰富文章内容，增加用户粘性，需要想办法从其他地方爬取文章数据，丰富社区内容系统的文章。为此，需要设计一个文章内容爬取系统，负责爬取、清洗、保存文章。
                         
                     </div>
                     <div class="publish-info">

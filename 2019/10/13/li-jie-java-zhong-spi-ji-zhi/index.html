@@ -437,7 +437,7 @@
 <li>4、SPI的实现类必须携带一个不带参数的构造方法；</li>
 </ul>
 <h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><p><strong>步骤1</strong>、定义一组接口 (假设是org.foo.demo.IShout)，并写出接口的一个或多个实现，(假设是org.foo.demo.animal.Dog、org.foo.demo.animal.Cat)。</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IShout</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">IShout</span> <span class="token punctuation">{</span>
     <span class="token keyword">void</span> <span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 <span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Cat</span> <span class="token keyword">implements</span> <span class="token class-name">IShout</span> <span class="token punctuation">{</span>
@@ -451,32 +451,32 @@
     <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"wang wang"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><strong>步骤2</strong>、在 src/main/resources/ 下建立 /META-INF/services 目录， 新增一个以接口命名的文件 (org.foo.demo.IShout文件)，内容是要应用的实现类（这里是org.foo.demo.animal.Dog和org.foo.demo.animal.Cat，每行一个类）。</p>
 <p>文件位置</p>
-<pre class=" language-java"><code class="language-java"><span class="token operator">-</span> src
+<pre class="line-numbers language-java"><code class="language-java"><span class="token operator">-</span> src
     <span class="token operator">-</span>main
         <span class="token operator">-</span>resources
             <span class="token operator">-</span> META<span class="token operator">-</span>INF
                 <span class="token operator">-</span> services
-                    <span class="token operator">-</span> org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>IShout</code></pre>
+                    <span class="token operator">-</span> org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>IShout<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>文件内容</p>
-<pre class=" language-java"><code class="language-java">org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>animal<span class="token punctuation">.</span>Dog
-org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>animal<span class="token punctuation">.</span>Cat</code></pre>
+<pre class="line-numbers language-java"><code class="language-java">org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>animal<span class="token punctuation">.</span>Dog
+org<span class="token punctuation">.</span>foo<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>animal<span class="token punctuation">.</span>Cat<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p><strong>步骤3</strong>、使用 ServiceLoader 来加载配置文件中指定的实现。</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SPIMain</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">SPIMain</span> <span class="token punctuation">{</span>
     <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
         ServiceLoader<span class="token operator">&lt;</span>IShout<span class="token operator">></span> shouts <span class="token operator">=</span> ServiceLoader<span class="token punctuation">.</span><span class="token function">load</span><span class="token punctuation">(</span>IShout<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token keyword">for</span> <span class="token punctuation">(</span>IShout s <span class="token operator">:</span> shouts<span class="token punctuation">)</span> <span class="token punctuation">{</span>
             s<span class="token punctuation">.</span><span class="token function">shout</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token punctuation">}</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>代码输出：</p>
-<pre class=" language-java"><code class="language-java">wang wang
-miao miao</code></pre>
+<pre class="line-numbers language-java"><code class="language-java">wang wang
+miao miao<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <h1 id="4-原理解析"><a href="#4-原理解析" class="headerlink" title="4 原理解析"></a>4 原理解析</h1><p>首先看ServiceLoader类的签名类的成员变量：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">ServiceLoader</span><span class="token operator">&lt;</span>S<span class="token operator">></span> <span class="token keyword">implements</span> <span class="token class-name">Iterable</span><span class="token operator">&lt;</span>S<span class="token operator">></span><span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">ServiceLoader</span><span class="token operator">&lt;</span>S<span class="token operator">></span> <span class="token keyword">implements</span> <span class="token class-name">Iterable</span><span class="token operator">&lt;</span>S<span class="token operator">></span><span class="token punctuation">{</span>
 <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> String PREFIX <span class="token operator">=</span> <span class="token string">"META-INF/services/"</span><span class="token punctuation">;</span>
 
     <span class="token comment" spellcheck="true">// 代表被加载的类或者接口</span>
@@ -495,7 +495,7 @@ miao miao</code></pre>
     <span class="token keyword">private</span> LazyIterator lookupIterator<span class="token punctuation">;</span>
 
     <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>参考具体ServiceLoader具体源码，代码量不多，加上注释一共587行，梳理了一下，实现的流程如下：</p>
 <ul>
 <li><p>1 应用程序调用ServiceLoader.load方法<br>ServiceLoader.load方法内先创建一个新的ServiceLoader，并实例化该类中的成员变量，包括： </p>
@@ -744,49 +744,6 @@ miao miao</code></pre>
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-de-fen-ji-yin-yong-mo-xing/">
-                    <div class="card-image">
-                        
-                        <img src="/images/理解Java的分级引用模型/0.jpg" class="responsive-img" alt="理解Java的分级引用模型">
-                        
-                        <span class="card-title">理解Java的分级引用模型</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-作者 陈彩华
-文章转载交流请联系 caison@aliyun.com本文通过探析Java中的引用模型，分析比较强引用、软引用、弱引用、虚引用的概念及使用场景，知其然且知其所以然，希望给大家在实际开发实践、学习开源项目提供参考。
-1 Jav
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
                 <a href="/2019/10/13/java-zhen-duan-li-qi-arthas/">
                     <div class="card-image">
                         
@@ -808,6 +765,51 @@ miao miao</code></pre>
                         
                     </div>
                     <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/li-jie-fen-bu-shi-xi-tong-zhong-de-huan-cun-jia-gou/">
+                    <div class="card-image">
+                        
+                        <img src="/images/理解分布式系统中的缓存架构/0.jpg" class="responsive-img" alt="理解分布式系统中的缓存架构">
+                        
+                        <span class="card-title">理解分布式系统中的缓存架构</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+作者 陈彩华
+文章转载交流请联系 caison@aliyun.com本文主要介绍大型分布式系统中缓存的相关理论，常见的缓存组件以及应用场景。
+1 缓存概述
+2 缓存的分类缓存主要分为以下四类
+2.1 CDN缓存基本介绍CDN(Conten
+                        
+                    </div>
+                    <div class="publish-info">
                             <span class="publish-date">
                                 <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
                             </span>
@@ -815,8 +817,8 @@ miao miao</code></pre>
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/工具使用/" class="post-category">
-                                    工具使用
+                            <a href="/categories/架构设计/" class="post-category">
+                                    架构设计
                                 </a>
                             
                             

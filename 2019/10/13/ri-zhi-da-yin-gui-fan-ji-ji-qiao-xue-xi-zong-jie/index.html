@@ -427,9 +427,9 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
 <h1 id="二、日志打印规范"><a href="#二、日志打印规范" class="headerlink" title="二、日志打印规范"></a>二、日志打印规范</h1><blockquote>
 <p><strong>1. 【强制</strong>】应用中不可直接使用日志系统 （Log 4 j 、 Logback） 中的 API ，而应依赖使用日志框架<br>SLF 4 J 中的 API ，使用门面模式的日志框架，有利于维护和各个类的日志处理方式统一。</p>
 </blockquote>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">import</span> org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span>Logger<span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">import</span> org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span>Logger<span class="token punctuation">;</span>
 <span class="token keyword">import</span> org<span class="token punctuation">.</span>slf4j<span class="token punctuation">.</span>LoggerFactory<span class="token punctuation">;</span>
-<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> Logger logger <span class="token operator">=</span> LoggerFactory<span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span>Abc<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> Logger logger <span class="token operator">=</span> LoggerFactory<span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span>Abc<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 <blockquote>
 <ol start="2">
 <li>【强制】日志文件推荐至少保存 15 天，因为有些异常具备以“周”为频次发生的特点。</li>
@@ -474,24 +474,24 @@ DEBUG（调试）开发调试日志。一般来说，在系统实际运行过程
 </blockquote>
 <h1 id="三、日志打印技巧"><a href="#三、日志打印技巧" class="headerlink" title="三、日志打印技巧"></a>三、日志打印技巧</h1><h2 id="问题排查的日志"><a href="#问题排查的日志" class="headerlink" title="问题排查的日志"></a>问题排查的日志</h2><ul>
 <li><p><strong>对接外部的调用封装</strong>：<br>程序中对接外部系统与模块的依赖调用前后都记下日志，方便接口调试。出问题时也可以很快理清是哪块的问题 </p>
-<pre class=" language-java"><code class="language-java">LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Calling external system:"</span> <span class="token operator">+</span> parameters<span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java">LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Calling external system:"</span> <span class="token operator">+</span> parameters<span class="token punctuation">)</span><span class="token punctuation">;</span>  
 Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
 <span class="token keyword">try</span> <span class="token punctuation">{</span>  
   result <span class="token operator">=</span> <span class="token function">callRemoteSystem</span><span class="token punctuation">(</span>params<span class="token punctuation">)</span><span class="token punctuation">;</span>  
   LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Called successfully. result is "</span> <span class="token operator">+</span> result<span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"Failed at calling xxx system . exception : "</span> <span class="token operator">+</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>  
-<span class="token punctuation">}</span>  </code></pre>
+<span class="token punctuation">}</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p>状态变化：<br>程序中重要的状态信息的变化应该记录下来，方便查问题时还原现场，推断程序运行过程 </p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">boolean</span> isRunning <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">boolean</span> isRunning <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>  
 LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"System is running"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token comment" spellcheck="true">//...  </span>
 isRunning <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>  
-LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"System was interrupted by "</span> <span class="token operator">+</span> Thread<span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </code></pre>
+LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"System was interrupted by "</span> <span class="token operator">+</span> Thread<span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p>系统入口与出口： </p>
-<pre class=" language-java"><code class="language-java">这个粒度可以是重要方法级或模块级。记录它的输入与输出，方便定位 
+<pre class="line-numbers language-java"><code class="language-java">这个粒度可以是重要方法级或模块级。记录它的输入与输出，方便定位 
 <span class="token keyword">void</span> <span class="token function">execute</span><span class="token punctuation">(</span>Object input<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Invoke parames : "</span> <span class="token operator">+</span> input<span class="token punctuation">)</span><span class="token punctuation">;</span>  
   Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
@@ -499,10 +499,10 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
   <span class="token comment" spellcheck="true">//business logical  </span>
 
   LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"Method result : "</span> <span class="token operator">+</span> result<span class="token punctuation">)</span><span class="token punctuation">;</span>  
-<span class="token punctuation">}</span>  </code></pre>
+<span class="token punctuation">}</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p>业务异常：<br>任何业务异常都应该记下来 </p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">try</span> <span class="token punctuation">{</span>  
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">try</span> <span class="token punctuation">{</span>  
   <span class="token comment" spellcheck="true">//business logical  </span>
 <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">IOException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"Description xxx"</span> <span class="token punctuation">,</span> e<span class="token punctuation">)</span><span class="token punctuation">;</span>  
@@ -516,35 +516,35 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
       LOG<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span>原因<span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
       <span class="token keyword">return</span><span class="token punctuation">;</span>  
   <span class="token punctuation">}</span>  
-<span class="token punctuation">}</span> </code></pre>
+<span class="token punctuation">}</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p>非预期执行：<br>为程序在“有可能”执行到的地方打印日志。如果我想删除一个文件，结果返回成功。但事实上，那个文件在你想删除之前就不存在了。最终结果是一致的，但程序得让我们知道这种情况，要查清为什么文件在删除之前就已经不存在呢 </p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">int</span> myValue <span class="token operator">=</span> xxxx<span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">int</span> myValue <span class="token operator">=</span> xxxx<span class="token punctuation">;</span>  
 <span class="token keyword">int</span> absResult <span class="token operator">=</span> Math<span class="token punctuation">.</span><span class="token function">abs</span><span class="token punctuation">(</span>myValue<span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token keyword">if</span> <span class="token punctuation">(</span>absResult <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"Original int "</span> <span class="token operator">+</span> myValue <span class="token operator">+</span> <span class="token string">"has nagetive abs "</span> <span class="token operator">+</span> absResult<span class="token punctuation">)</span><span class="token punctuation">;</span>  
-<span class="token punctuation">}</span>  </code></pre>
+<span class="token punctuation">}</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p>很少出现的else情况：<br>else可能吞掉你的请求，或是赋予难以理解的最终结果 </p>
-<pre class=" language-java"><code class="language-java">Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java">Object result <span class="token operator">=</span> null<span class="token punctuation">;</span>  
 <span class="token keyword">if</span> <span class="token punctuation">(</span>running<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
  result <span class="token operator">=</span> xxx<span class="token punctuation">;</span>  
 <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>  
  result <span class="token operator">=</span> yyy<span class="token punctuation">;</span>  
  LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"System does not running, we change the final result"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
-<span class="token punctuation">}</span>  </code></pre>
+<span class="token punctuation">}</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="程序运行状态的日志"><a href="#程序运行状态的日志" class="headerlink" title="程序运行状态的日志"></a>程序运行状态的日志</h2><p>程序在运行时就像一个机器人，我们可以从它的日志看出它正在做什么，是不是按预期的设计在做，所以这些正常的运行状态是要有的。 </p>
 </li>
 <li><p>程序运行时间： </p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">long</span> startTime <span class="token operator">=</span> System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">long</span> startTime <span class="token operator">=</span> System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> 
-LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"execution cost : "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> startTime<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"ms"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>　 </code></pre>
+LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"execution cost : "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">currentTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> startTime<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"ms"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>　 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 </li>
 </ul>
 <p>大批量数据的执行进度： </p>
-<pre class=" language-java"><code class="language-java">LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"current progress: "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>currentPos <span class="token operator">*</span> <span class="token number">100</span> <span class="token operator">/</span> totalAmount<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"%"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> </code></pre>
+<pre class="line-numbers language-java"><code class="language-java">LOG<span class="token punctuation">.</span><span class="token function">debug</span><span class="token punctuation">(</span><span class="token string">"current progress: "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>currentPos <span class="token operator">*</span> <span class="token number">100</span> <span class="token operator">/</span> totalAmount<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"%"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>关键变量及正在做哪些重要的事情：<br>执行关键的逻辑，做IO操作等等 </p>
-<pre class=" language-java"><code class="language-java">String <span class="token function">getJVMPid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  
+<pre class="line-numbers language-java"><code class="language-java">String <span class="token function">getJVMPid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  
    String pid <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">;</span>  
    <span class="token comment" spellcheck="true">// Obtains JVM process ID  </span>
    LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"JVM pid is "</span> <span class="token operator">+</span> pid<span class="token punctuation">)</span><span class="token punctuation">;</span>  
@@ -554,21 +554,21 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
 <span class="token keyword">void</span> <span class="token function">invokeRemoteMethod</span><span class="token punctuation">(</span>Object params<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
     LOG<span class="token punctuation">.</span><span class="token function">info</span><span class="token punctuation">(</span><span class="token string">"Calling remote method : "</span> <span class="token operator">+</span> params<span class="token punctuation">)</span><span class="token punctuation">;</span>  
     <span class="token comment" spellcheck="true">//Calling remote server  </span>
-<span class="token punctuation">}</span> </code></pre>
+<span class="token punctuation">}</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="四、需要规避的问题"><a href="#四、需要规避的问题" class="headerlink" title="四、需要规避的问题"></a>四、需要规避的问题</h1><ul>
 <li><p>频繁打印大数据量日志：<br>当日志产生的速度大于日志文件写磁盘的速度，会导致日志内容积压在内存中，导致内存泄漏。</p>
 </li>
 <li><p>无意义的Log：<br>日志不包含有意义的信息: 你肯定想知道的是哪个文件不存在吧 </p>
-<pre class=" language-java"><code class="language-java">File file <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"xxx"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java">File file <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">File</span><span class="token punctuation">(</span><span class="token string">"xxx"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>file<span class="token punctuation">.</span><span class="token function">isExist</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"File does not exist"</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//Useless message  </span>
-<span class="token punctuation">}</span> </code></pre>
+<span class="token punctuation">}</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p>混淆信息的Log：<br>日志应该是清晰准确的: 当看到日志的时候，你知道是因为连接池取不到连接导致的问题么？</p>
-<pre class=" language-java"><code class="language-java">Connection connection <span class="token operator">=</span> ConnectionFactory<span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
+<pre class="line-numbers language-java"><code class="language-java">Connection connection <span class="token operator">=</span> ConnectionFactory<span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
 <span class="token keyword">if</span> <span class="token punctuation">(</span>connection <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>  
   LOG<span class="token punctuation">.</span><span class="token function">warn</span><span class="token punctuation">(</span><span class="token string">"System initialized unsuccessfully"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  
-<span class="token punctuation">}</span>  </code></pre>
+<span class="token punctuation">}</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 <p>参考：<br>《阿里巴巴开发手册》<br><a href="http://blog.csdn.net/rogger_chen/article/details/50587920" target="_blank" rel="noopener">Logger日志级别说明及设置方法、说明</a><br><a href="http://langyu.iteye.com/blog/1147992" target="_blank" rel="noopener">闲谈程序中如何打印log</a></p>
 </li>
 </ul>
@@ -820,19 +820,19 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/ji-yu-sonarqube-dai-ma-zhi-liang-jian-cha-gong-ju-zong-jie/">
+                <a href="/2019/10/13/she-ji-mo-shi-xing-wei-xing-mo-shi/">
                     <div class="card-image">
                         
-                        <img src="/images/基于SonarQube代码质量检查工具总结/0.jpg" class="responsive-img" alt="基于SonarQube代码质量检查工具总结">
+                        <img src="/images/设计模式-行为型模式/0.jpg" class="responsive-img" alt="设计模式-行为型模式">
                         
-                        <span class="card-title">基于SonarQube代码质量检查工具总结</span>
+                        <span class="card-title">设计模式-行为型模式</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-#　1 概述SonarQube(sonar)是一个开源平台，用于管理源代码的质量。 SonarQube不只是一个质量数据报告工具，更是代码质量管理平台。 支持java, C#, C/C++, PL/SQL, Cobol, JavaScri
+中介者模式(Mediator)意图：用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。主要解决：对象与对象之间存在大量的关联关系，这样势必会导致系统的结构变得很复
                         
                     </div>
                     <div class="publish-info">
@@ -843,8 +843,8 @@ LOG<span class="token punctuation">.</span><span class="token function">info</sp
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/运维监控/" class="post-category">
-                                    运维监控
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
                                 </a>
                             
                             

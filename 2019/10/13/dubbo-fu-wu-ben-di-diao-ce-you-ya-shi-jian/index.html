@@ -427,24 +427,24 @@ Dubbo服务开发完服务提供者后需要进行本地测试测试，本来希
 </ul>
 <h1 id="2-解决步骤"><a href="#2-解决步骤" class="headerlink" title="2 解决步骤"></a>2 解决步骤</h1><ul>
 <li><p>1 创建properties文件<br>创建一个properties文件，名字可以随便命名，例如命名为：dubbo-local.properties，这个文件可以放在任何地方。该文件不提交到Git/SVN，<strong>建议不要放在工程目录里以避免自己提交了都不知道</strong>，建议放在用户目录下${user.home}<br>获取用户目录的方法之一：</p>
-<pre class=" language-java"><code class="language-java">System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"user.home"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java">System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>System<span class="token punctuation">.</span><span class="token function">getProperty</span><span class="token punctuation">(</span><span class="token string">"user.home"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 </li>
 <li><p>2 修改properties文件</p>
-<pre class=" language-sql"><code class="language-sql"><span class="token comment" spellcheck="true"># 以下是你们DubboServer.xml中配置的需要Export Service，</span>
+<pre class="line-numbers language-sql"><code class="language-sql"><span class="token comment" spellcheck="true"># 以下是你们DubboServer.xml中配置的需要Export Service，</span>
 <span class="token comment" spellcheck="true"># 建议你有几个要Export Service都配置在这里，后面是请求本地的地址</span>
 <span class="token comment" spellcheck="true"># 地址格式：dubbo://ip:port，这里需要注意的是，需要修改为自己dubbo服务的端口</span>
-com<span class="token punctuation">.</span>ibeiliao<span class="token punctuation">.</span>course<span class="token punctuation">.</span>stub<span class="token punctuation">.</span>provider<span class="token punctuation">.</span>AdCourseProvider<span class="token operator">=</span>dubbo:<span class="token comment" spellcheck="true">//localhost:20880</span></code></pre>
+com<span class="token punctuation">.</span>ibeiliao<span class="token punctuation">.</span>course<span class="token punctuation">.</span>stub<span class="token punctuation">.</span>provider<span class="token punctuation">.</span>AdCourseProvider<span class="token operator">=</span>dubbo:<span class="token comment" spellcheck="true">//localhost:20880</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 </ul>
 <p>为方便开发测试，经常会在线下共用一个所有服务可用的注册中心，这时，如果一个正在开发中的服务提供者注册，可能会影响消费者不能正常运行。<br>可以加入如下配置来禁用注册：</p>
-<pre class=" language-sql"><code class="language-sql"><span class="token comment" spellcheck="true"># 禁止服务提供者注册到注册中心</span>
-dubbo<span class="token punctuation">.</span>registry<span class="token punctuation">.</span>register<span class="token operator">=</span><span class="token boolean">false</span></code></pre>
+<pre class="line-numbers language-sql"><code class="language-sql"><span class="token comment" spellcheck="true"># 禁止服务提供者注册到注册中心</span>
+dubbo<span class="token punctuation">.</span>registry<span class="token punctuation">.</span>register<span class="token operator">=</span><span class="token boolean">false</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <ul>
-<li>3 配置运行的环境变量<pre class=" language-java"><code class="language-java">参数：<span class="token operator">-</span>Ddubbo<span class="token punctuation">.</span>properties<span class="token punctuation">.</span>file
-值：dubbo<span class="token operator">-</span>local<span class="token punctuation">.</span>properties文件的本地绝对路径</code></pre>
+<li>3 配置运行的环境变量<pre class="line-numbers language-java"><code class="language-java">参数：<span class="token operator">-</span>Ddubbo<span class="token punctuation">.</span>properties<span class="token punctuation">.</span>file
+值：dubbo<span class="token operator">-</span>local<span class="token punctuation">.</span>properties文件的本地绝对路径<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 这里我基于IDEA运行Junit测试，配置环境变量方法如下<br><img src="/images/Dubbo%E6%9C%8D%E5%8A%A1%E6%9C%AC%E5%9C%B0%E8%B0%83%E6%B5%8B%E4%BC%98%E9%9B%85%E5%AE%9E%E8%B7%B5/1.png" alt></li>
-<li>4 运行并测试<br>我这里基于Junit测试，在测试类头加上2个注解，applicationContext.xml是Spring配置文件<pre class=" language-java"><code class="language-java"><span class="token annotation punctuation">@RunWith</span><span class="token punctuation">(</span>SpringJUnit4ClassRunner<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
-<span class="token annotation punctuation">@ContextConfiguration</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token string">"classpath:applicationContext.xml"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span></code></pre>
+<li>4 运行并测试<br>我这里基于Junit测试，在测试类头加上2个注解，applicationContext.xml是Spring配置文件<pre class="line-numbers language-java"><code class="language-java"><span class="token annotation punctuation">@RunWith</span><span class="token punctuation">(</span>SpringJUnit4ClassRunner<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span>
+<span class="token annotation punctuation">@ContextConfiguration</span><span class="token punctuation">(</span><span class="token punctuation">{</span> <span class="token string">"classpath:applicationContext.xml"</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <img src="/images/Dubbo%E6%9C%8D%E5%8A%A1%E6%9C%AC%E5%9C%B0%E8%B0%83%E6%B5%8B%E4%BC%98%E9%9B%85%E5%AE%9E%E8%B7%B5/2.png" alt="image.png"><br>可以看到，在Dubbo服务提供者代码打断点，程序可以正常再断点处停下</li>
 </ul>
 <h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3 总结"></a>3 总结</h1><p><a href="http://dubbo.apache.org/zh-cn/docs/user/configuration/properties.html" target="_blank" rel="noopener">参考Dubbo官方文档</a>，Dubbo获取配置文件时，优先级如下：</p>
@@ -660,19 +660,36 @@ dubbo<span class="token punctuation">.</span>registry<span class="token punctuat
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/ji-yu-sonarqube-dai-ma-zhi-liang-jian-cha-gong-ju-zong-jie/">
+                <a href="/2019/10/13/java-dai-ma-jing-tai-jian-ce-gong-ju-bi-jiao/">
                     <div class="card-image">
                         
-                        <img src="/images/基于SonarQube代码质量检查工具总结/0.jpg" class="responsive-img" alt="基于SonarQube代码质量检查工具总结">
+                        <img src="/images/Java代码静态检测工具比较/0.jpg" class="responsive-img" alt="Java代码静态检测工具比较">
                         
-                        <span class="card-title">基于SonarQube代码质量检查工具总结</span>
+                        <span class="card-title">Java代码静态检测工具比较</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-#　1 概述SonarQube(sonar)是一个开源平台，用于管理源代码的质量。 SonarQube不只是一个质量数据报告工具，更是代码质量管理平台。 支持java, C#, C/C++, PL/SQL, Cobol, JavaScri
+                            最近团队想引进代码静态检测工具，稍微调研一下：
+工具比较功能比较
+
+
+
+Checkstyle
+FindBugs
+PMD
+Jtest
+SonarQube
+
+
+
+使用方式
+IDE插件
+IDE插件
+IDE插件
+IDE插件
+IDE插件+独立部署的服
                         
                     </div>
                     <div class="publish-info">
@@ -683,8 +700,8 @@ dubbo<span class="token punctuation">.</span>registry<span class="token punctuat
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/运维监控/" class="post-category">
-                                    运维监控
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
                                 </a>
                             
                             
@@ -701,21 +718,20 @@ dubbo<span class="token punctuation">.</span>registry<span class="token punctuat
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
+                <a href="/2019/10/13/intellij-idea-li-yong-duan-dian-tian-jia-diao-shi-dai-ma/">
                     <div class="card-image">
                         
-                        <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
+                        <img src="/images/Intellij-idea-利用断点添加调试代码/0.jpg" class="responsive-img" alt="Intellij-idea-利用断点添加调试代码">
                         
-                        <span class="card-title">线程的5种状态总结</span>
+                        <span class="card-title">Intellij-idea-利用断点添加调试代码</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
-
-New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线程中的代码，
+问题场景在调试代码时，有时需要额外打印信息到日志或者控制台，事后又需要再把代码注释掉，操作起来比较繁琐，代码臃肿。
+解决方法测试代码：右键点击断点，点击“More”勾选“Evaluate and log”编写断点调试逻辑Dubug运行代码
                         
                     </div>
                     <div class="publish-info">
@@ -726,8 +742,8 @@ New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/Java基础/" class="post-category">
-                                    Java基础
+                            <a href="/categories/工具使用/" class="post-category">
+                                    工具使用
                                 </a>
                             
                             

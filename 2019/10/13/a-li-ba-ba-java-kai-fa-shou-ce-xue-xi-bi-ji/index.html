@@ -424,7 +424,7 @@
 <p>【强制】 POJO 类中布尔类型的变量，都不要加 is ，否则部分框架解析会引起序列化错误。<br><strong>反例：</strong>定义为基本数据类型 boolean isSuccess;的属性，它的方法也是 isSuccess() ，RPC框架在反向解析的时候，“以为”对应的属性名称是 success ，导致属性获取不到，进而抛出异常。</p>
 </blockquote>
 <p>对于isSuccess这个布尔变量，IDE在自动生成getter,setter方法时，<strong>生成的方法名称是isSuccess和setSuccess，而不是isIsSuccess和setIsSuccess,</strong></p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoPOJO</span><span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">DemoPOJO</span><span class="token punctuation">{</span>
     <span class="token keyword">boolean</span> active<span class="token punctuation">;</span>
     <span class="token keyword">boolean</span> isSuccess<span class="token punctuation">;</span>
 
@@ -443,7 +443,7 @@
     <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setSuccess</span><span class="token punctuation">(</span><span class="token keyword">boolean</span> success<span class="token punctuation">)</span> <span class="token punctuation">{</span>
         isSuccess <span class="token operator">=</span> success<span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
- <span class="token punctuation">}</span></code></pre>
+ <span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>除了RPC框架反向解析会有问题，类型情况反向解析时也会有问题：<br>比如SpringMVC在接收前端页面传回一个”isSuccess”布尔变量时，解析成为POJO对象时，找不到setIsSuccess方法，导致POJO的属性不能正确获取，而且比较坑的是，这种情况不容易发现异常，最终解析后的属性值是拿到布尔类型默认值false。</p>
 <h2 id="常量定义"><a href="#常量定义" class="headerlink" title="常量定义"></a>常量定义</h2><blockquote>
 <p>【推荐】不要使用一个常量类维护所有常量，应该按常量功能进行归类，分开维护。如：缓存相关的常量放在类： CacheConsts 下 ； 系统配置相关的常量放在类： ConfigConsts 下。<br><strong>说明：</strong>大而全的常量类，非得使用查找功能才能定位到修改的常量，不利于理解和维护。</p>
@@ -462,7 +462,7 @@
 <blockquote>
 <p>【强制】所有的相同类型的包装类对象之间值的比较，全部使用 equals 方法比较。<br>说明：对于 Integer var =?在-128 至 127 之间的赋值， <strong>Integer 对象是在IntegerCache.cache 产生，会复用已有对象</strong>，这个区间内的 Integer 值可以直接使用==进行判断， 但是这个区间之外的所有数据， 都会在堆上产生， 并不会复用已有对象， 这是一个大坑，推荐使用 <strong>equals</strong> 方法进行判断。</p>
 </blockquote>
-<pre class=" language-java"><code class="language-java"> Integer integerA1 <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java"> Integer integerA1 <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
  Integer integerA2 <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
  System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>integerA1 <span class="token operator">==</span> integerA2<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//true</span>
 
@@ -470,7 +470,7 @@
  Integer integerB2 <span class="token operator">=</span> <span class="token number">1000</span><span class="token punctuation">;</span>
  System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>integerB1 <span class="token operator">==</span> integerB2<span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//false</span>
 
- System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>integerB1<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//true</span></code></pre>
+ System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>integerB1<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//true</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <hr>
 <blockquote>
 <p>【强制】关于基本数据类型与包装数据类型的使用标准如下：<br>1 ） 所有的 POJO 类属性必须使用<strong>包装数据类型</strong>。<br>2 ） RPC 方法的返回值和参数必须使用<strong>包装数据类型</strong>。<br>3 ） 所有的局部变量【推荐】使用<strong>基本数据类型</strong>。<br>说明： POJO 类属性没有初值是提醒使用者在需要使用时，必须自己显式地进行赋值，任何NPE 问题，或者入库检查，都由<strong>使用者来保证</strong>。<br><strong>正例：</strong>数据库的查询结果可能是 null ，因为自动拆箱，用基本数据类型接收有 NPE 风险。<br><strong>反例：</strong>比如显示成交总额涨跌情况，即正负 x %， x 为基本数据类型，调用的 RPC 服务，调用不成功时，返回的是默认值，页面显示：0%，这是不合理的，应该显示成中划线-。所以包装数据类型的 null 值，能够表示额外的信息，如：远程调用失败，异常退出。</p>
@@ -587,12 +587,12 @@
 <hr>
 <blockquote>
 <p>【强制】 <strong>SimpleDateFormat 是线程不安全的类</strong>，一般不要定义为 static 变量，如果定义为<br>static ，必须加锁，或者使用 DateUtils 工具类。<br>正例：注意线程安全，使用 DateUtils 。亦推荐如下处理：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> ThreadLocal<span class="token operator">&lt;</span>DateFormat<span class="token operator">></span> df <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ThreadLocal</span><span class="token operator">&lt;</span>DateFormat<span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> ThreadLocal<span class="token operator">&lt;</span>DateFormat<span class="token operator">></span> df <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ThreadLocal</span><span class="token operator">&lt;</span>DateFormat<span class="token operator">></span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token annotation punctuation">@Override</span>
     <span class="token keyword">protected</span> DateFormat <span class="token function">initialValue</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
       <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">SimpleDateFormat</span><span class="token punctuation">(</span><span class="token string">"yyyy-MM-dd"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre>
+<span class="token punctuation">}</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>说明：如果是 JDK 8 的应用，可以使用 Instant 代替 Date， LocalDateTime 代替 Calendar，<strong>DateTimeFormatter 代替 Simpledateformatter</strong>，官方给出的解释： simple beautiful strong immutable thread - safe </p>
 </blockquote>
 <p>个人推荐的话，需要做日期与字符串的转换，推荐使用joda的<a href="http://joda-time.sourceforge.net/apidocs/org/joda/time/DateTime.html" target="_blank" rel="noopener">DataTime</a>,主要特点是易于使用，功能完整，可以利用它<strong>把JDK Date和Calendar类完全替换掉</strong>，而且仍然能够提供很好的集成。</p>
@@ -609,8 +609,8 @@
 <hr>
 <blockquote>
 <p>【参考】 volatile 解决多线程内存不可见问题。对于一写多读，是可以解决变量同步问题，但是如果多写，同样无法解决线程安全问题。如果是 count ++操作，使用如下类实现：</p>
-<pre class=" language-java"><code class="language-java">AtomicInteger count <span class="token operator">=</span>  <span class="token keyword">new</span> <span class="token class-name">AtomicInteger</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-count<span class="token punctuation">.</span><span class="token function">addAndGet</span><span class="token punctuation">(</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>  </code></pre>
+<pre class="line-numbers language-java"><code class="language-java">AtomicInteger count <span class="token operator">=</span>  <span class="token keyword">new</span> <span class="token class-name">AtomicInteger</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+count<span class="token punctuation">.</span><span class="token function">addAndGet</span><span class="token punctuation">(</span> <span class="token number">1</span> <span class="token punctuation">)</span><span class="token punctuation">;</span>  <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p> 如果是 JDK 8，推荐使用 LongAdder 对象，比 AtomicLong 性能更好 （ 减少乐观锁的重试次数 ） </p>
 </blockquote>
 <p>多个线程操作同一个对象就会有数据可见性问题，当A线程修改了变量number，修改完成之后，B线程读这个number变量，读到的变量不一定是A线程修改后的变量，什么时候B线程能读到A线程修改后的变量值？<strong>有可能永远都读不到</strong>，这种现象称为<strong>“重排序(Recordering)”</strong><br>要避免数据可见性的问题，最简单的方法是使用内置锁(synchronized)来保护变量，内置锁可以用于确保某个线程以一种<strong>可预测的方法来查看</strong>另一个线程的执行结果。也就是说，刚刚的number变量如果使用内置锁保护的话，可以保证多线程可见性。</p>
@@ -626,22 +626,22 @@ count<span class="token punctuation">.</span><span class="token function">addAnd
 <hr>
 <blockquote>
 <p>【推荐】推荐尽量少用 else ，  if - else 的方式可以改写成：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">if</span><span class="token punctuation">(</span>condition<span class="token punctuation">)</span><span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">if</span><span class="token punctuation">(</span>condition<span class="token punctuation">)</span><span class="token punctuation">{</span>
    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
    <span class="token keyword">return</span> obj<span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
-<span class="token comment" spellcheck="true">// 接着写 else 的业务逻辑代码;</span></code></pre>
+<span class="token comment" spellcheck="true">// 接着写 else 的业务逻辑代码;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>说明：如果非得使用 if()…else if()…else… 方式表达逻辑，<strong>【强制】请勿超过 3 层</strong>，<br>超过请使用状态设计模式。<br><strong>正例：</strong>逻辑上超过 3 层的 if-else 代码可以使用卫语句，或者状态模式来实现。</p>
 </blockquote>
 <p>很多时候，例如做参数校验的时候，尽量避免不要用一堆 else if，那样导致读代码的人要把整个方法的代码都读完才能理解好代码，建议使用:</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">if</span><span class="token punctuation">(</span>conditionA<span class="token punctuation">)</span><span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">if</span><span class="token punctuation">(</span>conditionA<span class="token punctuation">)</span><span class="token punctuation">{</span>
    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
    <span class="token keyword">return</span> <span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 <span class="token keyword">if</span><span class="token punctuation">(</span>conditionB<span class="token punctuation">)</span><span class="token punctuation">{</span>
    <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
    <span class="token keyword">return</span> <span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>这样的单独检查就是<strong>卫语句(guard clauses)</strong>.卫语句可以把我们的视线从异常处理中解放出来，<strong>集中精力到正常处理</strong>的代码中。</p>
 <hr>
 <blockquote>
@@ -893,21 +893,20 @@ count<span class="token punctuation">.</span><span class="token function">addAnd
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/xian-cheng-de-5-chong-zhuang-tai-zong-jie/">
+                <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
                     <div class="card-image">
                         
-                        <img src="/images/线程的5种状态总结/0.jpg" class="responsive-img" alt="线程的5种状态总结">
+                        <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
                         
-                        <span class="card-title">线程的5种状态总结</span>
+                        <span class="card-title">设计模式-创建型模式</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-线程的5种状态线程可以有如下5种状态：5种状态的转换图如下
-
-New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread(r)，该线程还没有开始运行。这意外这它的状态是new。此时程序还没有开始运行线程中的代码，
+原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
+建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
                         
                     </div>
                     <div class="publish-info">
@@ -936,19 +935,20 @@ New (新创建)*　　当用*new**操作符创建一个线程时，如new Thread
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/bian-cheng-chang-yong-kuai-jie-jian/">
+                <a href="/2019/10/13/java-xian-shang-fu-wu-cpu-guo-zai-wen-ti-kuai-su-ding-wei/">
                     <div class="card-image">
                         
-                        <img src="/images/编程常用快捷键/0.jpg" class="responsive-img" alt="编程常用快捷键">
+                        <img src="/images/Java线上服务CPU过载问题快速定位/0.jpg" class="responsive-img" alt="Java线上服务CPU过载问题快速定位">
                         
-                        <span class="card-title">编程常用快捷键</span>
+                        <span class="card-title">Java线上服务CPU过载问题快速定位</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-Intellij idea快捷键编辑类快捷键Ctrl + Shift + Alt + U      生成UML图(专业版才有的功能)Ctrl + Alt + L     代码自动缩进Ctrl + Alt + T     对选中的代码块进行
+*　　本文介绍一次解决线上服务*Java进程CPU过载问题的经过，提供了如果定位是哪个服务进程导致CPU过载，哪个线程导致CPU过载，哪段代码**导致CPU过载，希望能提供后续遇到类似情况的读者一点思路。  
+#线上环境发现的问题*　　*
                         
                     </div>
                     <div class="publish-info">
@@ -959,8 +959,8 @@ Intellij idea快捷键编辑类快捷键Ctrl + Shift + Alt + U      生成UML图
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/工具使用/" class="post-category">
-                                    工具使用
+                            <a href="/categories/运维监控/" class="post-category">
+                                    运维监控
                                 </a>
                             
                             

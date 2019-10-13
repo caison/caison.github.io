@@ -429,19 +429,19 @@
 <h2 id="1-显式获取"><a href="#1-显式获取" class="headerlink" title="1 显式获取"></a>1 显式获取</h2><p>以ReentrantLock锁为例，主要支持以下4种方式显式获取锁</p>
 <ul>
 <li><p><strong>(1) 阻塞等待获取</strong></p>
-<pre class=" language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token comment" spellcheck="true">// 一直阻塞等待，直到获取成功</span>
-lock<span class="token punctuation">.</span><span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+lock<span class="token punctuation">.</span><span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p><strong>(2) 无阻塞尝试获取</strong></p>
-<pre class=" language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token comment" spellcheck="true">// 尝试获取锁，如果锁已被其他线程占用，则不阻塞等待直接返回false</span>
 <span class="token comment" spellcheck="true">// 返回true - 锁是空闲的且被本线程获取，或者已经被本线程持有</span>
 <span class="token comment" spellcheck="true">// 返回false - 获取锁失败</span>
-<span class="token keyword">boolean</span> isGetLock <span class="token operator">=</span> lock<span class="token punctuation">.</span><span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<span class="token keyword">boolean</span> isGetLock <span class="token operator">=</span> lock<span class="token punctuation">.</span><span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p><strong>(3) 指定时间内阻塞等待获取</strong></p>
-<pre class=" language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">try</span> <span class="token punctuation">{</span>
   <span class="token comment" spellcheck="true">// 尝试在指定时间内获取锁</span>
   <span class="token comment" spellcheck="true">// 返回true - 锁是空闲的且被本线程获取，或者已经被本线程持有</span>
@@ -450,24 +450,24 @@ lock<span class="token punctuation">.</span><span class="token function">lock</s
 <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">InterruptedException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   <span class="token comment" spellcheck="true">// 内部调用isInterrupted() 方法检测线程中断标志位，主动响应中断</span>
   e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 <li><p><strong>(4) 响应中断获取</strong></p>
-<pre class=" language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="line-numbers language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token keyword">try</span> <span class="token punctuation">{</span>
   <span class="token comment" spellcheck="true">// 响应中断获取锁</span>
   <span class="token comment" spellcheck="true">// 如果调用线程的thread.interrupt()方法设置线程中断，线程退出阻塞等待并抛出中断异常</span>
   lock<span class="token punctuation">.</span><span class="token function">lockInterruptibly</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">InterruptedException</span> e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
   e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 </li>
 </ul>
-<h2 id="2-显式释放"><a href="#2-显式释放" class="headerlink" title="2 显式释放"></a>2 显式释放</h2><pre class=" language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<h2 id="2-显式释放"><a href="#2-显式释放" class="headerlink" title="2 显式释放"></a>2 显式释放</h2><pre class="line-numbers language-java"><code class="language-java">ReentrantLock lock <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ReentrantLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 lock<span class="token punctuation">.</span><span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token comment" spellcheck="true">// ... 各种业务操作</span>
 <span class="token comment" spellcheck="true">// 显式释放锁</span>
-lock<span class="token punctuation">.</span><span class="token function">unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+lock<span class="token punctuation">.</span><span class="token function">unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="3-可重入"><a href="#3-可重入" class="headerlink" title="3 可重入"></a>3 可重入</h2><p>已经获取到锁的线程，再次请求该锁可以直接获得</p>
 <h2 id="4-可共享"><a href="#4-可共享" class="headerlink" title="4 可共享"></a>4 可共享</h2><p>指同一个资源允许多个线程共享，例如读写锁的读锁允许多个线程共享，共享锁可以让多个线程并发安全地访问数据，提高程序执效率</p>
 <h2 id="5-公平、非公平"><a href="#5-公平、非公平" class="headerlink" title="5 公平、非公平"></a>5 公平、非公平</h2><p>公平锁：多个线程采用先到先得的公平方式竞争锁。每次加锁前都会检查等待队列里面有没有线程排队，没有才会尝试获取锁。<br>非公平锁：当一个线程采用非公平的方式获取锁时，该线程会首先去尝试获取锁而不是等待。如果没有获取成功，才会进入等待队列</p>
@@ -505,14 +505,14 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <li>boolean releaseShared(int) 共享方式释放资源</li>
 </ul>
 <p>以独占模式为例：获取/释放资源的核心的实现如下：</p>
-<pre class=" language-java"><code class="language-java"> Acquire<span class="token operator">:</span>
+<pre class="line-numbers language-java"><code class="language-java"> Acquire<span class="token operator">:</span>
      <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">tryAcquire</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         如果线程尚未排队，则将其加入队列；
      <span class="token punctuation">}</span>
 
  Release<span class="token operator">:</span>
      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">tryRelease</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span><span class="token punctuation">)</span>
-        唤醒CLH中第一个排队线程</code></pre>
+        唤醒CLH中第一个排队线程<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>到这里，有点绕，下面一张图把上面介绍到的设计思路再重新捋一捋：</p>
 <p><img src="/images/%E7%90%86%E8%A7%A3Java%E5%B9%B6%E5%8F%91%E5%BA%95%E5%B1%82%E4%B9%8BAQS%E5%AE%9E%E7%8E%B0/3.png" alt="AQS基本设计"></p>
 <h1 id="特性实现"><a href="#特性实现" class="headerlink" title="特性实现"></a>特性实现</h1><p>下面介绍基于AQS的对象锁、并发工具的一系列功能特性的实现原理</p>
@@ -525,7 +525,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <li>3、ReentrantLock的lock()方法基于AQS的acquire(int)方法阻塞等待获取锁</li>
 </ul>
 <p>ReentrantLock中的tryAcquire(int)方法实现：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">protected</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">tryAcquire</span><span class="token punctuation">(</span><span class="token keyword">int</span> acquires<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">protected</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">tryAcquire</span><span class="token punctuation">(</span><span class="token keyword">int</span> acquires<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">final</span> Thread current <span class="token operator">=</span> Thread<span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">int</span> c <span class="token operator">=</span> <span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">// 没有任何线程持有锁</span>
@@ -550,9 +550,9 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
     <span class="token punctuation">}</span>
     <span class="token comment" spellcheck="true">// 其他线程已经持有锁</span>
     <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>AQS的acquire(int)方法实现</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">acquire</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">acquire</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token comment" spellcheck="true">// tryAcquire检查释放能获取成功</span>
         <span class="token comment" spellcheck="true">// addWaiter 构建CLH的节点对象并入队</span>
         <span class="token comment" spellcheck="true">// acquireQueued线程阻塞等待</span>
@@ -597,10 +597,10 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
         <span class="token keyword">if</span> <span class="token punctuation">(</span>failed<span class="token punctuation">)</span>
             <span class="token function">cancelAcquire</span><span class="token punctuation">(</span>node<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="2-无阻塞尝试获取"><a href="#2-无阻塞尝试获取" class="headerlink" title="(2) 无阻塞尝试获取"></a>(2) 无阻塞尝试获取</h3><p>ReentrantLock中的tryLock()的实现仅仅是非公平锁实现，实现逻辑基本与tryAcquire一致，不同的是没有通过hasQueuedPredecessors()检查CLH队列的head是否有其他线程在等待，这样当资源释放时，有线程请求资源能插队优先获取</p>
 <p>ReentrantLock中tryLock()具体实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">return</span> sync<span class="token punctuation">.</span><span class="token function">nonfairTryAcquire</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
 
@@ -627,7 +627,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
     <span class="token punctuation">}</span>
     <span class="token comment" spellcheck="true">// 其他线程已经持有锁</span>
     <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="3-指定时间内阻塞等待获取"><a href="#3-指定时间内阻塞等待获取" class="headerlink" title="(3) 指定时间内阻塞等待获取"></a>(3) 指定时间内阻塞等待获取</h3><p>基本实现如下：</p>
 <ul>
 <li>1、ReentrantLock的tryLock(long, TimeUnit)调用AQS的tryAcquireNanos(int, long)方法</li>
@@ -635,7 +635,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <li>3、AQS的doAcquireNanos判断当前节点是否为head且基于tryAcquire(int)能否获得资源，如果不能获得且超时时间大于1微秒，则休眠一段时间后再尝试获取</li>
 </ul>
 <p>ReentrantLock中的实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token keyword">long</span> timeout<span class="token punctuation">,</span> TimeUnit unit<span class="token punctuation">)</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">tryLock</span><span class="token punctuation">(</span><span class="token keyword">long</span> timeout<span class="token punctuation">,</span> TimeUnit unit<span class="token punctuation">)</span>
         <span class="token keyword">throws</span> InterruptedException <span class="token punctuation">{</span>
     <span class="token keyword">return</span> sync<span class="token punctuation">.</span><span class="token function">tryAcquireNanos</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> unit<span class="token punctuation">.</span><span class="token function">toNanos</span><span class="token punctuation">(</span>timeout<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
@@ -648,9 +648,9 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
     <span class="token comment" spellcheck="true">// 先tryAcquire尝试获取锁    </span>
     <span class="token keyword">return</span> <span class="token function">tryAcquire</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span> <span class="token operator">||</span>
         <span class="token function">doAcquireNanos</span><span class="token punctuation">(</span>arg<span class="token punctuation">,</span> nanosTimeout<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>AQS中的实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">boolean</span> <span class="token function">doAcquireNanos</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">,</span> <span class="token keyword">long</span> nanosTimeout<span class="token punctuation">)</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">boolean</span> <span class="token function">doAcquireNanos</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">,</span> <span class="token keyword">long</span> nanosTimeout<span class="token punctuation">)</span>
         <span class="token keyword">throws</span> InterruptedException <span class="token punctuation">{</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span>nanosTimeout <span class="token operator">&lt;=</span> 0L<span class="token punctuation">)</span>
         <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
@@ -692,10 +692,10 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
         <span class="token keyword">if</span> <span class="token punctuation">(</span>failed<span class="token punctuation">)</span>
             <span class="token function">cancelAcquire</span><span class="token punctuation">(</span>node<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h3 id="4-响应中断获取"><a href="#4-响应中断获取" class="headerlink" title="(4) 响应中断获取"></a>(4) 响应中断获取</h3><p>ReentrantLock响应中断获取锁的方式是：当线程在park方法休眠中响应thead.interrupt()方法中断唤醒时，检查到线程中断标志位为true，主动抛出异常，核心实现在AQS的doAcquireInterruptibly(int)方法中</p>
 <p>基本实现与阻塞等待获取类似，只是调用从AQS的acquire(int)方法，改为调用AQS的doAcquireInterruptibly(int)方法</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">doAcquireInterruptibly</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">doAcquireInterruptibly</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span>
     <span class="token keyword">throws</span> InterruptedException <span class="token punctuation">{</span>
     <span class="token keyword">final</span> Node node <span class="token operator">=</span> <span class="token function">addWaiter</span><span class="token punctuation">(</span>Node<span class="token punctuation">.</span>EXCLUSIVE<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">// 标记是否成功拿到资源</span>
@@ -726,7 +726,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
         <span class="token keyword">if</span> <span class="token punctuation">(</span>failed<span class="token punctuation">)</span>
             <span class="token function">cancelAcquire</span><span class="token punctuation">(</span>node<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="2-显式释放-1"><a href="#2-显式释放-1" class="headerlink" title="2 显式释放"></a>2 显式释放</h2><p>AQS资源共享方式分为独占式和共享式，这里先以ReentrantLock为例介绍独占式资源的显式释放，共享式后面会介绍到</p>
 <p>与显式获取有类似之处，ReentrantLock显式释放基本实现如下：</p>
 <ul>
@@ -735,7 +735,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <li>3、被唤醒后的线程继续执行acquireQueued(Node,int)或者doAcquireNanos(int, long)或者doAcquireInterruptibly(int)中for(;;)中的逻辑，继续尝试获取资源</li>
 </ul>
 <p>ReentrantLock中tryRelease(int)方法实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">protected</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">tryRelease</span><span class="token punctuation">(</span><span class="token keyword">int</span> releases<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">protected</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">tryRelease</span><span class="token punctuation">(</span><span class="token keyword">int</span> releases<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token keyword">int</span> c <span class="token operator">=</span> <span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> releases<span class="token punctuation">;</span>
     <span class="token comment" spellcheck="true">// 只有持有锁的线程才有资格释放锁</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span>Thread<span class="token punctuation">.</span><span class="token function">currentThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token function">getExclusiveOwnerThread</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
@@ -752,9 +752,9 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
     <span class="token punctuation">}</span>
     <span class="token function">setState</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token keyword">return</span> free<span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>AQS中的release(int)方法实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">release</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">release</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment" spellcheck="true">// 尝试释放资源</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">tryRelease</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         Node h <span class="token operator">=</span> head<span class="token punctuation">;</span>
@@ -768,7 +768,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
         <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
     <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="3-可重入-1"><a href="#3-可重入-1" class="headerlink" title="3 可重入"></a>3 可重入</h2><p>可重入的实现比较简单，以ReentrantLock为例，主要是在tryAcquire(int)方法中实现，持有锁的线程是不是当前线程，如果是，更新同步状态值state，并返回true，代表能获取锁</p>
 <h2 id="4-可共享-1"><a href="#4-可共享-1" class="headerlink" title="4 可共享"></a>4 可共享</h2><p>可共享资源以ReentrantReadWriteLock为例，跟独占锁ReentrantLock的区别主要在于，获取的时候，多个线程允许共享读锁，当写锁释放时，多个阻塞等待读锁的线程能同时获取到</p>
 <p>ReentrantReadWriteLock类中将AQS的state同步状态值定义为，高16位为读锁持有数，低16位为写锁持有锁</p>
@@ -780,7 +780,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <li>3、ReentrantReadWriteLock的ReadLock.lock()方法基于AQS的acquireShared(int)方法阻塞等待获取锁</li>
 </ul>
 <p>AQS共享模式获取资源的具体实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">acquireShared</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">acquireShared</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment" spellcheck="true">// tryAcquireShared返回负数代表获取共享资源失败</span>
     <span class="token comment" spellcheck="true">// 则通过进入等待队列，直到获取到资源为止才返回</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">tryAcquireShared</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span> <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span>
@@ -835,7 +835,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
             <span class="token comment" spellcheck="true">// 释放共享资源</span>
             <span class="token function">doReleaseShared</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><strong>释放读锁(ReadLock.unlock())主要实现如下</strong>：<br>ReentrantReadWriteLock共享资源的释放主要实现如下：</p>
 <ul>
 <li>1、ReentrantReadWriteLock实现AQS的tryReleaseShared(int)方法，判断读锁释放后是否还有线程持有读锁</li>
@@ -843,7 +843,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
 <li>3、ReentrantReadWriteLock的ReadLock.unlock()方法基于AQS的releaseShared(int)方法释放锁</li>
 </ul>
 <p>AQS共享模式释放资源具体实现如下：</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">releaseShared</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">boolean</span> <span class="token function">releaseShared</span><span class="token punctuation">(</span><span class="token keyword">int</span> arg<span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token comment" spellcheck="true">// 允许唤醒CLH中的休眠线程</span>
     <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">tryReleaseShared</span><span class="token punctuation">(</span>arg<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token comment" spellcheck="true">// 执行资源释放</span>
@@ -877,9 +877,9 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
         <span class="token keyword">if</span> <span class="token punctuation">(</span>h <span class="token operator">==</span> head<span class="token punctuation">)</span>                 
             <span class="token keyword">break</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h2 id="5-公平、非公平-1"><a href="#5-公平、非公平-1" class="headerlink" title="5 公平、非公平"></a>5 公平、非公平</h2><p>这个特性实现比较简单，以ReentrantLock锁为例，公平锁直接基于AQS的acquire(int)获取资源，而非公平锁先尝试插队：基于CAS，期望state同步变量值为0(没有任何线程持有锁)，更新为1，如果全部CAS更新失败再进行排队</p>
-<pre class=" language-java"><code class="language-java"><span class="token comment" spellcheck="true">// 公平锁实现</span>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token comment" spellcheck="true">// 公平锁实现</span>
 <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
     <span class="token function">acquire</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 <span class="token punctuation">}</span>
@@ -918,7 +918,7 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
         <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
     <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span></code></pre>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>AQS的state变量值的含义不一定代表资源，不同的AQS的继承类可以对state变量值有不同的定义</p>
 <p>例如在countDownLatch类中，state变量值代表还需释放的latch计数(可以理解为需要打开的门闩数)，需要每个门闩都打开，门才能打开，所有等待线程才会开始执行，每次countDown()就会对state变量减1，如果state变量减为0，则唤醒CLH队列中的休眠线程</p>
 <p>学习类似底层源码建议先定几个问题，带着问题学习；通俗学习前建议先理解透彻整体设计，整体原理(可以先阅读相关文档资料)，再研究和源码细节，避免一开始就扎进去源码，容易无功而返</p>
@@ -1129,22 +1129,19 @@ lock<span class="token punctuation">.</span><span class="token function">unlock<
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
+                <a href="/2019/10/13/li-jie-java-nei-cun-mo-xing/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
+                        <img src="/images/理解Java内存模型/0.jpg" class="responsive-img" alt="理解Java内存模型">
                         
-                        <span class="card-title">理解Java-GC原理和调优</span>
+                        <span class="card-title">理解Java内存模型</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
-阅读时长约30分钟，内容主要如下：
-
-GC基础原理，涉及调优目标，GC事件分类、JVM内存分
+最近重新学习一遍《深入学习Java虚拟机》，把之前Java内存模型中模糊的知识重新梳理一遍，这篇文章主要介绍模型产生的问题背景，解决的问题，处理思路，相关实现规则，环环相扣，希望读者看完这篇文章后能对Java内存模型体系产生一个相对清晰的
                         
                     </div>
                     <div class="publish-info">

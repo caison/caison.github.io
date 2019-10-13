@@ -677,29 +677,22 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/jenkins-da-jian-ji-cheng-sonarqube-zui-jian-shi-jian/">
+                <a href="/2019/10/13/fen-bu-shi-ren-wu-diao-du-ping-tai-xxl-job/">
                     <div class="card-image">
                         
-                        <img src="/images/Jenkins搭建集成SonarQube最简实践/0.jpg" class="responsive-img" alt="Jenkins搭建集成SonarQube最简实践">
+                        <img src="/images/分布式任务调度平台XXL-JOB/0.jpg" class="responsive-img" alt="分布式任务调度平台XXL-JOB">
                         
-                        <span class="card-title">Jenkins搭建集成SonarQube最简实践</span>
+                        <span class="card-title">分布式任务调度平台XXL-JOB</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-本文介绍在Linux环境下Jenkins如何整合SonarQube
-环境准备
-JDK环境JDK1.8
-代码托管Gitlab
-审查工具SonarQube
-发布容器Tomcat
-构建工具Maven
-数据库MySQL
+                            本文主要介绍分布式任务调度平台XXL-JOB(v2.1.0版本)，包括功能特性、实现原理、优缺点、同类框架比较等
+基本介绍项目开发中，常常以下场景需要分布式任务调度：
 
-系统配置要求
-OS内核需
+同一服务多个实例的任务存在互斥时，需要统一协调
+定时任务的执行需要支持
                         
                     </div>
                     <div class="publish-info">
@@ -710,8 +703,8 @@ OS内核需
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/运维监控/" class="post-category">
-                                    运维监控
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
                                 </a>
                             
                             
@@ -728,20 +721,20 @@ OS内核需
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/she-ji-mo-shi-chuang-jian-xing-mo-shi/">
+                <a href="/2019/10/13/she-ji-mo-shi-jie-gou-xing-mo-shi/">
                     <div class="card-image">
                         
-                        <img src="/images/设计模式-创建型模式/0.jpg" class="responsive-img" alt="设计模式-创建型模式">
+                        <img src="/images/设计模式-结构型模式/0.jpg" class="responsive-img" alt="设计模式-结构型模式">
                         
-                        <span class="card-title">设计模式-创建型模式</span>
+                        <span class="card-title">设计模式-结构型模式</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-原型模式(Prototype )意图：用原型实例指定创建对象的种类，并且通过拷贝这些原型创建新的对象。主要解决：在运行期建立和删除原型。
-建造者模式(Builder)意图：将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表
+享元模式(Flyweight)意图：运用共享技术有效地支持大量细粒度的对象。主要解决：在有大量对象时，有可能会造成内存溢出，我们把其中共同的部分抽象出来，如果有相同的业务请求，直接返回在内存中已有的对象，避免重新创建。
+代理模式(Prox
                         
                     </div>
                     <div class="publish-info">
