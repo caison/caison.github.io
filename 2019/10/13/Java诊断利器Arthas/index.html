@@ -5,15 +5,29 @@
   
 
   
-  <title>Hexo</title>
+  <title>Java诊断利器Arthas | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱 当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：  这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？ 我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？ 线上遇到某个用户的数据处理有问题，但线上">
+<meta name="keywords" content="工具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java诊断利器Arthas">
+<meta property="og:url" content="http://yoursite.com/2019/10/13/Java诊断利器Arthas/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱 当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：  这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？ 我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？ 线上遇到某个用户的数据处理有问题，但线上">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-a4d295308061e739.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-fb80aca7b7ae428d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-cd748c559b720ac4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-a24148b54f5ac484.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-a84fe618574a9481.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-125dc73d973c43ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-6ab6ae954f6bca2c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5618238-43a7a547879c7b7e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-10-13T05:24:46.291Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Java诊断利器Arthas">
+<meta name="twitter:description" content="1 简介Arthas 是Alibaba开源的Java诊断工具，深受开发者喜爱 当你遇到以下类似问题而束手无策时，Arthas可以帮助你解决：  这个类从哪个 jar 包加载的？为什么会报各种类相关的 Exception？ 我改的代码为什么没有执行到？难道是我没 commit？分支搞错了？ 遇到问题无法在线上 debug，难道只能通过加日志再重新发布吗？ 线上遇到某个用户的数据处理有问题，但线上">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/5618238-a4d295308061e739.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -60,9 +74,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Java诊断利器Arthas" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Java诊断利器Arthas" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/10/13/Java诊断利器Arthas/" class="article-date">
   <time datetime="2019-10-13T05:22:49.000Z" itemprop="datePublished">2019-10-13</time>
@@ -75,8 +87,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/13/Java诊断利器Arthas/">Java诊断利器Arthas</a>
+    <h1 class="article-title" itemprop="name">
+      Java诊断利器Arthas
     </h1>
   
 
@@ -171,60 +183,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/10/13/hello-world/" class="article-date">
-  <time datetime="2019-10-13T05:00:22.425Z" itemprop="datePublished">2019-10-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/13/hello-world/">Hello World</a>
-    </h1>
+    <a href="/2019/10/13/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/13/hello-world/" data-id="ck1ojov4a00037suz4dgu4dgf" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-
 
 </section>
         
