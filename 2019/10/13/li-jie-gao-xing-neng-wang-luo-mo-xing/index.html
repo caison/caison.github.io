@@ -488,7 +488,7 @@
 <p><strong>缺点</strong><br>要实现真正的异步 I/O，操作系统需要做大量的工作。目前 Windows 下通过 IOCP 实现了真正的异步 I/O，而在 Linux 系统下，Linux2.6才引入，目前 AIO 并不完善，因此在 Linux 下实现高并发网络编程时都是以 IO复用模型模式为主</p>
 <h2 id="2-5-5种I-O模型总结"><a href="#2-5-5种I-O模型总结" class="headerlink" title="2.5 5种I/O模型总结"></a>2.5 5种I/O模型总结</h2><p><img src="/images/%E7%90%86%E8%A7%A3%E9%AB%98%E6%80%A7%E8%83%BD%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/7.png" alt><br>从上图中我们可以看出，可以看出，越往后，阻塞越少，理论上效率也是最优。其五种I/O模型中，前四种属于同步I/O，因为其中真正的I/O操作(recvfrom)将阻塞进程/线程，只有异步I/O模型才于POSIX定义的异步I/O相匹配</p>
 <h1 id="3-线程模型"><a href="#3-线程模型" class="headerlink" title="3 线程模型"></a>3 线程模型</h1><p>介绍完服务器如何基于I/O模型管理连接，获取输入数据，下面介绍基于进程/线程模型，服务器如何处理请求</p>
-<p>值得说明的是，具体选择线程还是进程，更多是与平台及编程语言相关，例如C语言使用线程和进程都可以(例如Nginx使用进程，Memcached使用线程)，Java语言一般使用线程(例如Netty)，为了描述方便，下面都使用线程来进程描述</p>
+<p>值得说明的是，具体选择线程还是进程，更多是与平台及编程语言相关，例如C语言使用线程和进程都可以(例如Nginx使用进程，Memcached使用线程)，Java语言一般使用线程(例如Netty)，为了描述方便，下面都使用线程来进行描述</p>
 <h2 id="3-1-传统阻塞I-O服务模型"><a href="#3-1-传统阻塞I-O服务模型" class="headerlink" title="3.1 传统阻塞I/O服务模型"></a>3.1 传统阻塞I/O服务模型</h2><p><img src="/images/%E7%90%86%E8%A7%A3%E9%AB%98%E6%80%A7%E8%83%BD%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B/8.png" alt="传统阻塞I/O服务模型"><br><strong>特点</strong></p>
 <ul>
 <li>采用阻塞式I/O模型获取输入数据</li>
@@ -814,19 +814,22 @@
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                <a href="/2019/10/13/li-jie-java-gc-yuan-li-he-diao-you/">
                     <div class="card-image">
                         
-                        <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
+                        <img src="/images/理解Java-GC原理和调优/0.jpg" class="responsive-img" alt="理解Java-GC原理和调优">
                         
-                        <span class="card-title">理解Java并发底层之AQS实现</span>
+                        <span class="card-title">理解Java-GC原理和调优</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
-本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
+                            
+概述本文介绍GC基础原理和理论，GC调优方法思路和方法，基于Hotspot jdk1.8，学习之后将了解如何对生产系统出现的GC问题进行排查解决
+阅读时长约30分钟，内容主要如下：
+
+GC基础原理，涉及调优目标，GC事件分类、JVM内存分
                         
                     </div>
                     <div class="publish-info">
@@ -855,20 +858,20 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/10/13/li-jie-fen-bu-shi-shi-wu/">
+                <a href="/2019/10/13/li-jie-netty-mo-xing-jia-gou/">
                     <div class="card-image">
                         
-                        <img src="/images/理解分布式事务/0.jpg" class="responsive-img" alt="理解分布式事务">
+                        <img src="/images/理解Netty模型架构/0.jpg" class="responsive-img" alt="理解Netty模型架构">
                         
-                        <span class="card-title">理解分布式事务</span>
+                        <span class="card-title">理解Netty模型架构</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
                             
-这篇文章将介绍什么是分布式事务，分布式事务解决什么问题，对分布式事务实现的难点，解决思路，不同场景下方案的选择，通过图解的方式进行梳理、总结和比较。
-相信耐心看完这篇文章，谈到分布式事务，不再只是有“2PC”、“3PC”、“MQ的消息事务
+本文基于Netty4.1展开介绍相关理论模型，使用场景，基本组件、整体架构，知其然且知其所以然，希望给读者提供学习实践参考。
+1 Netty简介Netty是 一个异步事件驱动的网络应用程序框架，用于快速开发可维护的高性能协议服务器和客户端
                         
                     </div>
                     <div class="publish-info">
@@ -879,8 +882,8 @@
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/架构设计/" class="post-category">
-                                    架构设计
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
                                 </a>
                             
                             
@@ -1009,7 +1012,7 @@
             <br>
             
             &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
-                class="white-color">96k</span>&nbsp;字
+                class="white-color">102.7k</span>&nbsp;字
             
             
             

@@ -1,0 +1,1182 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="理解Redis-Cluster集群, caison博客">
+    <meta name="description" content="
+Redis作为一款性能优异的内存数据库，支撑着微博亿级社交平台，也成为很多互联网公司的标配。这里将以Redis Cluster集群为核心，基于最新的Redis5版本，从原理再到实战，玩转Redis集群
+常见Redis集群方案在介绍Redi">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>理解Redis-Cluster集群 | caison博客</title>
+    <link rel="icon" type="image/x-icon, image/vnd.microsoft.icon" href="/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+        code[class*="language-"], pre[class*="language-"] {
+            white-space: pre !important;
+        }
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+    
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper head-container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">caison博客</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/categories" class="waves-effect waves-light">
+      
+      <i class="fas fa-bookmark" style="zoom: 0.6;"></i>
+      
+      <span>分类</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/archives" class="waves-effect waves-light">
+      
+      <i class="fas fa-archive" style="zoom: 0.6;"></i>
+      
+      <span>归档</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/about" class="waves-effect waves-light">
+      
+      <i class="fas fa-user-circle" style="zoom: 0.6;"></i>
+      
+      <span>关于</span>
+    </a>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">caison博客</div>
+        <div class="logo-desc">
+            
+            Never really desperate, only the lost of the soul.
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/categories" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-bookmark"></i>
+			
+			分类
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/archives" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-archive"></i>
+			
+			归档
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/about" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-user-circle"></i>
+			
+			关于
+		</a>
+          
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/caison/" class="waves-effect waves-light" target="_blank">
+                <i class="fab fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/caison/" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/images/理解Redis-Cluster集群/0.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        理解Redis-Cluster集群
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+</style>
+<div class="row">
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/技术框架/" class="post-category">
+                                技术框架
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-10-27
+                </div>
+
+                
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        3.5k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        14 分
+                    </div>
+                    
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="far fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/0.jpg" alt></p>
+<p>Redis作为一款性能优异的内存数据库，支撑着微博亿级社交平台，也成为很多互联网公司的标配。这里将以Redis Cluster集群为核心，基于最新的Redis5版本，从原理再到实战，玩转Redis集群</p>
+<h1 id="常见Redis集群方案"><a href="#常见Redis集群方案" class="headerlink" title="常见Redis集群方案"></a>常见Redis集群方案</h1><p>在介绍Redis Cluster集群方案之前，为了方便对比，先简单了解一下业界常见的Redis集群方案：</p>
+<h2 id="1-基于客户端分片"><a href="#1-基于客户端分片" class="headerlink" title="1 基于客户端分片"></a>1 基于客户端分片</h2><p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/1.png" alt><br>Redis Sharding是Redis Cluster出来之前，业界普遍使用的多Redis实例集群方法。其主要思想是基于哈希算法，根据Redis数据的key的哈希值对数据进行分片，将数据映射到各自节点上</p>
+<p>优点在于实现简单，缺点在于当Redis集群调整，每个客户端都需要更新调整</p>
+<h2 id="2-基于代理服务器分片"><a href="#2-基于代理服务器分片" class="headerlink" title="2 基于代理服务器分片"></a>2 基于代理服务器分片</h2><p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/2.png" alt><br>客户端发送请求到独立部署代理组件，代理组件解析客户端的数据，并将请求转发至正确的节点，最后将结果回复给客户端</p>
+<p>优点在于透明接入，容易集群扩展，缺点在于多了一层代理转发，性能有所损耗</p>
+<h2 id="3-Redis-Sentinel-哨兵"><a href="#3-Redis-Sentinel-哨兵" class="headerlink" title="3 Redis Sentinel(哨兵)"></a>3 Redis Sentinel(哨兵)</h2><p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/3.png" alt><br>Redis Sentinel是官方从Redis 2.6版本提供的高可用方案，在Redis主从复制集群的基础上，增加Sentinel集群监控整个Redis集群。当Redis集群master节点发生故障时，Sentinel进行故障切换，选举出新的master，同时Sentinel本身支持高可用集群部署</p>
+<p>优点在于支持集群高可用，高性能读写，缺点在于没有实现数据分片，每个节点需要承载完整数据集，负载能力受当个Redis服务器限制，仅支持通过增加机器内存实现垂直扩容，不支持水平扩展</p>
+<h1 id="Redis-Cluster设计"><a href="#Redis-Cluster设计" class="headerlink" title="Redis Cluster设计"></a>Redis Cluster设计</h1><h2 id="1-整体设计"><a href="#1-整体设计" class="headerlink" title="1 整体设计"></a>1 整体设计</h2><p>Redis Cluster 是 在 3.0 版本正式推出的高可用集群方案，相比Redis Sentinel，Redis Cluster方案不需要额外部署Sentinel集群，而是通过集群内部通信实现集群监控，故障时主从切换；同时，支持内部基于哈希实现数据分片，支持动态水平扩容</p>
+<p>整体架构如下：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/4.png" alt><br>集群中有多个主节点，每个主节点有多个从节点，主从节点间数据一致，最少需要3个主节点，每个主节点最少需要1个从节点</p>
+<ul>
+<li><strong>高可用</strong>：当master节点故障时，自动主从切换</li>
+<li><strong>高性能</strong>：主节点提供读写服务，从节点只读服务，提高系统吞吐量</li>
+<li><strong>可扩展性</strong>：集群的数据分片存储，主节点间数据各不同，各自维护对应数据，可以为集群添加节点进行扩容，也可以下线部分节点进行水平缩容</li>
+</ul>
+<h2 id="2-数据分片"><a href="#2-数据分片" class="headerlink" title="2 数据分片"></a>2 数据分片</h2><p>将整个数据集按照一定规则分配到多个节点上，称为数据分片，Redis Cluster采用的分片方案是哈希分片</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/5.png" alt><br>基本原理如下：<br>Redis Cluster首先定义了编号0 ~ 16383的区间，称为槽，所有的键根据哈希函数映射到0 ~ 16383整数槽内，计算公式：slot=CRC16（key）&amp;16383。每一个节点负责维护一部分槽以及槽所映射的键值数据</p>
+<p><strong>槽是 Redis 集群管理数据的基本单位</strong>，集群扩容收缩就是槽和数据在节点之间的移动</p>
+<p>槽与节点映射关系如下：</p>
+<ul>
+<li>每个集群节点维护着一个16384 bit (2kB)的位数组，每个bit对应相同编号的槽，用 0 / 1标识对于某个槽自己是否拥有</li>
+<li>集群节点同时还维护着槽到集群节点的映射，是由长度为16384，数组下标代表槽编号，值为节点信息的数组</li>
+</ul>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/6.png" alt></p>
+<h2 id="3-集群扩容"><a href="#3-集群扩容" class="headerlink" title="3 集群扩容"></a>3 集群扩容</h2><p>Redis Cluster支持不影响集群对外服务的情况下，对集群进行动态扩容或缩容，当Redis 新节点加入现有集群后，需要为其迁移槽和数据，确保迁移后每个节点负责相似数量的槽，使数据分布均匀在各节点上</p>
+<p>整个数据迁移涉及系列操作，Redis提供了集群管理工具，包括基于Ruby的redis-trib.rb，还Redis5新提供的基于C语言redis-cli，下面的介绍以redis-cli为例</p>
+<p>源节点将指定slot数据迁移到目标节点，基本流程如下：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/7.png" alt></p>
+<ul>
+<li>(1) redis-cli设置目标节点指定slot状态importing，让目标节点准备迁入slot数据</li>
+<li>(2) redis-cli设置源节点指定slot状态migrating，让让源节点准备迁出slot的数据</li>
+<li>(3) redis-cli批量迁移源节点指定slot中的数据到目标节点</li>
+<li>(4) 数据迁移完后 redis-cli向集群所有主节点通知槽被分配给目标节点，主节点更新slot与节点映射关系信息</li>
+</ul>
+<p>通常情况下，如果客户端请求的数据不在节点上，节点会回复 MOVED 重定向信息，客户端根据该信息再请求正确的节点。对于正在迁移的slot数据，保证客户端仍然能正常访问的设计如下：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/8.png" alt></p>
+<ul>
+<li>(1) 迁移完成后才更新slot与节点映射关系信息，如果迁移进行中的映射信息保持与迁移前一致</li>
+<li>(2) 如果客户端访问源节点，访问的key尚未迁出，则正常的处理该key</li>
+<li>(3) 如果客户端访问源节点，访问的key尚已迁出，源节点返回ASK重定向信息</li>
+<li>(4) 客户端根据ASK 重定向异常提取出目标节点信息，先向目标节点发送ASKING命令请求操作，再执行键命令</li>
+</ul>
+<p>ASK 和 MOVED 这2个重定向控制有如下区别：</p>
+<ul>
+<li>ASK 重定向说明集群正在进行 slot 数据迁移，客户端无法知道什么时候迁移完成，因此只能是临时性的重定向，客户端不会更新 slot 到 Redis 节点的映射缓存。</li>
+<li>MOVED 重定向说明键对应的slot 已经明确指定到新的节点，因此需要更新 slot 到 Redis 节点的映射缓存</li>
+</ul>
+<h2 id="4-CAP取舍"><a href="#4-CAP取舍" class="headerlink" title="4 CAP取舍"></a>4 CAP取舍</h2><p>CAP包括：一致性（Consistency）、可用性（Availability）、分区容错性（Partition tolerance），系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须在C和A之间做出选择</p>
+<p>Redis Cluster选择了AP架构，为了保证可用性，Redis并不保证强一致性，在特定条件下会出现数据不一致甚至丢失写操作</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/9.png" alt><br>第一个原因是：为了在性能和一致性上做出权衡，主从节点间数据同步是异步复制的，当客户端成功写入master节点，master返回成功，master节点才将写操作异步复制给slave节点</p>
+<p>另外一个原因是，当集群发送网络分区，集群可能会分为两部分：多数派和少数派，假如masterA节点位于少数派，如果网络分区发生时间较短，那么集群将会继续正常运作；如果分区的时间足够长，让多数派中选举为新的master替代matsterA，那么分区期间写入masterA的数据就丢失了</p>
+<p>在网络分区期间， 客户端可以向matsterA发送写命令的最大时间是有限制的， 这一时间限制称为节点超时时间（cluster-node-timeout），是 Redis集群的一个重要的配置选项</p>
+<h1 id="集群搭建"><a href="#集群搭建" class="headerlink" title="集群搭建"></a>集群搭建</h1><p>2018年10月 Redis 发布了稳定版本的 5.0 版本，推出了各种新特性，其中一点是集群管理工具从基于Ruby的redis-trib.rb移植到基于C语言redis-cli中，方便集群的构建和管理</p>
+<p>Redis Cluster集群运行至少需要包含3个主节点，实现高可用最少需要3主3从6个节点</p>
+<p>以下步骤基于Redis 5.0.5版本，介绍如何在一台 Linux 服务器上搭建有3主3从的6节点的 Redis集群</p>
+<ul>
+<li><p><strong>步骤1 创建安装目录</strong></p>
+<pre class="line-numbers language-shell"><code class="language-shell">mkdir -p /data/project/redis-cluster<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p><strong>步骤2 下载源码并解压编译</strong></p>
+<pre class="line-numbers language-shell"><code class="language-shell">cd /data/project/redis-cluster
+wget http://download.redis.io/releases/redis-5.0.5.tar.gz
+tar xzf redis-5.0.5.tar.gz
+cd redis-5.0.5
+make<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>执行make后，如果报错“jemalloc/jemalloc.h：没有那个文件或目录”，可以改为用以下命令：</p>
+<pre class="line-numbers language-shell"><code class="language-shell">make MALLOC=libc<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+<li><p><strong>步骤3 创建6个Redis配置文件</strong><br>6个配置文件不能在同一个目录，下面Redis 6个节点分别安装在7000~7005端口<br>首先创建配置文件目录及文件，定义如下：</p>
+<pre><code>mkdir -p /data/project/redis-cluster/nodes/7000
+mkdir -p /data/project/redis-cluster/nodes/7001
+mkdir -p /data/project/redis-cluster/nodes/7002
+mkdir -p /data/project/redis-cluster/nodes/7003
+mkdir -p /data/project/redis-cluster/nodes/7004
+mkdir -p /data/project/redis-cluster/nodes/7005
+</code></pre></li>
+</ul>
+<p>touch /data/project/redis-cluster/nodes/7000/redis.conf<br>touch /data/project/redis-cluster/nodes/7001/redis.conf<br>touch /data/project/redis-cluster/nodes/7002/redis.conf<br>touch /data/project/redis-cluster/nodes/7003/redis.conf<br>touch /data/project/redis-cluster/nodes/7004/redis.conf<br>touch /data/project/redis-cluster/nodes/7005/redis.conf</p>
+<pre><code>redis.conf配置文件的内容为：
+```shell
+############################## 网络 ##############################
+#端口
+port 7000
+#非保护模式，如果值为yes，则必须是 bind配置指定的ip的机器连接或者使用密码连接
+protected-mode no 
+
+############################## 通用 ##############################
+#后台运行
+daemonize yes 
+#记录redis进程pid
+pidfile  /var/run/redis_7000.pid
+
+############################## 集群 ##############################
+#启用集群模式
+cluster-enabled yes 
+cluster-config-file nodes_7000.conf
+#集群节点如果在该超时时间(毫秒)内不可达，则认为节点处于故障状态
+cluster-node-timeout 15000
+
+############################## 持久化 ##############################
+#AOF, RDB持久化文件目录
+dir /data/project/redis-cluster/nodes
+#开启AOF持久化
+appendonly yes
+#AOF文件名
+appendfilename &quot;appendonly_7000.aof&quot;
+#当目前aof文件大小超过上一次重写的aof文件大小的百分之多少进行重写
+auto-aof-rewrite-percentage 100
+#设置允许重写的最小aof文件大小，避免了达到约定百分比但尺寸仍然很小的情况还要重写
+auto-aof-rewrite-min-size 64mb
+#RDB文件名
+dbfilename dump_7000.rdb</code></pre><p>其中 port 、 pidfile、cluster-config-file、appendfilename、 dbfilename配置需要随着节点的不同而调整</p>
+<p>配置项说明可以参考redis-5.0.5/redis.conf，每一项都介绍得很详细，推荐阅读</p>
+<ul>
+<li><strong>步骤4 启动节点</strong><pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-server /data/project/redis-cluster/nodes/7000/redis.conf
+/data/project/redis-cluster/redis-5.0.5/src/redis-server /data/project/redis-cluster/nodes/7001/redis.conf
+/data/project/redis-cluster/redis-5.0.5/src/redis-server /data/project/redis-cluster/nodes/7002/redis.conf
+/data/project/redis-cluster/redis-5.0.5/src/redis-server /data/project/redis-cluster/nodes/7003/redis.conf
+/data/project/redis-cluster/redis-5.0.5/src/redis-server /data/project/redis-cluster/nodes/7004/redis.conf
+/data/project/redis-cluster/redis-5.0.5/src/redis-server /data/project/redis-cluster/nodes/7005/redis.conf<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+ps -ef|grep redis，可以看到6个redis进程已启动：</li>
+</ul>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/10.png" alt></p>
+<ul>
+<li><strong>步骤5 启动集群</strong><br>使用如下命令启动集群，IP地址自行替换：<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster create 192.168.56.102:7000 192.168.56.102:7001 192.168.56.102:7002 192.168.56.102:7003 192.168.56.102:7004 192.168.56.102:7005 --cluster-replicas 1<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+</ul>
+<p>启动成功信息如下：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/11.png" alt><br>到此，Redis Cluster 集群搭建完成</p>
+<h1 id="集群信息查看"><a href="#集群信息查看" class="headerlink" title="集群信息查看"></a>集群信息查看</h1><p>Redis5的redis-cli新增系列集群运维功能，查看命令详情：</p>
+<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster help<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/12.png" alt><br>命令参数具体作用可以参考官方文档，下面会基于其中一些常用命令对集群进行管理</p>
+<ul>
+<li><p><strong>检查节点状态</strong></p>
+<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster check 192.168.56.102:7000<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/13.png" alt></p>
+</li>
+<li><p><strong>查看集群信息</strong></p>
+<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster info 192.168.56.102:7000<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/14.png" alt></p>
+</li>
+</ul>
+<h1 id="集群扩容"><a href="#集群扩容" class="headerlink" title="集群扩容"></a>集群扩容</h1><p>集群现在有3主3从，下面新增4个节点扩容变成5主5从</p>
+<ul>
+<li><strong>步骤1 启动新节点</strong><br>创建4个Redis配置文件，端口号为7006~7009，然后启动节点(参考“集群搭建”的步骤3和步骤4)</li>
+<li><strong>步骤2 新节点加入集群</strong><br>设置4个节点分别加入已有redis集群，2个为主节点，2个为从节点</li>
+</ul>
+<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster add-node 192.168.56.102:7006 192.168.56.102:7005 
+/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster add-node 192.168.56.102:7007 192.168.56.102:7005 
+#24e2c是节点7006的id，代表该节点加入集群并为7006的从节点
+/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster add-node 192.168.56.102:7008 192.168.56.102:7005 --cluster-slave --cluster-master-id 24e2c369678952b07d95c0a4b49c2d7a7b2e2bf7 
+#24e2c是节点7007的id，代表该节点加入集群并为7007的从节点
+/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster add-node 192.168.56.102:7009  192.168.56.102:7005 --cluster-slave --cluster-master-id ab0f74a19819a74238df7a510494e9418678cbe1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>此时集群状态如下，其中主节点7006和主节点7007还没分配任何slot，在下面的步骤会进行分配：</p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/15.png" alt></p>
+<ul>
+<li><strong>步骤3 模拟slot重新平衡分配</strong><br>基于rebalance命令，增加–cluster-simulat参数，查看会迁移哪些slots，而不会真正执行迁移操作<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster rebalance 192.168.56.102:7000 --cluster-threshold 1 --cluster-use-empty-masters  --cluster-simulat<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+返回以下迁移信息：<br><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/16.png" alt></li>
+<li><strong>步骤4 执行slot重新平衡分配</strong><br>执行rebalance命令，平衡集群节点slot数量，重新分配slot( 去掉–cluster-simulat)<pre class="line-numbers language-shell"><code class="language-shell">/data/project/redis-cluster/redis-5.0.5/src/redis-cli --cluster rebalance 192.168.56.102:7000 --cluster-threshold 1 --cluster-use-empty-masters<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/17.png" alt><br>至此，集群扩容完成，集群缩容的话，需要基于reshard将需被下线的结点中的slot移到其他结点，然后基于del-node命令删除结点</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>至此，Redis Cluster集群介绍到这里，其实还有集群通信协议，内存，数据备份，主从复制等特性值得学习，是设计分布式系统的典范，有机会再展开介绍</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>微博6年redis实践<br><a href="https://mp.weixin.qq.com/s/dBWIHwfmrs6Tt7INw-zSyA" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/dBWIHwfmrs6Tt7INw-zSyA</a></p>
+<p>Redis 官网介绍cluster设计说明<br><a href="https://redis.io/topics/cluster-tutorial" target="_blank" rel="noopener">https://redis.io/topics/cluster-tutorial</a><br><a href="https://redis.io/topics/cluster-spec" target="_blank" rel="noopener">https://redis.io/topics/cluster-spec</a></p>
+<p>redis cluster管理工具redis-trib-rb详解<br><a href="http://weizijun.cn/2016/01/08/redis%20cluster管理工具redis-trib-rb详解/" target="_blank" rel="noopener">http://weizijun.cn/2016/01/08/redis%20cluster管理工具redis-trib-rb详解/</a></p>
+<p><img src="/images/%E7%90%86%E8%A7%A3Redis-Cluster%E9%9B%86%E7%BE%A4/18.png" alt></p>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.png" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        <p class="reprint-tip">
+            <i class="fas fa-exclamation-triangle"></i>&nbsp;&nbsp;
+            <span>转载规则</span>
+        </p>
+        
+            <div class="center-align">
+                <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                    <img alt=""
+                         style="border-width:0"
+                         src="https://i.creativecommons.org/l/by/4.0/88x31.png"/>
+                </a>
+            </div>
+            <br/>
+            <a  href="/2019/10/27/li-jie-redis-cluster-ji-qun/">
+                    《理解Redis-Cluster集群》
+            </a> 由
+            <a href="https://caison.github.io">
+                caison
+            </a> 采用
+            <a rel="license" href="https://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank">
+                知识共享署名 4.0 国际许可协议
+            </a>进行许可。
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+        </div>
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2019/10/27/li-jie-fen-bu-shi-liu-liang-fang-wei-bing-sentinel/">
+                    <div class="card-image">
+                        
+                        <img src="/images/理解分布式流量防卫兵Sentinel/0.jpg" class="responsive-img" alt="理解分布式流量防卫兵Sentinel">
+                        
+                        <span class="card-title">理解分布式流量防卫兵Sentinel</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            Sentinel 承接了阿里巴巴近 10 年的双十一大促流量的核心场景
+本文介绍阿里开源限流熔断方案Sentinel功能、原理、架构、快速入门以及相关框架比较
+基本介绍1 名词解释
+服务限流 ：当系统资源不够，不足以应对大量请求，对系统按照
+                        
+                    </div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2019-10-27
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/技术框架/" class="post-category">
+                                    技术框架
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/13/li-jie-java-bing-fa-di-ceng-zhi-aqs-shi-xian/">
+                    <div class="card-image">
+                        
+                        <img src="/images/理解Java并发底层之AQS实现/0.png" class="responsive-img" alt="理解Java并发底层之AQS实现">
+                        
+                        <span class="card-title">理解Java并发底层之AQS实现</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            jdk的JUC包(java.util.concurrent)提供大量Java并发工具提供使用，基本由Doug Lea编写，很多地方值得学习和借鉴，是进阶升级必经之路
+本文从JUC包中常用的对象锁、并发工具的使用和功能特性入手，带着问题，由浅
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2019-10-13
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Java基础/" class="post-category">
+                                    Java基础
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+
+</div>
+
+
+
+    </div>
+    <div id="toc-aside" class="expanded col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- TOC 悬浮按钮. -->
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h1, h2, h3'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h1, h2, h3').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).slideUp(500);
+                $mainContent.removeClass('l9');
+            } else {
+                $tocAside.addClass(expandedClass).slideDown(500);
+                $mainContent.addClass('l9');
+            }
+            fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+    <footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            <span id="year">年份</span>
+            <a href="https://caison.github.io" target="_blank">caison</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">102.7k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <span id="sitetime">载入运行时间...</span>
+            <script>
+                function siteTime() {
+                    window.setTimeout("siteTime()", 1000);
+                    var seconds = 1000;
+                    var minutes = seconds * 60;
+                    var hours = minutes * 60;
+                    var days = hours * 24;
+                    var years = days * 365;
+                    var today = new Date();
+                    var startYear = "2019";
+                    var startMonth = "6";
+                    var startDate = "28";
+                    var startHour = "0";
+                    var startMinute = "0";
+                    var startSecond = "0";
+                    var todayYear = today.getFullYear();
+                    var todayMonth = today.getMonth() + 1;
+                    var todayDate = today.getDate();
+                    var todayHour = today.getHours();
+                    var todayMinute = today.getMinutes();
+                    var todaySecond = today.getSeconds();
+                    var t1 = Date.UTC(startYear, startMonth, startDate, startHour, startMinute, startSecond);
+                    var t2 = Date.UTC(todayYear, todayMonth, todayDate, todayHour, todayMinute, todaySecond);
+                    var diff = t2 - t1;
+                    var diffYears = Math.floor(diff / years);
+                    var diffDays = Math.floor((diff / days) - diffYears * 365);
+                    var diffHours = Math.floor((diff - (diffYears * 365 + diffDays) * days) / hours);
+                    var diffMinutes = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours) /
+                        minutes);
+                    var diffSeconds = Math.floor((diff - (diffYears * 365 + diffDays) * days - diffHours * hours -
+                        diffMinutes * minutes) / seconds);
+                    if (startYear == todayYear) {
+                        document.getElementById("year").innerHTML = todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffDays + " 天 " + diffHours +
+                            " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    } else {
+                        document.getElementById("year").innerHTML = startYear + " - " + todayYear;
+                        document.getElementById("sitetime").innerHTML = "本站已安全运行 " + diffYears + " 年 " + diffDays +
+                            " 天 " + diffHours + " 小时 " + diffMinutes + " 分钟 " + diffSeconds + " 秒";
+                    }
+                }
+                setInterval(siteTime, 1000);
+            </script>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://github.com/caison" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fab fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:caison@aliyun.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <!-- Baidu Analytics -->
+
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i["DaoVoiceObject"] = r;
+            i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            a.charset = "utf-8";
+            m.parentNode.insertBefore(a, m)
+        })(window, document, "script", ('https:' == document.location.protocol ? 'https:' : 'http:') +
+            "//widget.daovoice.io/widget/6984b559.js", "daovoice")
+        daovoice('init', {
+            app_id: ""
+        });
+        daovoice('update');
+    </script>
+    
+
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+    
+    
+
+</body>
+
+</html>
